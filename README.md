@@ -30,4 +30,4 @@ This chapter provides an overview of the main features and design principles of 
 
 The following notation is used for bit strings (or bitstrings)-i.e., finite strings consisting of binary digits (bits), 0 and 1 -throughout this document.
 
-1.0.1. Hexadecimal notation for bitstrings. When the length of a bitstring is a multiple of four, we subdivide it into groups of four bits and represent each group by one of sixteen hexadecimal digits $0-9, \mathrm{~A}-\mathrm{F}$ in the usual manner: $0_{16} \leftrightarrow 0000,1_{16} \leftrightarrow 0001, \ldots, F_{16} \leftrightarrow$ 1111. The resulting hexadecimal string is our equivalent representation for the original binary string.
+1.0.1. Hexadecimal notation for bitstrings. When the length of a bitstring is a multiple of four, we subdivide it into groups of four bits and represent each group by one of sixteen hexadecimal digits $$0-9, \mathrm{~A}-\mathrm{F}$$ in the usual manner: $$0_{16} \leftrightarrow 0000,1_{16}$$ $$\leftrightarrow 0001, \ldots$$, $$F_{16} \leftrightarrow$ 1111$$. The resulting hexadecimal string is our equivalent representation for the original binary string.
