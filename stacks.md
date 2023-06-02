@@ -1,6 +1,8 @@
+# Stacks
+
 This chapter contains a general discussion and comparison of register and stack machines, expanded further in Appendix $$\mathbf{C}$$, and describes the two main classes of stack manipulation primitives employed by TVM: the basic and the compound stack manipulation primitives. An informal explanation of their sufficiency for all stack reordering required for correctly invoking other primitives and user-defined functions is also provided. Finally, the problem of efficiently implementing TVM stack manipulation primitives is discussed in 2.3
 
-### Stack calling conventions
+## Stack calling conventions
 
 A stack machine, such as TVM, uses the stack-and especially the values near the top of the stack - to pass arguments to called functions and primitives (such as built-in arithmetic operations) and receive their results. This section discusses the TVM stack calling conventions, introduces some notation, and compares TVM stack calling conventions with those of certain register machines.
 
@@ -61,13 +63,13 @@ Alternatively, one can describe DIV as a primitive that runs on a stack $$S^{\pr
 
 The stack notation is extensively used throughout Appendix $$\mathbf{A}$$, where all currently defined TVM primitives are listed.
 
-#### Explicitly defining the number of arguments to a function.
+## Explicitly defining the number of arguments to a function.
 
  Stack machines usually pass the current stack in its entirety to the invoked primitive or function. That primitive or function accesses only the several values near the top of the stack that represent its arguments, and pushes the return values in their place, by convention leaving all deeper values intact. Then the resulting stack, again in its entirety, is returned to the caller.Most TVM primitives behave in this way, and we expect most user-defined functions to be implemented under such conventions. However, TVM provides mechanisms to specify how many arguments must be passed to a called function (cf. 4.1.10). When these mechanisms are employed, the specified number of values are moved from the caller's stack into the (usually initially empty) stack of the called function, while deeper values remain in the caller's stack and are inaccessible to the callee. The caller can also specify how many return values it expects from the called function.
 
 Such argument-checking mechanisms might be useful, for example, for a library function that calls user-provided functions passed as arguments to it.
 
-### Stack manipulation primitives
+## Stack manipulation primitives
 
 A stack machine, such as TVM, employs a lot of stack manipulation primitives to rearrange arguments to other primitives and user-defined functions, so that they become located near the top of the stack in correct order. This section discusses which stack manipulation primitives are necessary and sufficient for achieving this goal, and which of them are used by TVM. Some examples of code using these primitives can be found in Appendix $$\mathbf{C}$$.
 
@@ -118,7 +120,7 @@ As an exception, if a mnemonic would consist of only PU or only XC strings, so t
 
 2.2.6. Stack manipulation instructions are polymorphic. Notice that the stack manipulation instructions are almost the only "polymorphic" primitives in TVM-i.e., they work with values of arbitrary types (including the value types that will appear only in future revisions of TVM). For example, SWAP always interchanges the two top values of the stack, even if one of them is an integer and the other is a cell. Almost all other instructions, especially the data processing instructions (including arithmetic instructions), require each of their arguments to be of some fixed type (possibly different for different arguments).
 
-### Efficiency of stack manipulation primitives
+## Efficiency of stack manipulation primitives
 
 Stack manipulation primitives employed by a stack machine, such as TVM, have to be implemented very efficiently, because they constitute more than half of all the instructions used in a typical program. In fact, TVM performs all these instructions in a (small) constant time, regardless of the values involved (even if they represent very large integers or very large trees of cells).
 
