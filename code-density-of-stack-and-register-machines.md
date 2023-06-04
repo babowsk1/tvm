@@ -92,15 +92,15 @@ The meaning of the columns in Table 1 is as follows:
 * "Code bytes" - The total amount of code bytes used.
 * "Opcode space" - The portion of "opcode space" (i.e., of possible choices for the first byte of the encoding of an instruction) used by data and arithmetic instructions in the assumed instruction encoding. For example, the "optimistic" encoding for the three-address machine assumes two-byte encodings for all arithmetic instructions op $$r(i)$$, $$r(j), r(k)$$. Each arithmetic instruction would then consume portion
 
-|                 | Operations |       |       | Code bytes |       |                  | Opcode space |                                   |              |
-| --------------- | :--------: | :---: | :---: | :--------: | :---: | :--------------: | :----------: | :-------------------------------: | :----------: |
-| Machine         |    data    | arith | total |    data    | arith |       total      |     data     |               arith               |     total    |
-| 3-addr. (opt.)  |      0     |   11  |   12  |      0     |   22  | $$\mathbf{2 3}$$ |  $$0 / 256$$ |      $$\mathbf{6 4 / 2 5 6}$$     | $$65 / 256$$ |
-| 3-addr. (real.) |      0     |   11  |   12  |      0     |   30  | $$\mathbf{3 1}$$ |  $$0 / 256$$ | $$\mathbf{3 4} / \mathbf{2 5 6}$$ | $$35 / 256$$ |
-| 2-addr.         |      4     |   11  |   16  |      8     |   22  | $$\mathbf{3 1}$$ |  $$1 / 256$$ |  $$\mathbf{4} / \mathbf{2 5 6}$$  |  $$6 / 256$$ |
-| 1-addr.         |     11     |   11  |   23  |     17     |   11  | $$\mathbf{2 9}$$ | $$17 / 256$$ | $$\mathbf{6 4} / \mathbf{2 5 6}$$ | $$82 / 256$$ |
-| stack (basic)   |     16     |   11  |   28  |     16     |   11  | $$\mathbf{2 8}$$ | $$64 / 256$$ |  $$\mathbf{4} / \mathbf{2 5 6}$$  | $$69 / 256$$ |
-| stack (comp.)   |      9     |   11  |   21  |     15     |   11  | $$\mathbf{2 7}$$ | $$84 / 256$$ |  $$\mathbf{4} / \mathbf{2 5 6}$$  | $$89 / 256$$ |
+| Machine         | Operations | Operations | Operations | Code bytes | Code bytes |    Code bytes    | Opcode space |            Opcode space           |              |
+| --------------- | :--------: | :--------: | :--------: | :--------: | :--------: | :--------------: | :----------: | :-------------------------------: | :----------: |
+| -               |    data    |    arith   |    total   |    data    |    arith   |       total      |     data     |               arith               |     total    |
+| 3-addr. (opt.)  |      0     |     11     |     12     |      0     |     22     | $$\mathbf{2 3}$$ |  $$0 / 256$$ |      $$\mathbf{6 4 / 2 5 6}$$     | $$65 / 256$$ |
+| 3-addr. (real.) |      0     |     11     |     12     |      0     |     30     | $$\mathbf{3 1}$$ |  $$0 / 256$$ | $$\mathbf{3 4} / \mathbf{2 5 6}$$ | $$35 / 256$$ |
+| 2-addr.         |      4     |     11     |     16     |      8     |     22     | $$\mathbf{3 1}$$ |  $$1 / 256$$ |  $$\mathbf{4} / \mathbf{2 5 6}$$  |  $$6 / 256$$ |
+| 1-addr.         |     11     |     11     |     23     |     17     |     11     | $$\mathbf{2 9}$$ | $$17 / 256$$ | $$\mathbf{6 4} / \mathbf{2 5 6}$$ | $$82 / 256$$ |
+| stack (basic)   |     16     |     11     |     28     |     16     |     11     | $$\mathbf{2 8}$$ | $$64 / 256$$ |  $$\mathbf{4} / \mathbf{2 5 6}$$  | $$69 / 256$$ |
+| stack (comp.)   |      9     |     11     |     21     |     15     |     11     | $$\mathbf{2 7}$$ | $$84 / 256$$ |  $$\mathbf{4} / \mathbf{2 5 6}$$  | $$89 / 256$$ |
 
 Table 1: A summary of machine code properties for hypothetical 3-address, 2-address, 1-address, and stack machines, generated for a sample leaf function (cf. C.1.1). The two most important columns, reflecting code density and extendability to other operations, are marked by bold font. Smaller values are better in both of these columns.
 
@@ -136,15 +136,15 @@ C.2.3. Case $$m=n=16$$ : all registers must be preserved. This case is the most 
 
 In order to estimate the consequences of assuming $$m=n=16$$, we will assume that all our register machines are equipped with a stack, and with one-byte instructions PUSH $$r(i)$$ and POP $$r(i)$$, which push or pop a register into/from the stack. For example, the three-address machine code provided in C.1.2 destroys the values in registers $$r 2, r 3, r 6$$, and $$r 7$$; this means that the code of this function must be augmented by four instructions PUSH
 
-|                 | Operations |      |       | Code bytes |      |       |   Opcode space   |              |                                 |               |
-| --------------- | ---------- | :--: | :---: | :--------: | :--: | :---: | :--------------: | :----------: | :-----------------------------: | :-----------: |
-| Machine         | $$r$$      | data | arith |    total   | data | arith |       total      |     data     |              arith              |     total     |
-| 3-addr. (opt.)  | 4          |   8  |   11  |     20     |   8  |   22  | $$\mathbf{3 1}$$ | $$32 / 256$$ |     $$\mathbf{6 4 / 2 5 6}$$    |  $$97 / 256$$ |
-| 3-addr. (real.) | 4          |   8  |   11  |     20     |   8  |   30  | $$\mathbf{3 9}$$ | $$32 / 256$$ |     $$\mathbf{3 4 / 2 5 6}$$    |  $$67 / 256$$ |
-| 2-addr.         | 5          |  14  |   11  |     26     |  18  |   22  | $$\mathbf{4 1}$$ | $$33 / 256$$ | $$\mathbf{4} / \mathbf{2 5 6}$$ |  $$38 / 256$$ |
-| 1-addr.         | 6          |  23  |   11  |     35     |  29  |   11  | $$\mathbf{4 1}$$ | $$49 / 256$$ |     $$\mathbf{6 4 / 2 5 6}$$    | $$114 / 256$$ |
-| stack (basic)   | 0          |  16  |   11  |     28     |  16  |   11  | $$\mathbf{2 8}$$ | $$64 / 256$$ | $$\mathbf{4} / \mathbf{2 5 6}$$ |  $$69 / 256$$ |
-| stack (comp.)   | 0          |   9  |   11  |     21     |  15  |   11  | $$\mathbf{2 7}$$ | $$84 / 256$$ | $$\mathbf{4} / \mathbf{2 5 6}$$ |  $$89 / 256$$ |
+| Machine         | Operations | Operations | Operations | Code bytes | Code bytes | Code bytes |   Opcode space   | Opcode space |           Opcode space          |  Opcode space |
+| --------------- | ---------- | :--------: | :--------: | :--------: | :--------: | :--------: | :--------------: | :----------: | :-----------------------------: | :-----------: |
+| -               | $$r$$      |    data    |    arith   |    total   |    data    |    arith   |       total      |     data     |              arith              |     total     |
+| 3-addr. (opt.)  | 4          |      8     |     11     |     20     |      8     |     22     | $$\mathbf{3 1}$$ | $$32 / 256$$ |     $$\mathbf{6 4 / 2 5 6}$$    |  $$97 / 256$$ |
+| 3-addr. (real.) | 4          |      8     |     11     |     20     |      8     |     30     | $$\mathbf{3 9}$$ | $$32 / 256$$ |     $$\mathbf{3 4 / 2 5 6}$$    |  $$67 / 256$$ |
+| 2-addr.         | 5          |     14     |     11     |     26     |     18     |     22     | $$\mathbf{4 1}$$ | $$33 / 256$$ | $$\mathbf{4} / \mathbf{2 5 6}$$ |  $$38 / 256$$ |
+| 1-addr.         | 6          |     23     |     11     |     35     |     29     |     11     | $$\mathbf{4 1}$$ | $$49 / 256$$ |     $$\mathbf{6 4 / 2 5 6}$$    | $$114 / 256$$ |
+| stack (basic)   | 0          |     16     |     11     |     28     |     16     |     11     | $$\mathbf{2 8}$$ | $$64 / 256$$ | $$\mathbf{4} / \mathbf{2 5 6}$$ |  $$69 / 256$$ |
+| stack (comp.)   | 0          |      9     |     11     |     21     |     15     |     11     | $$\mathbf{2 7}$$ | $$84 / 256$$ | $$\mathbf{4} / \mathbf{2 5 6}$$ |  $$89 / 256$$ |
 
 Table 2: A summary of machine code properties for hypothetical 3-address, 2-address, 1address, and stack machines, generated for a sample leaf function (cf. C.1.1), assuming all of the 16 registers must be preserved by called functions $$(m=n=16)$$. The new column labeled $$r$$ denotes the number of registers to be saved and restored, leading to $$2 r$$ more operations and code bytes compared to Table 1. Newly-added PUSH and POP instructions for register machines also utilize $$32 / 256$$ of the opcode space. The two rows corresponding to stack machines remain unchanged.
 
@@ -158,15 +158,15 @@ Notice that the resulting table is very similar to Table $$\mathbf{1}$$, apart f
 
 C.2.5. A fairer comparison using a binary code instead of a byte code. The reader may have noticed that our preceding discussion of $$k$$ -
 
-|                 |       | Operations |       |       | Code bytes |       |                  | Opcode space |                                   |               |
-| --------------- | ----- | :--------: | :---: | :---: | :--------: | :---: | :--------------: | :----------: | :-------------------------------: | :-----------: |
-| Machine         | $$r$$ |    data    | arith | total |    data    | arith |       total      |     data     |               arith               |     total     |
-| 3-addr. (opt.)  | 0     |      0     |   11  |   12  |      0     |   22  | $$\mathbf{2 3}$$ | $$32 / 256$$ |      $$\mathbf{6 4 / 2 5 6}$$     |  $$97 / 256$$ |
-| 3-addr. (real.) | 0     |      0     |   11  |   12  |      0     |   30  | $$\mathbf{3 1}$$ | $$32 / 256$$ | $$\mathbf{3 4} / \mathbf{2 5 6}$$ |  $$67 / 256$$ |
-| 2-addr.         | 0     |      4     |   11  |   16  |      8     |   22  | $$\mathbf{3 1}$$ | $$33 / 256$$ |  $$\mathbf{4} / \mathbf{2 5 6}$$  |  $$38 / 256$$ |
-| 1-addr.         | 1     |     13     |   11  |   25  |     19     |   11  | $$\mathbf{3 1}$$ | $$49 / 256$$ |      $$\mathbf{6 4 / 2 5 6}$$     | $$114 / 256$$ |
-| stack (basic)   | 0     |     16     |   11  |   28  |     16     |   11  | $$\mathbf{2 8}$$ | $$64 / 256$$ |  $$\mathbf{4} / \mathbf{2 5 6}$$  |  $$69 / 256$$ |
-| stack (comp.)   | 0     |      9     |   11  |   21  |     15     |   11  | $$\mathbf{2 7}$$ | $$84 / 256$$ |  $$\mathbf{4} / \mathbf{2 5 6}$$  |  $$89 / 256$$ |
+| Machine         | r | Operations | Operations | Operations | Code bytes | Code bytes |    Code bytes    | Opcode space |            Opcode space           |  Opcode space |
+| --------------- | - | :--------: | :--------: | :--------: | :--------: | :--------: | :--------------: | :----------: | :-------------------------------: | :-----------: |
+| -               | - |    data    |    arith   |    total   |    data    |    arith   |       total      |     data     |               arith               |     total     |
+| 3-addr. (opt.)  | 0 |      0     |     11     |     12     |      0     |     22     | $$\mathbf{2 3}$$ | $$32 / 256$$ |      $$\mathbf{6 4 / 2 5 6}$$     |  $$97 / 256$$ |
+| 3-addr. (real.) | 0 |      0     |     11     |     12     |      0     |     30     | $$\mathbf{3 1}$$ | $$32 / 256$$ | $$\mathbf{3 4} / \mathbf{2 5 6}$$ |  $$67 / 256$$ |
+| 2-addr.         | 0 |      4     |     11     |     16     |      8     |     22     | $$\mathbf{3 1}$$ | $$33 / 256$$ |  $$\mathbf{4} / \mathbf{2 5 6}$$  |  $$38 / 256$$ |
+| 1-addr.         | 1 |     13     |     11     |     25     |     19     |     11     | $$\mathbf{3 1}$$ | $$49 / 256$$ |      $$\mathbf{6 4 / 2 5 6}$$     | $$114 / 256$$ |
+| stack (basic)   | 0 |     16     |     11     |     28     |     16     |     11     | $$\mathbf{2 8}$$ | $$64 / 256$$ |  $$\mathbf{4} / \mathbf{2 5 6}$$  |  $$69 / 256$$ |
+| stack (comp.)   | 0 |      9     |     11     |     21     |     15     |     11     | $$\mathbf{2 7}$$ | $$84 / 256$$ |  $$\mathbf{4} / \mathbf{2 5 6}$$  |  $$89 / 256$$ |
 
 Table 3: A summary of machine code properties for hypothetical 3-address, 2-address, 1-address and stack machines, generated for a sample leaf function (cf. C.1.1), assuming that only the last 8 of the 16 registers must be preserved by called functions $$(m=8$$, $$n=16$$ ). This table is similar to Table 2 , but has smaller values of $$r$$.
 
