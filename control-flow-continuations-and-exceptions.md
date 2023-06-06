@@ -112,44 +112,44 @@ $${ }^{23}$$ The implementation of REPEAT involves an extraordinary continuation
 
 ## Operations with continuations
 
-### 4.3.1. 
+### 4.3.1. Continuations are opaque. 
 
-Continuations are opaque. Notice that all continuations are opaque, at least in the current version of TVM, meaning that there is no way to modify a continuation or inspect its internal data. Almost the only use of a continuation is to supply it to a control flow primitive.
+Notice that all continuations are opaque, at least in the current version of TVM, meaning that there is no way to modify a continuation or inspect its internal data. Almost the only use of a continuation is to supply it to a control flow primitive.
 
 While there are some arguments in favor of including support for nonopaque continuations in TVM (along with opaque continuations, which are required for virtualization), the current revision offers no such support.
 
-### 4.3.2. 
+### 4.3.2. Allowed operations with continuations. 
 
-Allowed operations with continuations. However, some operations with opaque continuations are still possible, mostly because they are equivalent to operations of the kind "create a new continuation, which will do something special, and then invoke the original continuation". Allowed operations with continuations include:
+However, some operations with opaque continuations are still possible, mostly because they are equivalent to operations of the kind "create a new continuation, which will do something special, and then invoke the original continuation". Allowed operations with continuations include:
 
 - Push one or several values into the stack of a continuation $$c$$ (thus creating a partial application of a function, or a closure).
 - Set the saved value of a control register $$c(i)$$ inside the savelist $$c$$.save of a continuation $$c$$. If there is already a value for the control register in question, this operation silently does nothing.
 
-### 4.3.3. 
+### 4.3.3. Example: operations with control registers. 
 
-Example: operations with control registers. TVM has some primitives to set and inspect the values of control registers. The most important of them are PUSH $$c(i)$$ (pushes the current value of $$c(i)$$ into the stack) and POP $$\mathrm{c}(i)$$ (sets the value of $$\mathrm{c}(i)$$ from the stack, if the supplied value is of the correct type). However, there is also a modified version of the latter instruction, called POPSAVE $$\mathrm{c}(i)$$, which saves the old value of $$\mathrm{c}(i)($$ for $$i>0)$$ into the continuation at c0 as described in $$\mathbf{4 . 3 . 2}$$ before setting the new value.
+TVM has some primitives to set and inspect the values of control registers. The most important of them are PUSH $$c(i)$$ (pushes the current value of $$c(i)$$ into the stack) and POP $$\mathrm{c}(i)$$ (sets the value of $$\mathrm{c}(i)$$ from the stack, if the supplied value is of the correct type). However, there is also a modified version of the latter instruction, called POPSAVE $$\mathrm{c}(i)$$, which saves the old value of $$\mathrm{c}(i)($$ for $$i>0)$$ into the continuation at c0 as described in $$\mathbf{4 . 3 . 2}$$ before setting the new value.
 
-### 4.3.4. 
+### 4.3.4. Example: setting the number of arguments to a function in its code. 
 
-Example: setting the number of arguments to a function in its code. The primitive LEAVEARGS $$n$$ demonstrates another application of continuations in an operation: it leaves only the top $$n$$ values of the current stack, and moves the remainder to the stack of the continuation in c0. This primitive enables a called function to "return" unneeded arguments to its caller's stack, which is useful in some situations (e.g., those related to exception handling).
+The primitive LEAVEARGS $$n$$ demonstrates another application of continuations in an operation: it leaves only the top $$n$$ values of the current stack, and moves the remainder to the stack of the continuation in c0. This primitive enables a called function to "return" unneeded arguments to its caller's stack, which is useful in some situations (e.g., those related to exception handling).
 
-### 4.3.5. 
+### 4.3.5. Boolean circuits. 
 
-Boolean circuits. A continuation $$c$$ may be thought of as a piece of code with two optional exit points kept in the savelist of $$c$$ : the principal exit point given by $$c . c 0:=c$$.save $$(c 0)$$, and the auxiliary exit point given by $$c . c 1:=c . \operatorname{save}(c 1)$$. If executed, a continuation performs whatever action it was created for, and then (usually) transfers control to the principal exit point, or, on some occasions, to the auxiliary exit point. We sometimes say that a continuation $$c$$ with both exit points $$c . c 0$$ and $$c . c 1$$ defined is a two-exit continuation, or a boolean circuit, especially if the choice of the exit point depends on some internally-checked condition.
+A continuation $$c$$ may be thought of as a piece of code with two optional exit points kept in the savelist of $$c$$ : the principal exit point given by $$c . c 0:=c$$.save $$(c 0)$$, and the auxiliary exit point given by $$c . c 1:=c . \operatorname{save}(c 1)$$. If executed, a continuation performs whatever action it was created for, and then (usually) transfers control to the principal exit point, or, on some occasions, to the auxiliary exit point. We sometimes say that a continuation $$c$$ with both exit points $$c . c 0$$ and $$c . c 1$$ defined is a two-exit continuation, or a boolean circuit, especially if the choice of the exit point depends on some internally-checked condition.
 
-### 4.3.6. 
+### 4.3.6. Composition of continuations. 
 
-Composition of continuations. One can compose two continuations $$c$$ and $$c^{\prime}$$ simply by setting $$c . c 0$$ or $$c . c 1$$ to $$c^{\prime}$$. This creates a new continuation denoted by $$c \circ_{0} c^{\prime}$$ or $$c \circ_{1} c^{\prime}$$, which differs from $$c$$ in its savelist. (Recall that if the savelist of $$c$$ already has an entry corresponding to the control register in question, such an operation silently does nothing as explained in 4.3 .2 .
+One can compose two continuations $$c$$ and $$c^{\prime}$$ simply by setting $$c . c 0$$ or $$c . c 1$$ to $$c^{\prime}$$. This creates a new continuation denoted by $$c \circ_{0} c^{\prime}$$ or $$c \circ_{1} c^{\prime}$$, which differs from $$c$$ in its savelist. (Recall that if the savelist of $$c$$ already has an entry corresponding to the control register in question, such an operation silently does nothing as explained in 4.3 .2 .
 
 By composing continuations, one can build chains or other graphs, possibly with loops, representing the control flow. In fact, the resulting graph resembles a flow chart, with the boolean circuits corresponding to the "condition nodes" (containing code that will transfer control either to c0 or to c1 depending on some condition), and the one-exit continuations corresponding to the "action nodes".
 
-### 4.3.7. 
+### 4.3.7. Basic continuation composition primitives. 
 
-Basic continuation composition primitives. Two basic primitives for composing continuations are COMPOS (also known as SETCONT c0 and BOOLAND) and COMPOSALT (also known as SETCONT c1 and BOOLOR), which take $$c$$ and $$c^{\prime}$$ from the stack, set $$c . c 0$$ or $$c . c 1$$ to $$c^{\prime}$$, and return the resulting continuation $$c^{\prime \prime}=c \circ_{0} c^{\prime}$$ or $$c \circ_{1} c^{\prime}$$. All other continuation composition operations can be expressed in terms of these two primitives.
+Two basic primitives for composing continuations are COMPOS (also known as SETCONT c0 and BOOLAND) and COMPOSALT (also known as SETCONT c1 and BOOLOR), which take $$c$$ and $$c^{\prime}$$ from the stack, set $$c . c 0$$ or $$c . c 1$$ to $$c^{\prime}$$, and return the resulting continuation $$c^{\prime \prime}=c \circ_{0} c^{\prime}$$ or $$c \circ_{1} c^{\prime}$$. All other continuation composition operations can be expressed in terms of these two primitives.
 
-### 4.3.8. 
+### 4.3.8. Advanced continuation composition primitives. 
 
-Advanced continuation composition primitives. However, TVM can compose continuations not only taken from stack, but also taken from c0 or $$c 1$$, or from the current continuation cc; likewise, the result may be pushed into the stack, stored into either c0 or c1, or used as the new current continuation (i.e., the control may be transferred to it). Furthermore, TVM can define conditional composition primitives, performing some of the above actions only if an integer value taken from the stack is non-zero.
+However, TVM can compose continuations not only taken from stack, but also taken from c0 or $$c 1$$, or from the current continuation cc; likewise, the result may be pushed into the stack, stored into either c0 or c1, or used as the new current continuation (i.e., the control may be transferred to it). Furthermore, TVM can define conditional composition primitives, performing some of the above actions only if an integer value taken from the stack is non-zero.
 
 For instance, EXECUTE can be described as cc $$\leftarrow c \circ_{0} c c$$, with continuation $$c$$ taken from the original stack. Similarly, JMPX is cc $$\leftarrow c$$, and RET (also known as RETTRUE in a boolean circuit context) is cc $$\leftarrow$$ c0. Other interesting primitives include THENRET $$\left(c^{\prime} \leftarrow c \circ_{0} c 0\right)$$ and ATEXIT $$\left(c 0 \leftarrow c \circ_{0} c 0\right)$$.
 
@@ -165,21 +165,21 @@ Finally, some "experimental" primitives also involve $$c 1$$ and $$\circ_{1}$$. 
 
 ## Continuations as objects
 
-### 4.4.1. 
+### 4.4.1. Representing objects using continuations. 
 
-Representing objects using continuations. Object-oriented programming in Smalltalk (or Objective C) style may be implemented with the aid of continuations. For this, an object is represented by a special continuation $$o$$. If it has any data fields, they can be kept in the stack of $$o$$, making o a partial application (i.e., a continuation with a non-empty stack).
+Object-oriented programming in Smalltalk (or Objective C) style may be implemented with the aid of continuations. For this, an object is represented by a special continuation $$o$$. If it has any data fields, they can be kept in the stack of $$o$$, making o a partial application (i.e., a continuation with a non-empty stack).
 
 When somebody wants to invoke a method $$m$$ of $$o$$ with arguments $$x_{1}, x_{2}$$, $$\ldots, x_{n}$$, she pushes the arguments into the stack, then pushes a magic number corresponding to the method $$m$$, and then executes o passing $$n+1$$ arguments (cf. 4.1.10). Then $$o$$ uses the top-of-stack integer $$m$$ to select the branch with the required method, and executes it. If o needs to modify its state, it simply computes a new continuation $$o^{\prime}$$ of the same sort (perhaps with the same code as $$o$$, but with a different initial stack). The new continuation $$o^{\prime}$$ is returned to the caller along with whatever other return values need to be returned.
 
-### 4.4.2. 
+### 4.4.2. Serializable objects. 
 
-Serializable objects. Another way of representing Smalltalk-style objects as continuations, or even as trees of cells, consists in using the JMPREFDATA primitive (a variant of JMPXDATA, cf. $$\mathbf{4 . 1 . 1 1}$$ ), which takes the first cell reference from the code of the current continuation, transforms the cell referred to into a simple ordinary continuation, and transfers control to it, first pushing the remainder of the current continuation as a Slice into the stack. In this way, an object might be represented by a cell $$\tilde{o}$$ that contains JMPREFDATA at the beginning of its data, and the actual code of the object in the first reference (one might say that the first reference of cell $$\tilde{o}$$ is the class of object $$\tilde{o}$$ ). Remaining data and references of this cell will be used for storing the fields of the object.
+Another way of representing Smalltalk-style objects as continuations, or even as trees of cells, consists in using the JMPREFDATA primitive (a variant of JMPXDATA, cf. $$\mathbf{4 . 1 . 1 1}$$ ), which takes the first cell reference from the code of the current continuation, transforms the cell referred to into a simple ordinary continuation, and transfers control to it, first pushing the remainder of the current continuation as a Slice into the stack. In this way, an object might be represented by a cell $$\tilde{o}$$ that contains JMPREFDATA at the beginning of its data, and the actual code of the object in the first reference (one might say that the first reference of cell $$\tilde{o}$$ is the class of object $$\tilde{o}$$ ). Remaining data and references of this cell will be used for storing the fields of the object.
 
 Such objects have the advantage of being trees of cells, and not just continuations, meaning that they can be stored into the persistent storage of a TON smart contract.
 
-### 4.4.3. 
+### 4.4.3. Unique continuations and capabilities. 
 
-Unique continuations and capabilities. It might make sense (in a future revision of TVM) to mark some continuations as unique, meaning that they cannot be copied, even in a delayed manner, by increasing their reference counter to a value greater than one. If an opaque continuation is unique, it essentially becomes a capability, which can either be used by its owner exactly once or be transferred to somebody else.
+It might make sense (in a future revision of TVM) to mark some continuations as unique, meaning that they cannot be copied, even in a delayed manner, by increasing their reference counter to a value greater than one. If an opaque continuation is unique, it essentially becomes a capability, which can either be used by its owner exactly once or be transferred to somebody else.
 
 For example, imagine a continuation that represents the output stream to a printer (this is an example of a continuation used as an object, cf. 4.4.1). When invoked with one integer argument $$n$$, this continuation outputs the character with code $$n$$ to the printer, and returns a new continuation of the same kind reflecting the new state of the stream. Obviously, copying such a continuation and using the two copies in parallel would lead to some unintended side effects; marking it as unique would prohibit such adverse usage.
 
@@ -187,29 +187,29 @@ For example, imagine a continuation that represents the output stream to a print
 
 TVM's exception handling is quite simple and consists in a transfer of control to the continuation kept in control register c2. 4.5.1. Two arguments of the exception handler: exception parameter and exception number. Every exception is characterized by two arguments: the exception number (an Integer) and the exception parameter (any value, most often a zero Integer). Exception numbers 0-31 are reserved for TVM, while all other exception numbers are available for user-defined exceptions.
 
-### 4.5.2. 
+### 4.5.2. Primitives for throwing an exception. 
 
-Primitives for throwing an exception. There are several special primitives used for throwing an exception. The most general of them, THROWANY, takes two arguments, $$v$$ and $$0 \leq n<2^{16}$$, from the stack, and throws the exception with number $$n$$ and value $$v$$. There are variants of this primitive that assume $$v$$ to be a zero integer, store $$n$$ as a literal value, and/or are conditional on an integer value taken from the stack. User-defined exceptions may use arbitrary values as $$v$$ (e.g., trees of cells) if needed.
+There are several special primitives used for throwing an exception. The most general of them, THROWANY, takes two arguments, $$v$$ and $$0 \leq n<2^{16}$$, from the stack, and throws the exception with number $$n$$ and value $$v$$. There are variants of this primitive that assume $$v$$ to be a zero integer, store $$n$$ as a literal value, and/or are conditional on an integer value taken from the stack. User-defined exceptions may use arbitrary values as $$v$$ (e.g., trees of cells) if needed.
 
-### 4.5.3. 
+### 4.5.3. Exceptions generated by TVM. 
 
-Exceptions generated by TVM. Of course, some exceptions are generated by normal primitives. For example, an arithmetic overflow exception is generated whenever the result of an arithmetic operation does not fit into a signed 257-bit integer. In such cases, the arguments of the exception, $$v$$ and $$n$$, are determined by TVM itself.
+Of course, some exceptions are generated by normal primitives. For example, an arithmetic overflow exception is generated whenever the result of an arithmetic operation does not fit into a signed 257-bit integer. In such cases, the arguments of the exception, $$v$$ and $$n$$, are determined by TVM itself.
 
-### 4.5.4. 
+### 4.5.4. Exception handling. 
 
-Exception handling. The exception handling itself consists in a control transfer to the exception handler-i.e., the continuation specified in control register c2, with $$v$$ and $$n$$ supplied as the two arguments to this continuation, as if a JMP to c2 had been requested with $$n^{\prime \prime}=2$$ arguments (cf. 4.1.7 and 4.1.6). As a consequence, $$v$$ and $$n$$ end up in the top of the stack of the exception handler. The remainder of the old stack is discarded.
+The exception handling itself consists in a control transfer to the exception handler-i.e., the continuation specified in control register c2, with $$v$$ and $$n$$ supplied as the two arguments to this continuation, as if a JMP to c2 had been requested with $$n^{\prime \prime}=2$$ arguments (cf. 4.1.7 and 4.1.6). As a consequence, $$v$$ and $$n$$ end up in the top of the stack of the exception handler. The remainder of the old stack is discarded.
 
 Notice that if the continuation in c2 has a value for c2 in its savelist, it will be used to set up the new value of c2 before executing the exception handler. In particular, if the exception handler invokes THROWANY, it will rethrow the original exception with the restored value of c2. This trick enables the exception handler to handle only some exceptions, and pass the rest to an outer exception handler.
 
-### 4.5.5. 
+### 4.5.5. Default exception handler. 
 
-Default exception handler. When an instance of TVM is created, c2 contains a reference to the "default exception handler continuation", which is an ec_fatal extraordinary continuation (cf. 4.1.5). Its execution leads to the termination of the execution of TVM, with the arguments $$v$$ and $$n$$ of the exception returned to the outside caller. In the context of the TON Blockchain, $$n$$ will be stored as a part of the transaction's result. 4.5.6. TRY primitive. A TRY primitive can be used to implement $$\mathrm{C}++-$$ like exception handling. This primitive accepts two continuations, $$c$$ and $$c^{\prime}$$. It stores the old value of c2 into the savelist of $$c^{\prime}$$, sets c2 to $$c^{\prime}$$, and executes $$c$$ just as EXECUTE would, but additionally saving the old value of c2 into the savelist of the new c0 as well. Usually a version of the TRY primitive with an explicit number of arguments $$n^{\prime \prime}$$ passed to the continuation $$c$$ is used.
+When an instance of TVM is created, c2 contains a reference to the "default exception handler continuation", which is an ec_fatal extraordinary continuation (cf. 4.1.5). Its execution leads to the termination of the execution of TVM, with the arguments $$v$$ and $$n$$ of the exception returned to the outside caller. In the context of the TON Blockchain, $$n$$ will be stored as a part of the transaction's result. 4.5.6. TRY primitive. A TRY primitive can be used to implement $$\mathrm{C}++-$$ like exception handling. This primitive accepts two continuations, $$c$$ and $$c^{\prime}$$. It stores the old value of c2 into the savelist of $$c^{\prime}$$, sets c2 to $$c^{\prime}$$, and executes $$c$$ just as EXECUTE would, but additionally saving the old value of c2 into the savelist of the new c0 as well. Usually a version of the TRY primitive with an explicit number of arguments $$n^{\prime \prime}$$ passed to the continuation $$c$$ is used.
 
 The net result is roughly equivalent to $$\mathrm{C}++$$ 's try $$\{c\} \operatorname{catch}(\ldots)$$ $$\left\{c^{\prime}\right\}$$ operator.
 
-### 4.5.7. 
+### 4.5.7. List of predefined exceptions. 
 
-List of predefined exceptions. Predefined exceptions of TVM correspond to exception numbers $$n$$ in the range $$0-31$$. They include:
+Predefined exceptions of TVM correspond to exception numbers $$n$$ in the range $$0-31$$. They include:
 
 - Normal termination $$(n=0)$$ - Should never be generated, but it is useful for some tricks.
 - Alternative termination $$(n=1)$$ - Again, should never be generated.
@@ -227,27 +227,31 @@ List of predefined exceptions. Predefined exceptions of TVM correspond to except
 
 Most of these exceptions have no parameter (i.e., use a zero integer instead). The order in which these exceptions are checked is outlined below in $$\mathbf{4 . 5 . 8}$$.
 
-### 4.5.8. 
+### 4.5.8. Order of stack underflow, type check, and range check exceptions. 
 
-Order of stack underflow, type check, and range check exceptions. All TVM primitives first check whether the stack contains the required number of arguments, generating a stack underflow exception if this is not the case. Only then are the type tags of the arguments and their ranges (e.g., if a primitive expects an argument not only to be an Integer, but also to be in the range from 0 to 256) checked, starting from the value in the top of the stack (the last argument) and proceeding deeper into the stack. If an argument's type is incorrect, a type-checking exception is generated; if the type is correct, but the value does not fall into the expected range, a range check exception is generated.
+All TVM primitives first check whether the stack contains the required number of arguments, generating a stack underflow exception if this is not the case. Only then are the type tags of the arguments and their ranges (e.g., if a primitive expects an argument not only to be an Integer, but also to be in the range from 0 to 256) checked, starting from the value in the top of the stack (the last argument) and proceeding deeper into the stack. If an argument's type is incorrect, a type-checking exception is generated; if the type is correct, but the value does not fall into the expected range, a range check exception is generated.
 
 Some primitives accept a variable number of arguments, depending on the values of some small fixed subset of arguments located near the top of the stack. In this case, the above procedure is first run for all arguments from this small subset. Then it is repeated for the remaining arguments, once their number and types have been determined from the arguments already processed.
 
 ## Functions, recursion, and dictionaries
 
-### 4.6.1. 
+### 4.6.1. The problem of recursion. 
 
-The problem of recursion. The conditional and iterated execution primitives described in $$\mathbf{4 . 2}$$ along with the unconditional branch, call, and return primitives described in $$\mathbf{4 . 1}$$ enable one to implement more or less arbitrary code with nested loops and conditional expressions, with one notable exception: one can only create new constant continuations from parts of the current continuation. (In particular, one cannot invoke a subroutine from itself in this way.) Therefore, the code being executed-i.e., the current continuation-gradually becomes smaller and smaller. $${ }^{24}$$
+The conditional and iterated execution primitives described in $$\mathbf{4 . 2}$$ along with the unconditional branch, call, and return primitives described in $$\mathbf{4 . 1}$$ enable one to implement more or less arbitrary code with nested loops and conditional expressions, with one notable exception: one can only create new constant continuations from parts of the current continuation. (In particular, one cannot invoke a subroutine from itself in this way.) Therefore, the code being executed-i.e., the current continuation-gradually becomes smaller and smaller. $${ }^{24}$$
 
-$${ }^{24}$$ An important point here is that the tree of cells representing a TVM program cannot have cyclic references, so using CALLREF along with a reference to a cell higher up the tree 4.6.2. $$Y$$-combinator solution: pass a continuation as an argument to itself. One way of dealing with the problem of recursion is by passing a copy of the continuation representing the body of a recursive function as an extra argument to itself. Consider, for example, the following code for a factorial function:
+$${ }^{24}$$ An important point here is that the tree of cells representing a TVM program cannot have cyclic references, so using CALLREF along with a reference to a cell higher up the tree 
+
+### 4.6.2. $$Y$$-combinator solution: pass a continuation as an argument to itself. 
+
+One way of dealing with the problem of recursion is by passing a copy of the continuation representing the body of a recursive function as an extra argument to itself. Consider, for example, the following code for a factorial function:
 
 $$\begin{array}{ll}71 & \text { PUSHINT 1 } \\ \text { 9C } & \text { PUSHCONT }\{ \\ 22 & \text { PUSH s2 } \\ 72 & \text { PUSHINT } 2 \\ \text { B9 } & \text { LESS } \\ \text { DC } & \text { IFRET } \\ 59 & \text { ROTREV } \\ 21 & \text { PUSH s1 } \\ \text { A8 } & \text { MUL } \\ 01 & \text { SWAP } \\ \text { A5 } & \text { DEC } \\ \text { 02 } & \text { XCHG s2 } \\ 20 & \text { DUP } \\ \text { D9 } & \text { JMPX } \\ & \text { \} } \\ 20 & \text { DUP } \\ \text { D8 } & \text { EXECUTE } \\ 30 & \text { DROP } \\ 31 & \text { NIP }\end{array}$$
 
 This roughly corresponds to defining an auxiliary function body with three arguments $$n, x$$, and $$f$$, such that $$\operatorname{body}(n, x, f)$$ equals $$x$$ if $$n<2$$ and $$f(n-$$ $$1, n x, f)$$ otherwise, then invoking $$\operatorname{bod} y(n, 1, \operatorname{body})$$ to compute the factorial of $$n$$. The recursion is then implemented with the aid of the DUP; EXECUTE construction, or DUP; JMPX in the case of tail recursion. This trick is equivalent to applying $$Y$$-combinator to a function body.
 
-### 4.6.3. 
+### 4.6.3. A variant of $$Y$$-combinator solution. 
 
-A variant of $$Y$$-combinator solution. Another way of recursively computing the factorial, more closely following the classical recursive definition
+Another way of recursively computing the factorial, more closely following the classical recursive definition
 
 $$$$
 \operatorname{fact}(n):= \begin{cases}1 & \text { if } n<2 \\ n \cdot \operatorname{fact}(n-1) & \text { otherwise }\end{cases}
@@ -259,40 +263,42 @@ $$\begin{array}{ll}\text { 9D } & \text { PUSHCONT }\{ \\ 21 & \text { OVER } \\
 
 This definition of the factorial function is two bytes shorter than the previous one, but it uses general recursion instead of tail recursion, so it cannot be easily transformed into a loop.
 
-### 4.6.4. 
+### 4.6.4. Comparison: non-recursive definition of the factorial function. 
 
-Comparison: non-recursive definition of the factorial function. Incidentally, a non-recursive definition of the factorial with the aid of a REPEAT loop is also possible, and it is much shorter than both recursive definitions:
+Incidentally, a non-recursive definition of the factorial with the aid of a REPEAT loop is also possible, and it is much shorter than both recursive definitions:
 
 $$\begin{array}{ll}71 & \text { PUSHINT } 1 \\ 01 & \text { SWAP } \\ 20 & \text { DUP } \\ 94 & \text { PUSHCONT }\{ \\ 66 & \text { TUCK } \\ \text { A8 } & \text { MUL } \\ 01 & \text { SWAP } \\ \text { A5 } & \text { DEC } \\ & \text { \} } \\ \text { E4 } & \text { REPEAT } \\ 30 & \text { DROP }\end{array}$$
 
-4.6.5. Several mutually recursive functions. If one has a collection $$f_{1}, \ldots, f_{n}$$ of mutually recursive functions, one can use the same trick by passing the whole collection of continuations $$\left\{f_{i}\right\}$$ in the stack as an extra $$n$$ arguments to each of these functions. However, as $$n$$ grows, this becomes more and more cumbersome, since one has to reorder these extra arguments in the stack to work with the "true" arguments, and then push their copies into the top of the stack before any recursive call.
+### 4.6.5. Several mutually recursive functions. 
 
-### 4.6.6. 
+If one has a collection $$f_{1}, \ldots, f_{n}$$ of mutually recursive functions, one can use the same trick by passing the whole collection of continuations $$\left\{f_{i}\right\}$$ in the stack as an extra $$n$$ arguments to each of these functions. However, as $$n$$ grows, this becomes more and more cumbersome, since one has to reorder these extra arguments in the stack to work with the "true" arguments, and then push their copies into the top of the stack before any recursive call.
 
-Combining several functions into one tuple. One might also combine a collection of continuations representing functions $$f_{1}, \ldots, f_{n}$$ into a "tuple" $$\mathbf{f}:=\left(f_{1}, \ldots, f_{n}\right)$$, and pass this tuple as one stack element $$\mathbf{f}$$. For instance, when $$n \leq 4$$, each function can be represented by a cell $$\tilde{f}_{i}$$ (along with the tree of cells rooted in this cell), and the tuple may be represented by a cell $$\tilde{\mathbf{f}}$$, which has references to its component cells $$\tilde{f}_{i}$$. However, this would lead to the necessity of "unpacking" the needed component from this tuple before each recursive call.
+### 4.6.6. Combining several functions into one tuple. 
 
-### 4.6.7. 
+One might also combine a collection of continuations representing functions $$f_{1}, \ldots, f_{n}$$ into a "tuple" $$\mathbf{f}:=\left(f_{1}, \ldots, f_{n}\right)$$, and pass this tuple as one stack element $$\mathbf{f}$$. For instance, when $$n \leq 4$$, each function can be represented by a cell $$\tilde{f}_{i}$$ (along with the tree of cells rooted in this cell), and the tuple may be represented by a cell $$\tilde{\mathbf{f}}$$, which has references to its component cells $$\tilde{f}_{i}$$. However, this would lead to the necessity of "unpacking" the needed component from this tuple before each recursive call.
 
-Combining several functions into a selector function. Another approach is to combine several functions $$f_{1}, \ldots, f_{n}$$ into one "selector function" $$f$$, which takes an extra argument $$i, 1 \leq i \leq n$$, from the top of the stack, and invokes the appropriate function $$f_{i}$$. Stack machines such as TVM are well-suited to this approach, because they do not require the functions $$f_{i}$$ to have the same number and types of arguments. Using this approach, one would need to pass only one extra argument, $$f$$, to each of these functions, and push into the stack an extra argument $$i$$ before each recursive call to $$f$$ to select the correct function to be called.
+### 4.6.7. Combining several functions into a selector function. 
 
-### 4.6.8. 
+Another approach is to combine several functions $$f_{1}, \ldots, f_{n}$$ into one "selector function" $$f$$, which takes an extra argument $$i, 1 \leq i \leq n$$, from the top of the stack, and invokes the appropriate function $$f_{i}$$. Stack machines such as TVM are well-suited to this approach, because they do not require the functions $$f_{i}$$ to have the same number and types of arguments. Using this approach, one would need to pass only one extra argument, $$f$$, to each of these functions, and push into the stack an extra argument $$i$$ before each recursive call to $$f$$ to select the correct function to be called.
 
-Using a dedicated register to keep the selector function. However, even if we use one of the two previous approaches to combine all functions into one extra argument, passing this argument to all mutually recursive functions is still quite cumbersome and requires a lot of additional stack manipulation operations. Because this argument changes very rarely, one might use a dedicated register to keep it and transparently pass it to all functions called. This is the approach used by TVM by default.
+### 4.6.8. Using a dedicated register to keep the selector function. 
 
-### 4.6.9. 
+However, even if we use one of the two previous approaches to combine all functions into one extra argument, passing this argument to all mutually recursive functions is still quite cumbersome and requires a lot of additional stack manipulation operations. Because this argument changes very rarely, one might use a dedicated register to keep it and transparently pass it to all functions called. This is the approach used by TVM by default.
 
-Special register c3 for the selector function. In fact, TVM uses a dedicated register c3 to keep the continuation representing the current or global "selector function", which can be used to invoke any of a family of mutually recursive functions. Special primitives CALL $$n n$$ or CALLDICT $$n n$$ (cf. A.8.7) are equivalent to PUSHINT $$n n$$; PUSH c3; EXECUTE, and similarly JMP $$n n$$ or JMPDICT $$n n$$ are equivalent to PUSHINT $$n n$$; PUSH c3; JMPX. In this way a TVM program, which ultimately is a large collection of mutually recursive functions, may initialize c3 with the correct selector function representing the family of all the functions in the program, and then use CALL $$n n$$ to invoke any of these functions by its index (sometimes also called the selector of a function).
+### 4.6.9. Special register c3 for the selector function. 
 
-### 4.6.10. 
+In fact, TVM uses a dedicated register c3 to keep the continuation representing the current or global "selector function", which can be used to invoke any of a family of mutually recursive functions. Special primitives CALL $$n n$$ or CALLDICT $$n n$$ (cf. A.8.7) are equivalent to PUSHINT $$n n$$; PUSH c3; EXECUTE, and similarly JMP $$n n$$ or JMPDICT $$n n$$ are equivalent to PUSHINT $$n n$$; PUSH c3; JMPX. In this way a TVM program, which ultimately is a large collection of mutually recursive functions, may initialize c3 with the correct selector function representing the family of all the functions in the program, and then use CALL $$n n$$ to invoke any of these functions by its index (sometimes also called the selector of a function).
 
-Initialization of c3. A TVM program might initialize c3 by means of a POP c3 instruction. However, because this usually is the very first action undertaken by a program (e.g., a smart contract), TVM makes some provisions for the automatic initialization of c3. Namely, c3 is initialized by the code (the initial value of cc) of the program itself, and an extra zero (or, in some cases, some other predefined number $$s$$ ) is pushed into the stack before the program's execution. This is approximately equivalent to invoking JMPDICT 0 (or JMPDICT $$s$$ ) at the very beginning of a program-i.e., the function with index zero is effectively the main() function for the program.
+### 4.6.10. Initialization of c3. 
 
-### 4.6.11. 
+A TVM program might initialize c3 by means of a POP c3 instruction. However, because this usually is the very first action undertaken by a program (e.g., a smart contract), TVM makes some provisions for the automatic initialization of c3. Namely, c3 is initialized by the code (the initial value of cc) of the program itself, and an extra zero (or, in some cases, some other predefined number $$s$$ ) is pushed into the stack before the program's execution. This is approximately equivalent to invoking JMPDICT 0 (or JMPDICT $$s$$ ) at the very beginning of a program-i.e., the function with index zero is effectively the main() function for the program.
 
-Creating selector functions and switch statements. TVM makes special provisions for simple and concise implementation of selector functions (which usually constitute the top level of a TVM program) or, more generally, arbitrary switch or case statements (which are also useful in TVM programs). The most important primitives included for this purpose are IFBITJMP, IFNBITJMP, IFBIT JMPREF, and IFNBITJMPREF (cf. A.8.2). They effectively enable one to combine subroutines, kept either in separate cells or as subslices of certain cells, into a binary decision tree with decisions made according to the indicated bits of the integer passed in the top of the stack.
+### 4.6.11. Creating selector functions and switch statements. 
+
+TVM makes special provisions for simple and concise implementation of selector functions (which usually constitute the top level of a TVM program) or, more generally, arbitrary switch or case statements (which are also useful in TVM programs). The most important primitives included for this purpose are IFBITJMP, IFNBITJMP, IFBIT JMPREF, and IFNBITJMPREF (cf. A.8.2). They effectively enable one to combine subroutines, kept either in separate cells or as subslices of certain cells, into a binary decision tree with decisions made according to the indicated bits of the integer passed in the top of the stack.
 
 Another instruction, useful for the implementation of sum-product types, is PLDUZ (cf. A.7.2). This instruction preloads the first several bits of a Slice into an Integer, which can later be inspected by IFBITJMP and other similar instructions.
 
-### 4.6.12. 
+### 4.6.12. Alternative: using a hashmap to select the correct function. 
 
-Alternative: using a hashmap to select the correct function. Yet another alternative is to use a Hashmap (cf. 3.3) to hold the "collection" or "dictionary" of the code of all functions in a program, and use the hashmap lookup primitives (cf. A.10 to select the code of the required function, which can then be BLESSed into a continuation (cf. A.8.5 and executed. Special combined "lookup, bless, and execute" primitives, such as DICTIGETJMP and DICTIGETEXEC, are also available (cf. A.10.11). This approach may be more efficient for larger programs and switch statements.
+Yet another alternative is to use a Hashmap (cf. 3.3) to hold the "collection" or "dictionary" of the code of all functions in a program, and use the hashmap lookup primitives (cf. A.10 to select the code of the required function, which can then be BLESSed into a continuation (cf. A.8.5 and executed. Special combined "lookup, bless, and execute" primitives, such as DICTIGETJMP and DICTIGETEXEC, are also available (cf. A.10.11). This approach may be more efficient for larger programs and switch statements.

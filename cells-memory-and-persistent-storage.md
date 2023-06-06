@@ -6,21 +6,21 @@ This chapter briefly describes TVM cells, used to represent all data structures 
 
 This section presents a classification and general descriptions of cell types.
 
-### 3.1.1.
+### 3.1.1. TVM memory and persistent storage consist of cells. 
 
-TVM memory and persistent storage consist of cells. Recall that the TVM memory and persistent storage consist of (TVM) cells. Each cell contains up to 1023 bits of data and up to four references to other cells $${ }^{11}$$ Circular references are forbidden and cannot be created by means of TVM (cf. 2.3.5). In this way, all cells kept in TVM memory and persistent storage constitute a directed acyclic graph (DAG).
+Recall that the TVM memory and persistent storage consist of (TVM) cells. Each cell contains up to 1023 bits of data and up to four references to other cells $${ }^{11}$$ Circular references are forbidden and cannot be created by means of TVM (cf. 2.3.5). In this way, all cells kept in TVM memory and persistent storage constitute a directed acyclic graph (DAG).
 
-### 3.1.2.
+### 3.1.2. Ordinary and exotic cells. 
 
-Ordinary and exotic cells. Apart from the data and references, a cell has a cell type, encoded by an integer $$-1 \ldots 255$$. A cell of type -1 is called ordinary; such cells do not require any special processing. Cells of other types are called exotic, and may be loaded - automatically replaced by other cells when an attempt to deserialize them (i.e., to convert them into a Slice by a CTOS instruction) is made. They may also exhibit a non-trivial behavior when their hashes are computed.
+Apart from the data and references, a cell has a cell type, encoded by an integer $$-1 \ldots 255$$. A cell of type -1 is called ordinary; such cells do not require any special processing. Cells of other types are called exotic, and may be loaded - automatically replaced by other cells when an attempt to deserialize them (i.e., to convert them into a Slice by a CTOS instruction) is made. They may also exhibit a non-trivial behavior when their hashes are computed.
 
 The most common use for exotic cells is to represent some other cells - for instance, cells present in an external library, or pruned from the original tree of cells when a Merkle proof has been created.
 
 The type of an exotic cell is stored as the first eight bits of its data. If an exotic cell has less than eight data bits, it is invalid.
 
-### 3.1.3.
+### 3.1.3. The level of a cell. 
 
-The level of a cell. Every cell $$c$$ has another attribute LVL $$(c)$$ called its (de Brujn) level, which currently takes integer values in the range $$0 \ldots 3$$.
+Every cell $$c$$ has another attribute LVL $$(c)$$ called its (de Brujn) level, which currently takes integer values in the range $$0 \ldots 3$$.
 
 $${ }^{11}$$ From the perspective of low-level cell operations, these data bits and cell references are not intermixed. In other words, an (ordinary) cell essentially is a couple consisting of a list of up to 1023 bits and of a list of up to four cell references, without prescribing an order in which the references and the data bits should be deserialized, even though TL-B schemes appear to suggest such an order. The level of an ordinary cell is always equal to the maximum of the levels of all its children $$c_{i}$$ :
 
@@ -32,9 +32,9 @@ for an ordinary cell $$c$$ containing $$r$$ references to cells $$c_{1}, \ldots,
 
 A cell's level affects the number of higher hashes it has. More precisely, a level $$l$$ cell has $$l$$ higher hashes $$\mathrm{HASH}_{1}(c), \ldots, \mathrm{HASH}_{l}(c)$$ in addition to its representation hash $$\mathrm{HASH}(c)=\mathrm{HASH}_{\infty}(c)$$. Cells of non-zero level appear inside Merkle proofs and Merkle updates, after some branches of the tree of cells representing a value of an abstract data type are pruned.
 
-### 3.1.4.
+### 3.1.4. Standard cell representation. 
 
-Standard cell representation. When a cell needs to be transferred by a network protocol or stored in a disk file, it must be serialized. The standard representation CellRepr $$(c)=\operatorname{CELlRepR}_{\infty}(c)$$ of a cell $$c$$ as an octet (byte) sequence is constructed as follows:
+When a cell needs to be transferred by a network protocol or stored in a disk file, it must be serialized. The standard representation CellRepr $$(c)=\operatorname{CELlRepR}_{\infty}(c)$$ of a cell $$c$$ as an octet (byte) sequence is constructed as follows:
 
 1. Two descriptor bytes $$d_{1}$$ and $$d_{2}$$ are serialized first. Byte $$d_{1}$$ equals $$r+8 s+32 l$$, where $$0 \leq r \leq 4$$ is the quantity of cell references contained in the cell, $$0 \leq l \leq 3$$ is the level of the cell, and $$0 \leq s \leq 1$$ is 1 for exotic cells and 0 for ordinary cells. Byte $$d_{2}$$ equals $$\lfloor b / 8\rfloor+\lceil b / 8\rceil$$, where $$0 \leq b \leq 1023$$ is the quantity of data bits in $$c$$.
 2. Then the data bits are serialized as $$\lceil b / 8\rceil 8$$-bit octets (bytes). If $$b$$ is not a multiple of eight, a binary 1 and up to six binary 0s are appended to the data bits. After that, the data is split into $$\lceil b / 8\rceil$$ eight-bit groups, and each group is interpreted as an unsigned big-endian integer 0 . . 255 and stored into an octet.
@@ -42,9 +42,9 @@ Standard cell representation. When a cell needs to be transferred by a network p
 
 In this way, $$2+\lceil b / 8\rceil+32 r$$ bytes of CELlRepR $$(c)$$ are obtained.
 
-### 3.1.5.
+### 3.1.5. The representation hash of a cell. 
 
-The representation hash of a cell. The 256-bit representation hash or simply hash $$\mathrm{HASH}(c)$$ of a cell $$c$$ is recursively defined as the SHA256 of the standard representation of the cell $$c$$ :
+The 256-bit representation hash or simply hash $$\mathrm{HASH}(c)$$ of a cell $$c$$ is recursively defined as the SHA256 of the standard representation of the cell $$c$$ :
 
 $$
 \operatorname{HASH}(c):=\operatorname{SHA} 256(\operatorname{CELlREPR}(c))
@@ -52,11 +52,13 @@ $$
 
 Notice that cyclic cell references are not allowed and cannot be created by means of the TVM (cf. 2.3.5), so this recursion always ends, and the representation hash of any cell is well-defined.
 
-3.1.6. The higher hashes of a cell. Recall that a cell $$c$$ of level $$l$$ has $$l$$ higher hashes $$\mathrm{HASH}_{i}(c), 1 \leq i \leq l$$, as well. Exotic cells have their own rules for computing their higher hashes. Higher hashes $$\mathrm{HASH}_{i}(c)$$ of an ordinary cell $$c$$ are computed similarly to its representation hash, but using the higher hashes $$\operatorname{HASH}_{i}\left(c_{j}\right)$$ of its children $$c_{j}$$ instead of their representation hashes $$\operatorname{HASH}\left(c_{j}\right)$$. By convention, we set $$\operatorname{HASH}_{\infty}(c):=\operatorname{HASH}(c)$$, and $$\operatorname{HASH}_{i}(c):=$$ $$\operatorname{HASH}_{\infty}(c)=\operatorname{HASH}(c)$$ for all $$i>l, l^{12}$$
+### 3.1.6. The higher hashes of a cell. 
 
-### 3.1.7.
+Recall that a cell $$c$$ of level $$l$$ has $$l$$ higher hashes $$\mathrm{HASH}_{i}(c), 1 \leq i \leq l$$, as well. Exotic cells have their own rules for computing their higher hashes. Higher hashes $$\mathrm{HASH}_{i}(c)$$ of an ordinary cell $$c$$ are computed similarly to its representation hash, but using the higher hashes $$\operatorname{HASH}_{i}\left(c_{j}\right)$$ of its children $$c_{j}$$ instead of their representation hashes $$\operatorname{HASH}\left(c_{j}\right)$$. By convention, we set $$\operatorname{HASH}_{\infty}(c):=\operatorname{HASH}(c)$$, and $$\operatorname{HASH}_{i}(c):=$$ $$\operatorname{HASH}_{\infty}(c)=\operatorname{HASH}(c)$$ for all $$i>l, l^{12}$$
 
-Types of exotic cells. TVM currently supports the following cell types:
+### 3.1.7. Types of exotic cells. 
+
+TVM currently supports the following cell types:
 
 - Type -1: Ordinary cell-Contains up to 1023 bits of data and up to four cell references.
 - Type 1: Pruned branch cell c- May have any level $$1 \leq l \leq 3$$. It contains exactly $$8+256 l$$ data bits: first an 8-bit integer equal to 1 (representing the cell's type), then its $$l$$ higher hashes $$\mathrm{HASH}_{1}(c), \ldots$$, $$\mathrm{HASH}_{l}(c)$$. The level $$l$$ of a pruned branch cell may be called its de Brujn index, because it determines the outer Merkle proof or Merkle update during the construction of which the branch has been pruned. An attempt to load a pruned branch cell usually leads to an exception.
@@ -77,13 +79,13 @@ $$
 
 A Merkle update behaves like a Merkle proof for both $$c_{1}$$ and $$c_{2}$$, and contains $$8+256+256$$ data bits with $$\mathrm{HASH}_{1}\left(c_{1}\right)$$ and $$\mathrm{HASH}_{1}\left(c_{2}\right)$$. However, an extra requirement is that all pruned branch cells $$c^{\prime}$$ that are descendants of $$c_{2}$$ and are bound by $$c$$ must also be descendants of $$c_{1} \underline{1}^{13}$$ When a Merkle update cell is loaded, it is replaced by $$c_{2}$$.
 
-### 3.1.8.
+### 3.1.8. All values of algebraic data types are trees of cells. 
 
-All values of algebraic data types are trees of cells. Arbitrary values of arbitrary algebraic data types (e.g., all types used in functional programming languages) can be serialized into trees of cells (of level 0), and such representations are used for representing such values within TVM. The copy-on-write mechanism (cf. 2.3.2 allows TVM to identify cells containing the same data and references, and to keep only one copy of such cells. This actually transforms a tree of cells into a directed acyclic graph (with the additional property that all its vertices be accessible from a marked vertex called the "root"). However, this is a storage optimization rather than an essential property of TVM. From the perspective of a TVM code programmer, one should think of TVM data structures as trees of cells.
+Arbitrary values of arbitrary algebraic data types (e.g., all types used in functional programming languages) can be serialized into trees of cells (of level 0), and such representations are used for representing such values within TVM. The copy-on-write mechanism (cf. 2.3.2 allows TVM to identify cells containing the same data and references, and to keep only one copy of such cells. This actually transforms a tree of cells into a directed acyclic graph (with the additional property that all its vertices be accessible from a marked vertex called the "root"). However, this is a storage optimization rather than an essential property of TVM. From the perspective of a TVM code programmer, one should think of TVM data structures as trees of cells.
 
-### 3.1.9.
+### 3.1.9. TVM code is a tree of cells. 
 
-TVM code is a tree of cells. The TVM code itself is also represented by a tree of cells. Indeed, TVM code is simply a value of some complex algebraic data type, and as such, it can be serialized into a tree of cells.
+The TVM code itself is also represented by a tree of cells. Indeed, TVM code is simply a value of some complex algebraic data type, and as such, it can be serialized into a tree of cells.
 
 The exact way in which the TVM code (e.g., TVM assembly code) is transformed into a tree of cells is explained later (cf. $$\mathbf{4 . 1 . 4}$$ and $$\mathbf{5 . 2}$$, in sections discussing control flow instructions, continuations, and TVM instruction encoding.
 
@@ -93,30 +95,30 @@ $${ }^{13} \mathrm{~A}$$ pruned branch cell $$c^{\prime}$$ of level $$l$$ is bou
 
 The next large group of TVM instructions consists of data manipulation instructions, also known as cell manipulation instructions or simply cell instructions. They correspond to memory access instructions of other architectures.
 
-### 3.2.1.
+### 3.2.1. Classes of cell manipulation instructions. 
 
-Classes of cell manipulation instructions. The TVM cell instructions are naturally subdivided into two principal classes:
+The TVM cell instructions are naturally subdivided into two principal classes:
 
 - Cell creation instructions or serialization instructions, used to construct new cells from values previously kept in the stack and previously constructed cells.
 - Cell parsing instructions or deserialization instructions, used to extract data previously stored into cells by cell creation instructions.
 
 Additionally, there are exotic cell instructions used to create and inspect exotic cells (cf. 3.1.2), which in particular are used to represent pruned branches of Merkle proofs and Merkle proofs themselves.
 
-### 3.2.2.
+### 3.2.2. Builder and Slice values. 
 
-Builder and Slice values. Cell creation instructions usually work with Builder values, which can be kept only in the stack (cf. $$\mathbf{1 . 1 . 3}$$. Such values represent partially constructed cells, for which fast operations for appending bitstrings, integers, other cells, and references to other cells can be defined. Similarly, cell parsing instructions make heavy use of Slice values, which represent either the remainder of a partially parsed cell, or a value (subcell) residing inside such a cell and extracted from it by a parsing instruction. 3.2.3. Builder and Slice values exist only as stack values. Notice that Builder and Slice objects appear only as values in a TVM stack. They cannot be stored in "memory" (i.e., trees of cells) or "persistent storage" (which is also a bag of cells). In this sense, there are far more Cell objects than Builder or Slice objects in a TVM environment, but, somewhat paradoxically, a TVM program sees Builder and Slice objects in its stack more often than Cells. In fact, a TVM program does not have much use for Cell values, because they are immutable and opaque; all cell manipulation primitives require that a Cell value be transformed into either a Builder or a Slice first, before it can be modified or inspected.
+Cell creation instructions usually work with Builder values, which can be kept only in the stack (cf. $$\mathbf{1 . 1 . 3}$$. Such values represent partially constructed cells, for which fast operations for appending bitstrings, integers, other cells, and references to other cells can be defined. Similarly, cell parsing instructions make heavy use of Slice values, which represent either the remainder of a partially parsed cell, or a value (subcell) residing inside such a cell and extracted from it by a parsing instruction. 3.2.3. Builder and Slice values exist only as stack values. Notice that Builder and Slice objects appear only as values in a TVM stack. They cannot be stored in "memory" (i.e., trees of cells) or "persistent storage" (which is also a bag of cells). In this sense, there are far more Cell objects than Builder or Slice objects in a TVM environment, but, somewhat paradoxically, a TVM program sees Builder and Slice objects in its stack more often than Cells. In fact, a TVM program does not have much use for Cell values, because they are immutable and opaque; all cell manipulation primitives require that a Cell value be transformed into either a Builder or a Slice first, before it can be modified or inspected.
 
-### 3.2.4.
+### 3.2.4. TVM has no separate Bitstring value type. 
 
-TVM has no separate Bitstring value type. Notice that TVM offers no separate bitstring value type. Instead, bitstrings are represented by Slices that happen to have no references at all, but can still contain up to 1023 data bits.
+Notice that TVM offers no separate bitstring value type. Instead, bitstrings are represented by Slices that happen to have no references at all, but can still contain up to 1023 data bits.
 
-### 3.2.5.
+### 3.2.5. Cells and cell primitives are bit-oriented, not byte-oriented. 
 
-Cells and cell primitives are bit-oriented, not byte-oriented. An important point is that TVM regards data kept in cells as sequences (strings, streams) of (up to 1023) bits, not of bytes. In other words, TVM is a bit-oriented machine, not a byte-oriented machine. If necessary, an application is free to use, say, 21-bit integer fields inside records serialized into TVM cells, thus using fewer persistent storage bytes to represent the same data.
+An important point is that TVM regards data kept in cells as sequences (strings, streams) of (up to 1023) bits, not of bytes. In other words, TVM is a bit-oriented machine, not a byte-oriented machine. If necessary, an application is free to use, say, 21-bit integer fields inside records serialized into TVM cells, thus using fewer persistent storage bytes to represent the same data.
 
-### 3.2.6.
+### 3.2.6. Taxonomy of cell creation (serialization) primitives. 
 
-Taxonomy of cell creation (serialization) primitives. Cell creation primitives usually accept a Builder argument and an argument representing the value to be serialized. Additional arguments controlling some aspects of the serialization process (e.g., how many bits should be used for serialization) can be also provided, either in the stack or as an immediate value inside the instruction. The result of a cell creation primitive is usually another Builder, representing the concatenation of the original builder and the serialization of the value provided.
+Cell creation primitives usually accept a Builder argument and an argument representing the value to be serialized. Additional arguments controlling some aspects of the serialization process (e.g., how many bits should be used for serialization) can be also provided, either in the stack or as an immediate value inside the instruction. The result of a cell creation primitive is usually another Builder, representing the concatenation of the original builder and the serialization of the value provided.
 
 Therefore, one can suggest a classification of cell serialization primitives according to the answers to the following questions:
 
@@ -132,9 +134,9 @@ The mnemonics of cell serialization primitives usually begin with ST. Subsequent
 
 This classification scheme is used to create a more complete taxonomy of cell serialization primitives, which can be found in $$\mathbf{A . 7 . 1}$$
 
-### 3.2.7.
+### 3.2.7. Integer serialization primitives. 
 
-Integer serialization primitives. Integer serialization primitives can be classified according to the above taxonomy as well. For example:
+Integer serialization primitives can be classified according to the above taxonomy as well. For example:
 
 - There are signed and unsigned (big-endian) integer serialization primitives.
 - The size $$n$$ of the bit field to be used ( $$1 \leq n \leq 257$$ for signed integers, $$0 \leq n \leq 256$$ for unsigned integers) can either come from the top of stack or be embedded into the instruction itself.
@@ -142,23 +144,23 @@ Integer serialization primitives. Integer serialization primitives can be classi
 
 Integer serialization instructions have mnemonics like STU 20 ("store an unsigned 20-bit integer value") or STIXQ ("quietly store an integer value of variable length provided in the stack"). The full list of these instructionsincluding their mnemonics, descriptions, and opcodes - is provided in $$\mathbf{A . 7 . 1}$$
 
-### 3.2.8.
+### 3.2.8. Integers in cells are big-endian by default. 
 
-Integers in cells are big-endian by default. Notice that the default order of bits in Integers serialized into Cells is big-endian, not littleendian.$$^{14}$$ In this respect $$T V M$$ is a big-endian machine. However, this affects only the serialization of integers inside cells. The internal representation of the Integer value type is implementation-dependent and irrelevant for the operation of TVM. Besides, there are some special primitives such as STULE for (de)serializing little-endian integers, which must be stored into an integral number of bytes (otherwise "little-endianness" does not make sense, unless one is also willing to revert the order of bits inside octets). Such primitives are useful for interfacing with the little-endian world-for instance, for parsing custom-format messages arriving to a TON Blockchain smart contract from the outside world.
+Notice that the default order of bits in Integers serialized into Cells is big-endian, not littleendian.$$^{14}$$ In this respect $$T V M$$ is a big-endian machine. However, this affects only the serialization of integers inside cells. The internal representation of the Integer value type is implementation-dependent and irrelevant for the operation of TVM. Besides, there are some special primitives such as STULE for (de)serializing little-endian integers, which must be stored into an integral number of bytes (otherwise "little-endianness" does not make sense, unless one is also willing to revert the order of bits inside octets). Such primitives are useful for interfacing with the little-endian world-for instance, for parsing custom-format messages arriving to a TON Blockchain smart contract from the outside world.
 
-### 3.2.9.
+### 3.2.9. Other serialization primitives. 
 
-Other serialization primitives. Other cell creation primitives serialize bitstrings (i.e., cell slices without references), either taken from the stack or supplied as literal arguments; cell slices (which are concatenated to the cell builder in an obvious way); other Builders (which are also concatenated); and cell references $$(\mathrm{STREF})$$.
+Other cell creation primitives serialize bitstrings (i.e., cell slices without references), either taken from the stack or supplied as literal arguments; cell slices (which are concatenated to the cell builder in an obvious way); other Builders (which are also concatenated); and cell references $$(\mathrm{STREF})$$.
 
-### 3.2.10.
+### 3.2.10. Other cell creation primitives. 
 
-Other cell creation primitives. In addition to the cell serialization primitives for certain built-in value types described above, there are simple primitives that create a new empty Builder and push it into the stack (NEWC), or transform a Builder into a Cell (ENDC), thus finishing the cell creation process. An ENDC can be combined with a STREF into a single instruction ENDCST, which finishes the creation of a cell and immediately stores a reference to it in an "outer" Builder. There are also primitives that obtain the quantity of data bits or references already stored in a Builder, and check how many data bits or references can be stored.
+In addition to the cell serialization primitives for certain built-in value types described above, there are simple primitives that create a new empty Builder and push it into the stack (NEWC), or transform a Builder into a Cell (ENDC), thus finishing the cell creation process. An ENDC can be combined with a STREF into a single instruction ENDCST, which finishes the creation of a cell and immediately stores a reference to it in an "outer" Builder. There are also primitives that obtain the quantity of data bits or references already stored in a Builder, and check how many data bits or references can be stored.
 
 $${ }^{14}$$ Negative numbers are represented using two's complement. For instance, integer -17 is serialized by instruction STI 8 into bitstring $$\mathrm{xEF}$$. 
 
-### 3.2.11. 
+### 3.2.11. Taxonomy of cell deserialisation primitives. 
 
-Taxonomy of cell deserialisation primitives. Cell parsing, or deserialization, primitives can be classified as described in 3.2.6, with the following modifications:
+Cell parsing, or deserialization, primitives can be classified as described in 3.2.6, with the following modifications:
 
 - They work with Slices (representing the remainder of the cell being parsed) instead of Builders.
 - They return deserialized values instead of accepting them as arguments.
@@ -169,46 +171,46 @@ For example, an unsigned big-endian 20-bit integer previously serialized into a 
 
 Again, more detailed information about these instructions is provided in $$\mathbf{A . 7 . 2}$$.
 
-### 3.2.12.
+### 3.2.12. Other cell slice primitives. 
 
-Other cell slice primitives. In addition to the cell deserialisation primitives outlined above, TVM provides some obvious primitives for initializing and completing the cell deserialization process. For instance, one can convert a Cell into a Slice (CTOS), so that its deserialisation might begin; or check whether a Slice is empty, and generate an exception if it is not (ENDS); or deserialize a cell reference and immediately convert it into a Slice (LDREFTOS, equivalent to two instructions LDREF and CTOS).
+In addition to the cell deserialisation primitives outlined above, TVM provides some obvious primitives for initializing and completing the cell deserialization process. For instance, one can convert a Cell into a Slice (CTOS), so that its deserialisation might begin; or check whether a Slice is empty, and generate an exception if it is not (ENDS); or deserialize a cell reference and immediately convert it into a Slice (LDREFTOS, equivalent to two instructions LDREF and CTOS).
 
-### 3.2.13.
+### 3.2.13. Modifying a serialized value in a cell. 
 
-Modifying a serialized value in a cell. The reader might wonder how the values serialized inside a cell may be modified. Suppose a cell contains three serialized 29-bit integers, $$(x, y, z)$$, representing the coordinates of a point in space, and we want to replace $$y$$ with $$y^{\prime}=y+1$$, leaving the other coordinates intact. How would we achieve this?
+The reader might wonder how the values serialized inside a cell may be modified. Suppose a cell contains three serialized 29-bit integers, $$(x, y, z)$$, representing the coordinates of a point in space, and we want to replace $$y$$ with $$y^{\prime}=y+1$$, leaving the other coordinates intact. How would we achieve this?
 
 TVM does not offer any ways to modify existing values (cf. 2.3.4 and 2.3.5, so our example can only be accomplished with a series of operations as follows:
 
 1. Deserialize the original cell into three Integers $$x, y, z$$ in the stack (e.g., by CTOS; LDI 29; LDI 29; LDI 29; ENDS). 2. Increase $$y$$ by one (e.g., by SWAP; INC; SWAP).
 2. Finally, serialize the resulting Integers into a new cell (e.g., by XCHG s2; NEWC; STI 29; STI 29; STI 29; ENDC).
 
-### 3.2.14.
+### 3.2.14. Modifying the persistent storage of a smart contract. 
 
-Modifying the persistent storage of a smart contract. If the TVM code wants to modify its persistent storage, represented by the tree of cells rooted at $$c 4$$, it simply needs to rewrite control register c4 by the root of the tree of cells containing the new value of its persistent storage. (If only part of the persistent storage needs to be modified, cf. 3.2.13.)
+If the TVM code wants to modify its persistent storage, represented by the tree of cells rooted at $$c 4$$, it simply needs to rewrite control register c4 by the root of the tree of cells containing the new value of its persistent storage. (If only part of the persistent storage needs to be modified, cf. 3.2.13.)
 
 ## Hashmaps, or dictionaries
 
 Hashmaps, or dictionaries, are a specific data structure represented by a tree of cells. Essentially, a hashmap represents a map from keys, which are bitstrings of either fixed or variable length, into values of an arbitrary type $$X$$, in such a way that fast lookups and modifications be possible. While any such structure might be inspected or modified with the aid of generic cell serialization and deserialization primitives, TVM introduces special primitives to facilitate working with these hashmaps.
 
-### 3.3.1.
+### 3.3.1. Basic hashmap types. 
 
-Basic hashmap types. The two most basic hashmap types predefined in TVM are HashmapE $$n X$$ or HashmapE( $$n, X)$$, which represents a partially defined map from $$n$$-bit strings (called keys) for some fixed $$0 \leq$$ $$n \leq 1023$$ into values of some type $$X$$, and $$\operatorname{Hashmap}(n, X)$$, which is similar to HashmapE $$(n, X)$$ but is not allowed to be empty (i.e., it must contain at least one key-value pair).
+The two most basic hashmap types predefined in TVM are HashmapE $$n X$$ or HashmapE( $$n, X)$$, which represents a partially defined map from $$n$$-bit strings (called keys) for some fixed $$0 \leq$$ $$n \leq 1023$$ into values of some type $$X$$, and $$\operatorname{Hashmap}(n, X)$$, which is similar to HashmapE $$(n, X)$$ but is not allowed to be empty (i.e., it must contain at least one key-value pair).
 
 Other hashmap types are also available-for example, one with keys of arbitrary length up to some predefined bound (up to 1023 bits).
 
-### 3.3.2.
+### 3.3.2. Hashmaps as Patricia trees. 
 
-Hashmaps as Patricia trees. The abstract representation of a hashmap in TVM is a Patricia tree, or a compact binary trie. It is a binary tree with edges labelled by bitstrings, such that the concatenation of all edge labels on a path from the root to a leaf equals a key of the hashmap. The corresponding value is kept in this leaf (for hashmaps with keys of fixed length), or optionally in the intermediate vertices as well (for hashmaps with keys of variable length). Furthermore, any intermediate vertex must have two children, and the label of the left child must begin with a binary zero, while the label of the right child must begin with a binary one. This enables us not to store the first bit of the edge labels explicitly. It is easy to see that any collection of key-value pairs (with distinct keys) is represented by a unique Patricia tree.
+The abstract representation of a hashmap in TVM is a Patricia tree, or a compact binary trie. It is a binary tree with edges labelled by bitstrings, such that the concatenation of all edge labels on a path from the root to a leaf equals a key of the hashmap. The corresponding value is kept in this leaf (for hashmaps with keys of fixed length), or optionally in the intermediate vertices as well (for hashmaps with keys of variable length). Furthermore, any intermediate vertex must have two children, and the label of the left child must begin with a binary zero, while the label of the right child must begin with a binary one. This enables us not to store the first bit of the edge labels explicitly. It is easy to see that any collection of key-value pairs (with distinct keys) is represented by a unique Patricia tree.
 
-### 3.3.3.
+### 3.3.3. Serialization of hashmaps. 
 
-Serialization of hashmaps. The serialization of a hashmap into a tree of cells (or, more generally, into a Slice) is defined by the following TL-B scheme: $$: 15$$
+The serialization of a hashmap into a tree of cells (or, more generally, into a Slice) is defined by the following TL-B scheme: $$: 15$$
 
 ![](https://cdn.mathpix.com/cropped/2023_06_02_174e9ec2591c06b3f394g-038.jpg?height=1116&width=1351&top_left_y=757&top_left_x=362)
 
-### 3.3.4.
+### 3.3.4. Brief explanation of TL-B schemes. 
 
-Brief explanation of TL-B schemes. A TL-B scheme, like the one above, includes the following components.
+A TL-B scheme, like the one above, includes the following components.
 
 The right-hand side of each "equation" is a type, either simple (such as Bit or True) or parametrized (such as Hashmap $$n X$$ ). The parameters of a type must be either natural numbers (i.e., non-negative integers, which are required to fit into 32 bits in practice), such as $$n$$ in Hashmap $$n X$$, or other types, such as $$X$$ in Hashmap $$n X$$.
 
@@ -228,9 +230,9 @@ A caret (^) preceding a type $$X$$ means that instead of serializing a value of 
 
 Parametrized type $$\#<=p$$ with $$p: \#$$ (this notation means " $$p$$ of type \\#", i.e., a natural number) denotes the subtype of the natural numbers type $$\#$$, consisting of integers $$0 \ldots p$$; it is serialized into $$\left\lceil\log _{2}(p+1)\right\rceil$$ bits as an unsigned big-endian integer. Type \\# by itself is serialized as an unsigned 32-bit integer. Parametrized type \\#\\# $$b$$ with $$b: \#<=31$$ is equivalent to \\#<= $$2^{b}-1$$ (i.e., it is an unsigned $$b$$-bit integer).
 
-### 3.3.5.
+### 3.3.5. Application to the serialization of hashmaps. 
 
-Application to the serialization of hashmaps. Let us explain the net result of applying the general rules described in 3.3.4 to the TL-B scheme presented in $$\mathbf{3 . 3 . 3}$$
+Let us explain the net result of applying the general rules described in 3.3.4 to the TL-B scheme presented in $$\mathbf{3 . 3 . 3}$$
 
 Suppose we wish to serialize a value of type HashmapE $$n X$$ for some integer $$0 \leq n \leq 1023$$ and some type $$X$$ (i.e., a dictionary with $$n$$-bit keys and values of type $$X$$, admitting an abstract representation as a Patricia tree $$(\operatorname{cf} .3 .3 .2)$$ ).
 
@@ -246,9 +248,9 @@ If $$m=0$$, a value of type HashmapNode $$0 X$$ is given by the hmn_leaf constru
 
 On the other hand, if $$m>0$$, a value of type HashmapNode $$m X$$ corresponds to a fork (i.e., an intermediate node) in the Patricia tree, and is given by the hmn_fork constructor. Its serialization consists of left and right, two references to cells containing values of type Hashmap $$m-1 X$$, which correspond to the left and the right child of the intermediate node in question-or, equivalently, to the two subdictionaries of the original dictionary consisting of key-value pairs with keys beginning with a binary 0 or a binary 1, respectively. Because the first bit of all keys in each of these subdictionaries is known and fixed, it is removed, and the resulting (necessarily non-empty) subdictionaries are recursively serialized as values of type Hashmap $$m-1 X$$.
 
-### 3.3.6.
+### 3.3.6. Serialization of labels. 
 
-Serialization of labels. There are several ways to serialize a label of length at most $$n$$, if its exact length is $$l \leq n$$ (recall that the exact length must be deducible from the serialization of the label itself, while the upper bound $$n$$ is known before the label is serialized or deserialized). These ways are described by the three constructors hml_short, hml_long, and hml_same of type HmLabel $$l^{\perp} n$$ :
+There are several ways to serialize a label of length at most $$n$$, if its exact length is $$l \leq n$$ (recall that the exact length must be deducible from the serialization of the label itself, while the upper bound $$n$$ is known before the label is serialized or deserialized). These ways are described by the three constructors hml_short, hml_long, and hml_same of type HmLabel $$l^{\perp} n$$ :
 
 - hml_short - Describes a way to serialize "short" labels, of small length $$l \leq n$$. Such a serialization consists of a binary 0 (the constructor tag of $$\mathrm{hml}$$ _short), followed by $$l$$ binary 1 s and one binary 0 (the unary representation of the length $$l$$ ), followed by $$l$$ bits comprising the label itself.
 - hml_long - Describes a way to serialize "long" labels, of arbitrary length $$l \leq n$$. Such a serialization consists of a binary 10 (the constructor tag of hml_long), followed by the big-endian binary representation of the length $$0 \leq l \leq n$$ in $$\left\lceil\log _{2}(n+1)\right\rceil$$ bits, followed by $$l$$ bits comprising the label itself.
@@ -258,9 +260,9 @@ Each label can always be serialized in at least two different fashions, using hm
 
 This label encoding scheme has been designed to be efficient for dictionaries with "random" keys (e.g., hashes of some data), as well as for dictionaries with "regular" keys (e.g., big-endian representations of integers in some range).
 
-### 3.3.7.
+### 3.3.7. An example of dictionary serialization. 
 
-An example of dictionary serialization. Consider a dictionary with three 16-bit keys 13, 17, and 239 (considered as big-endian integers) and corresponding 16-bit values 169,289 , and 57121.
+Consider a dictionary with three 16-bit keys 13, 17, and 239 (considered as big-endian integers) and corresponding 16-bit values 169,289 , and 57121.
 
 In binary form:
 
@@ -290,22 +292,22 @@ Here $$A$$ is the root cell, $$A .0$$ is the cell at the first reference of $$A,
 
 A total of 93 data bits and 5 references in 6 cells have been used to serialize this dictionary. Notice that a straightforward representation of three 16bit keys and their corresponding 16-bit values would already require 96 bits (albeit without any references), so this particular serialization turns out to be quite efficient.
 
-### 3.3.8.
+### 3.3.8. Ways to describe the serialization of type $$X$$. 
 
-Ways to describe the serialization of type $$X$$. Notice that the built-in TVM primitives for dictionary manipulation need to know something about the serialization of type $$X$$; otherwise, they would not be able to work correctly with Hashmap $$n X$$, because values of type $$X$$ are immediately contained in the Patricia tree leaf cells. There are several options available to describe the serialization of type $$X$$ :
+Notice that the built-in TVM primitives for dictionary manipulation need to know something about the serialization of type $$X$$; otherwise, they would not be able to work correctly with Hashmap $$n X$$, because values of type $$X$$ are immediately contained in the Patricia tree leaf cells. There are several options available to describe the serialization of type $$X$$ :
 
 - The simplest case is when $$X=^{\wedge} Y$$ for some other type $$Y$$. In this case the serialization of $$X$$ itself always consists of one reference to a cell, which in fact must contain a value of type $$Y$$, something that is not relevant for dictionary manipulation primitives.
 - Another simple case is when the serialization of any value of type $$X$$ always consists of $$0 \leq b \leq 1023$$ data bits and $$0 \leq r \leq 4$$ references. Integers $$b$$ and $$r$$ can then be passed to a dictionary manipulation primitive as a simple description of $$X$$. (Notice that the previous case corresponds to $$b=0, r=1$$.)
 - A more sophisticated case can be described by four integers $$1 \leq b_{0}, b_{1} \leq$$ 1023, $$0 \leq r_{0}, r_{1} \leq 4$$, with $$b_{i}$$ and $$r_{i}$$ used when the first bit of the serialization equals $$i$$. When $$b_{0}=b_{1}$$ and $$r_{0}=r_{1}$$, this case reduces to the previous one.
 - Finally, the most general description of the serialization of a type $$X$$ is given by a splitting function split $$_{X}$$ for $$X$$, which accepts one Slice parameter $$s$$, and returns two Slices, $$s^{\prime}$$ and $$s^{\prime \prime}$$, where $$s^{\prime}$$ is the only prefix of $$s$$ that is the serialization of a value of type $$X$$, and $$s^{\prime \prime}$$ is the remainder of $$s$$. If no such prefix exists, the splitting function is expected to throw an exception. Notice that a compiler for a high-level language, which supports some or all algebraic TL-B types, is likely to automatically generate splitting functions for all types defined in the program.
 
-### 3.3.9.
+### 3.3.9. A simplifying assumption on the serialization of $$X$$. 
 
-A simplifying assumption on the serialization of $$X$$. One may notice that values of type $$X$$ always occupy the remaining part of an hm_edge/hme_leaf cell inside the serialization of a HashmapE $$n X$$. Therefore, if we do not insist on strict validation of all dictionaries accessed, we may assume that everything left unparsed in an hm_edge/hme_leaf cell after deserializing its label is a value of type $$X$$. This greatly simplifies the creation of dictionary manipulation primitives, because in most cases they turn out not to need any information about $$X$$ at all.
+One may notice that values of type $$X$$ always occupy the remaining part of an hm_edge/hme_leaf cell inside the serialization of a HashmapE $$n X$$. Therefore, if we do not insist on strict validation of all dictionaries accessed, we may assume that everything left unparsed in an hm_edge/hme_leaf cell after deserializing its label is a value of type $$X$$. This greatly simplifies the creation of dictionary manipulation primitives, because in most cases they turn out not to need any information about $$X$$ at all.
 
-### 3.3.10.
+### 3.3.10. Basic dictionary operations. 
 
-Basic dictionary operations. Let us present a classification of basic operations with dictionaries (i.e., values $$D$$ of type Hashmap $$E \quad X)$$ : - $$\operatorname{Get}(D, k)$$ - Given $$D: \operatorname{Hashmap} E(n, X)$$ and a key $$k: n \cdot$$ bit, returns the corresponding value $$D[k]: X^{?}$$ kept in $$D$$.
+Let us present a classification of basic operations with dictionaries (i.e., values $$D$$ of type Hashmap $$E \quad X)$$ : - $$\operatorname{Get}(D, k)$$ - Given $$D: \operatorname{Hashmap} E(n, X)$$ and a key $$k: n \cdot$$ bit, returns the corresponding value $$D[k]: X^{?}$$ kept in $$D$$.
 
 - $$\operatorname{Set}(D, k, x)$$ - Given $$D: \operatorname{Hashmap} E(n, X)$$, a key $$k: n$$ · bit, and a value $$x: X$$, sets $$D^{\prime}[k]$$ to $$x$$ in a copy $$D^{\prime}$$ of $$D$$, and returns the resulting dictionary $$D^{\prime}$$ (cf. 2.3.4).
 - $$\operatorname{AdD}(D, k, x)$$ - Similar to SET, but adds the key-value pair $$(k, x)$$ to $$D$$ only if key $$k$$ is absent in $$D$$.
@@ -343,17 +345,17 @@ In addition, TVM includes special serialization/deserialization primitives, such
 
 TVM provides some support for dictionaries, or hashmaps, with variablelength keys, in addition to its support for dictionaries with fixed-length keys (as described in 3.3 above).
 
-### 3.4.1.
+### 3.4.1. Serialization of dictionaries with variable-length keys. 
 
-Serialization of dictionaries with variable-length keys. The serialization of a VarHashmap into a tree of cells (or, more generally, into a Slice) is defined by a TL-B scheme, similar to that described in $$\mathbf{3 . 3 . 3}$$
+The serialization of a VarHashmap into a tree of cells (or, more generally, into a Slice) is defined by a TL-B scheme, similar to that described in $$\mathbf{3 . 3 . 3}$$
 
 ![](https://cdn.mathpix.com/cropped/2023_06_02_174e9ec2591c06b3f394g-047.jpg?height=412&width=1322&top_left_y=1952&top_left_x=369)
 
 ![](https://cdn.mathpix.com/cropped/2023_06_02_174e9ec2591c06b3f394g-048.jpg?height=412&width=1073&top_left_y=450&top_left_x=362)
 
-### 3.4.2.
+### 3.4.2. Serialization of prefix codes. 
 
-Serialization of prefix codes. One special case of a dictionary with variable-length keys is that of a prefix code, where the keys cannot be prefixes of each other. Values in such dictionaries may occur only in the leaves of a Patricia tree.
+One special case of a dictionary with variable-length keys is that of a prefix code, where the keys cannot be prefixes of each other. Values in such dictionaries may occur only in the leaves of a Patricia tree.
 
 The serialization of a prefix code is defined by the following TL-B scheme:
 

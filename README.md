@@ -2,11 +2,11 @@
 
 ## Abstract
 
-The aim of this text is to provide a description of the Telegram Open Network Virtual Machine (TON VM or TVM), used to execute smart contracts in the TON Blockchain.
+The aim of this text is to provide a description of the Threaded Open Network Virtual Machine (TON VM or TVM), used to execute smart contracts in the TON Blockchain.
 
 ## Introduction
 
-The primary purpose of the Telegram Open Network Virtual Machine (TON VM or TVM) is to execute smart-contract code in the TON Blockchain. TVM must support all operations required to parse incoming messages and persistent data, and to create new messages and modify persistent data.
+The primary purpose of the Threaded Open Network Virtual Machine (TON VM or TVM) is to execute smart-contract code in the TON Blockchain. TVM must support all operations required to parse incoming messages and persistent data, and to create new messages and modify persistent data.
 
 Additionally, TVM must meet the following requirements:
 
@@ -30,25 +30,25 @@ This chapter provides an overview of the main features and design principles of 
 
 The following notation is used for bit strings (or bitstrings)-i.e., finite strings consisting of binary digits (bits), 0 and 1 -throughout this document.
 
-### 1.0.1.
+### 1.0.1. Hexadecimal notation for bitstrings. 
 
-Hexadecimal notation for bitstrings. When the length of a bitstring is a multiple of four, we subdivide it into groups of four bits and represent each group by one of sixteen hexadecimal digits $$0-9, \mathrm{~A}-\mathrm{F}$$ in the usual manner: $$0_{16} \leftrightarrow 0000,1_{16}$$ $$\leftrightarrow 0001, \ldots$$, $$F_{16} \leftrightarrow 1111$$. The resulting hexadecimal string is our equivalent representation for the original binary string.
+When the length of a bitstring is a multiple of four, we subdivide it into groups of four bits and represent each group by one of sixteen hexadecimal digits $$0-9, \mathrm{~A}-\mathrm{F}$$ in the usual manner: $$0_{16} \leftrightarrow 0000,1_{16}$$ $$\leftrightarrow 0001, \ldots$$, $$F_{16} \leftrightarrow 1111$$. The resulting hexadecimal string is our equivalent representation for the original binary string.
 
-### 1.0.2.
+### 1.0.2. Bitstrings of lengths not divisible by four. 
 
-Bitstrings of lengths not divisible by four. If the length of a binary string is not divisible by four, we augment it by one 1 and several (maybe zero) 0s at the end, so that its length becomes divisible by four, and then transform it into a string of hexadecimal digits as described above. To indicate that such a transformation has taken place, a special "completion tag" - is added to the end of the hexadecimal string. The reverse transformation (applied if the completion tag is present) consists in first replacing each hexadecimal digit by four corresponding bits, and then removing all trailing zeroes (if any) and the last 1 immediately preceding them (if the resulting bitstring is non-empty at this point).
+If the length of a binary string is not divisible by four, we augment it by one 1 and several (maybe zero) 0s at the end, so that its length becomes divisible by four, and then transform it into a string of hexadecimal digits as described above. To indicate that such a transformation has taken place, a special "completion tag" - is added to the end of the hexadecimal string. The reverse transformation (applied if the completion tag is present) consists in first replacing each hexadecimal digit by four corresponding bits, and then removing all trailing zeroes (if any) and the last 1 immediately preceding them (if the resulting bitstring is non-empty at this point).
 
 Notice that there are several admissible hexadecimal representations for the same bitstring. Among them, the shortest one is "canonical". It can be deterministically obtained by the above procedure.
 
 For example, 8A corresponds to binary string 10001010, while 8A\_ and 8A0\_ both correspond to 100010. An empty bitstring may be represented by either', '8\_', '0\_,', ', or '00\_'.
 
-### 1.0.3.
+### 1.0.3. Emphasizing that a string is a hexadecimal representation of a bitstring. 
 
-Emphasizing that a string is a hexadecimal representation of a bitstring. Sometimes we need to emphasize that a string of hexadecimal digits (with or without a \_ at the end) is the hexadecimal representation of a bitstring. In such cases, we either prepend $$x$$ to the resulting string (e.g., $$\mathrm{x} 8 \mathrm{~A}$$ ), or prepend $$\mathrm{x}\{$$ and append $$\}$$ (e.g., $$x\left\{2 D\right.$$ D\_\_ $$_{-}$$, which is 00101101100). This should not be confused with hexadecimal numbers, usually prepended by $$0 x$$ (e.g., 0x2D9 or $$0 \times 2 \mathrm{~d} 9$$, which is the integer 729$$)$$.
+Sometimes we need to emphasize that a string of hexadecimal digits (with or without a \_ at the end) is the hexadecimal representation of a bitstring. In such cases, we either prepend $$x$$ to the resulting string (e.g., $$\mathrm{x} 8 \mathrm{~A}$$ ), or prepend $$\mathrm{x}\{$$ and append $$\}$$ (e.g., $$x\left\{2 D\right.$$ D\_\_ $$_{-}$$, which is 00101101100). This should not be confused with hexadecimal numbers, usually prepended by $$0 x$$ (e.g., 0x2D9 or $$0 \times 2 \mathrm{~d} 9$$, which is the integer 729$$)$$.
 
-### 1.0.4.
+### 1.0.4. Serializing a bitstring into a sequence of octets. 
 
-Serializing a bitstring into a sequence of octets. When a bitstring needs to be represented as a sequence of 8-bit bytes (octets), which take values in integers $$0 . .255$$, this is achieved essentially in the same fashion as above: we split the bitstring into groups of eight bits and interpret each group as the binary representation of an integer $$0 \ldots 255$$. If the length of the bitstring is not a multiple of eight, the bitstring is augmented by a binary 1 and up to seven binary 0s before being split into groups. The fact that such a completion has been applied is usually reflected by a "completion tag" bit.
+When a bitstring needs to be represented as a sequence of 8-bit bytes (octets), which take values in integers $$0 . .255$$, this is achieved essentially in the same fashion as above: we split the bitstring into groups of eight bits and interpret each group as the binary representation of an integer $$0 \ldots 255$$. If the length of the bitstring is not a multiple of eight, the bitstring is augmented by a binary 1 and up to seven binary 0s before being split into groups. The fact that such a completion has been applied is usually reflected by a "completion tag" bit.
 
 For instance, 00101101100 corresponds to the sequence of two octets (0x2d, 0x90) (hexadecimal), or $$(45,144)$$ (decimal), along with a completion tag bit equal to 1 (meaning that the completion has been applied), which must be stored separately.
 
@@ -70,9 +70,9 @@ In some respects TVM performs a kind of dynamic typing using run-time type check
 
 One should bear in mind that one always can implement compilers from statically typed high-level smart-contract languages into the TVM code (and we do expect that most smart contracts for TON will be written in such languages), just as one can compile statically typed languages into conventional machine code (e.g., x86 architecture). If the compiler works correctly, the resulting machine code will never generate any run-time type-checking exceptions. All type tags attached to values processed by TVM will always have expected values and may be safely ignored during the analysis of the resulting TVM code, apart from the fact that the run-time generation and verification of these type tags by TVM will slightly slow down the execution of the TVM code.
 
-### 1.1.3.
+### 1.1.3. Preliminary list of value types. 
 
-Preliminary list of value types. A preliminary list of value types supported by TVM is as follows:
+A preliminary list of value types supported by TVM is as follows:
 
 * Integer - Signed 257-bit integers, representing integer numbers in the range $$-2^{256} \ldots 2^{256}-1$$, as well as a special "not-a-number" value $$N a N$$.
 * Cell - A TVM cell consists of at most 1023 bits of data, and of at most four references to other cells. All persistent data (including TVM code) in the TON Blockchain is represented as a collection of TVM cells (cf. \[1, 2.5.14]).
@@ -100,13 +100,13 @@ While TVM is a stack machine, some rarely changed values needed in almost all fu
 
 To this end, the TVM model includes, apart from the stack, up to 16 special control registers, denoted by c0 to c15, or c $$(0)$$ to $$c(15)$$. The original version of TVM makes use of only some of these registers; the rest may be supported later.
 
-### 1.3.1.
+### 1.3.1. Values kept in control registers. 
 
-Values kept in control registers. The values kept in control registers are of the same types as those kept on the stack. However, some control registers accept only values of specific types, and any attempt to load a value of a different type will lead to an exception.
+The values kept in control registers are of the same types as those kept on the stack. However, some control registers accept only values of specific types, and any attempt to load a value of a different type will lead to an exception.
 
-### 1.3.2.
+### 1.3.2. List of control registers. 
 
-List of control registers. The original version of TVM defines and uses the following control registers: - c0 - Contains the next continuation or return continuation (similar to the subroutine return address in conventional designs). This value must be a Continuation.
+The original version of TVM defines and uses the following control registers: - c0 - Contains the next continuation or return continuation (similar to the subroutine return address in conventional designs). This value must be a Continuation.
 
 * c1 - Contains the alternative (return) continuation; this value must be a Continuation. It is used in some (experimental) control flow primitives, allowing TVM to define and call "subroutines with two exit points".
 * c2 - Contains the exception handler. This value is a Continuation, invoked whenever an exception is triggered.
@@ -141,32 +141,32 @@ All arithmetic primitives of TVM operate on several arguments of type Integer, t
 
 If one of the results does not fit into the supported range of integersor if one of the arguments is a $$\mathrm{NaN}$$-then this result or all of the results are replaced by a $$\mathrm{NaN}$$, and (by default) an integer overflow exception is generated. However, special "quiet" versions of arithmetic operations will simply produce NaNs and keep going. If these NaNs end up being used in a "non-quiet" arithmetic operation, or in a non-arithmetic operation, an integer overflow exception will occur.
 
-### 1.5.1.
+### 1.5.1. Absence of automatic conversion of integers. 
 
-Absence of automatic conversion of integers. Notice that TVM Integers are "mathematical" integers, and not 257-bit strings interpreted differently depending on the primitive used, as is common for other machine code designs. For example, TVM has only one multiplication primitive MUL, rather than two (MUL for unsigned multiplication and IMUL for signed multiplication) as occurs, for example, in the popular x86 architecture.
+Notice that TVM Integers are "mathematical" integers, and not 257-bit strings interpreted differently depending on the primitive used, as is common for other machine code designs. For example, TVM has only one multiplication primitive MUL, rather than two (MUL for unsigned multiplication and IMUL for signed multiplication) as occurs, for example, in the popular x86 architecture.
 
-### 1.5.2.
+### 1.5.2. Automatic overflow checks. 
 
-Automatic overflow checks. Notice that all TVM arithmetic primitives perform overflow checks of the results. If a result does not fit into the Integer type, it is replaced by a NaN, and (usually) an exception occurs. In particular, the result is not automatically reduced modulo $$2^{256}$$ or $$2^{257}$$, as is common for most hardware machine code architectures.
+Notice that all TVM arithmetic primitives perform overflow checks of the results. If a result does not fit into the Integer type, it is replaced by a NaN, and (usually) an exception occurs. In particular, the result is not automatically reduced modulo $$2^{256}$$ or $$2^{257}$$, as is common for most hardware machine code architectures.
 
-### 1.5.3.
+### 1.5.3. Custom overflow checks. 
 
-Custom overflow checks. In addition to automatic overflow checks, TVM includes custom overflow checks, performed by primitives FITS $$n$$ and UFITS $$n$$, where $$1 \leq n \leq 256$$. These primitives check whether the value on (the top of) the stack is an integer $$x$$ in the range $$-2^{n-1} \leq x<2^{n-1}$$ or $$0 \leq x<2^{n}$$, respectively, and replace the value with a $$\mathrm{NaN}$$ and (optionally) generate an integer overflow exception if this is not the case. This greatly simplifies the implementation of arbitrary $$n$$-bit integer types, signed or unsigned: the programmer or the compiler must insert appropriate FITS or UFITS primitives either after each arithmetic operation (which is more reasonable, but requires more checks) or before storing computed values and returning them from functions. This is important for smart contracts, where unexpected integer overflows happen to be among the most common source of bugs.
+In addition to automatic overflow checks, TVM includes custom overflow checks, performed by primitives FITS $$n$$ and UFITS $$n$$, where $$1 \leq n \leq 256$$. These primitives check whether the value on (the top of) the stack is an integer $$x$$ in the range $$-2^{n-1} \leq x<2^{n-1}$$ or $$0 \leq x<2^{n}$$, respectively, and replace the value with a $$\mathrm{NaN}$$ and (optionally) generate an integer overflow exception if this is not the case. This greatly simplifies the implementation of arbitrary $$n$$-bit integer types, signed or unsigned: the programmer or the compiler must insert appropriate FITS or UFITS primitives either after each arithmetic operation (which is more reasonable, but requires more checks) or before storing computed values and returning them from functions. This is important for smart contracts, where unexpected integer overflows happen to be among the most common source of bugs.
 
-### 1.5.4.
+### 1.5.4. Reduction modulo $$2^{n}$$. 
 
-Reduction modulo $$2^{n}$$. TVM also has a primitive MODPOW $$2 n$$, which reduces the integer at the top of the stack modulo $$2^{n}$$, with the result ranging from 0 to $$2^{n}-1$$.
+TVM also has a primitive MODPOW $$2 n$$, which reduces the integer at the top of the stack modulo $$2^{n}$$, with the result ranging from 0 to $$2^{n}-1$$.
 
-### 1.5.5.
+### 1.5.5. Integer is 257-bit, not 256-bit. 
 
-Integer is 257-bit, not 256-bit. One can understand now why TVM's Integer is (signed) 257-bit, not 256-bit. The reason is that it is the smallest integer type containing both signed 256-bit integers and unsigned 256-bit integers, which does not require automatic reinterpreting of the same 256-bit string depending on the operation used (cf. $$\mathbf{1 . 5 . 1}$$ ).
+One can understand now why TVM's Integer is (signed) 257-bit, not 256-bit. The reason is that it is the smallest integer type containing both signed 256-bit integers and unsigned 256-bit integers, which does not require automatic reinterpreting of the same 256-bit string depending on the operation used (cf. $$\mathbf{1 . 5 . 1}$$ ).
 
-### 1.5.6.
+### 1.5.6. Division and rounding. 
 
-Division and rounding. The most important division primitives are DIV, MOD, and DIVMOD. All of them take two numbers from the stack, $$x$$ and $$y$$ ( $$y$$ is taken from the top of the stack, and $$x$$ is originally under it), compute the quotient $$q$$ and remainder $$r$$ of the division of $$x$$ by $$y$$ (i.e., two integers such that $$x=y q+r$$ and $$|r|<|y|$$ ), and return either $$q, r$$, or both of them. If $$y$$ is zero, then all of the expected results are replaced by NaNs, and (usually) an integer overflow exception is generated.
+The most important division primitives are DIV, MOD, and DIVMOD. All of them take two numbers from the stack, $$x$$ and $$y$$ ( $$y$$ is taken from the top of the stack, and $$x$$ is originally under it), compute the quotient $$q$$ and remainder $$r$$ of the division of $$x$$ by $$y$$ (i.e., two integers such that $$x=y q+r$$ and $$|r|<|y|$$ ), and return either $$q, r$$, or both of them. If $$y$$ is zero, then all of the expected results are replaced by NaNs, and (usually) an integer overflow exception is generated.
 
 The implementation of division in TVM somewhat differs from most other implementations with regards to rounding. By default, these primitives round to $$-\infty$$, meaning that $$q=\lfloor x / y\rfloor$$, and $$r$$ has the same sign as $$y$$. (Most conventional implementations of division use "rounding to zero" instead, meaning that $$r$$ has the same sign as $$x$$.) Apart from this "floor rounding", two other rounding modes are available, called "ceiling rounding" (with $$q=\lceil x / y\rceil$$, and $$r$$ and $$y$$ having opposite signs) and "nearest rounding" (with $$q=\lfloor x / y+1 / 2\rfloor$$ and $$|r| \leq|y| / 2$$ ). These rounding modes are selected by using other division primitives, with letters $$C$$ and $$R$$ appended to their mnemonics. For example, DIVMODR computes both the quotient and the remainder using rounding to the nearest integer.
 
-### 1.5.7.
+### 1.5.7. Combined multiply-divide, multiply-shift, and shift-divide operations. 
 
-Combined multiply-divide, multiply-shift, and shift-divide operations. To simplify implementation of fixed-point arithmetic, TVM supports combined multiply-divide, multiply-shift, and shift-divide operations with double-length (i.e., 514-bit) intermediate product. For example, MULDIVMODR takes three integer arguments from the stack, $$a, b$$, and $$c$$, first computes $$a b$$ using a 514-bit intermediate result, and then divides $$a b$$ by $$c$$ using rounding to the nearest integer. If $$c$$ is zero or if the quotient does not fit into Integer, either two NaNs are returned, or an integer overflow exception is generated, depending on whether a quiet version of the operation has been used. Otherwise, both the quotient and the remainder are pushed into the stack.
+To simplify implementation of fixed-point arithmetic, TVM supports combined multiply-divide, multiply-shift, and shift-divide operations with double-length (i.e., 514-bit) intermediate product. For example, MULDIVMODR takes three integer arguments from the stack, $$a, b$$, and $$c$$, first computes $$a b$$ using a 514-bit intermediate result, and then divides $$a b$$ by $$c$$ using rounding to the nearest integer. If $$c$$ is zero or if the quotient does not fit into Integer, either two NaNs are returned, or an integer overflow exception is generated, depending on whether a quiet version of the operation has been used. Otherwise, both the quotient and the remainder are pushed into the stack.
