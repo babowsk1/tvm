@@ -2,11 +2,11 @@
 
 ## Abstract
 
-The aim of this text is to provide a description of the Threaded Open Network Virtual Machine (TON VM or TVM), used to execute smart contracts in the TON Blockchain.
+The aim of this text is to provide a description of the Threaded Virtual Machine (Threaded VM or TVM), used to execute smart contracts in the TVM Blockchain.
 
 ## Introduction
 
-The primary purpose of the Threaded Open Network Virtual Machine (TON VM or TVM) is to execute smart-contract code in the TON Blockchain. TVM must support all operations required to parse incoming messages and persistent data, and to create new messages and modify persistent data.
+The primary purpose of the Threaded Virtual Machine (Threaded VM or TVM) is to execute smart-contract code in the TVM Blockchain. TVM must support all operations required to parse incoming messages and persistent data, and to create new messages and modify persistent data.
 
 Additionally, TVM must meet the following requirements:
 
@@ -16,7 +16,7 @@ Additionally, TVM must meet the following requirements:
 
 The design of TVM is guided by these requirements. While this document describes a preliminary and experimental version of TVM the backward compatibility mechanisms built into the system allow us to be relatively unconcerned with the efficiency of the operation encoding used for TVM code in this preliminary version.
 
-TVM is not intended to be implemented in hardware (e.g., in a specialized microprocessor chip); rather, it should be implemented in software running on conventional hardware. This consideration lets us incorporate some highlevel concepts and operations in TVM that would require convoluted microcode in a hardware implementation but pose no significant problems for a software implementation. Such operations are useful for achieving high code density and minimizing the byte (or storage cell) profile of smart-contract code when deployed in the TON Blockchain.
+TVM is not intended to be implemented in hardware (e.g., in a specialized microprocessor chip); rather, it should be implemented in software running on conventional hardware. This consideration lets us incorporate some highlevel concepts and operations in TVM that would require convoluted microcode in a hardware implementation but pose no significant problems for a software implementation. Such operations are useful for achieving high code density and minimizing the byte (or storage cell) profile of smart-contract code when deployed in the TVM Blockchain.
 
 $${ }^{1}$$ For example, there are no floating-point arithmetic operations (which could be efficiently implemented using hardware-supported double type on most modern CPUs) present in TVM, because the result of performing such operations is dependent on the specific underlying hardware implementation and rounding mode settings. Instead, TVM supports special integer arithmetic operations, which can be used to simulate fixed-point arithmetic if needed.
 
@@ -68,14 +68,14 @@ For example, the integer addition primitive ADD accepts only two integer values,
 
 In some respects TVM performs a kind of dynamic typing using run-time type checking. However, this does not make the TVM code a "dynamically typed language" like PHP or Javascript, because all primitives accept values and return results of predefined (value) types, each value belongs to strictly one type, and values are never implicitly converted from one type to another. If, on the other hand, one compares the TVM code to the conventional microprocessor machine code, one sees that the TVM mechanism of value tagging prevents, for example, using the address of a string as a numberor, potentially even more disastrously, using a number as the address of a string - thus eliminating the possibility of all sorts of bugs and security vulnerabilities related to invalid memory accesses, usually leading to memory corruption and segmentation faults. This property is highly desirable for a VM used to execute smart contracts in a blockchain. In this respect, TVM's insistence on tagging all values with their appropriate types, instead of reinterpreting the bit sequence in a register depending on the needs of the operation it is used in, is just an additional run-time type-safety mechanism.An alternative would be to somehow analyze the smart-contract code for type correctness and type safety before allowing its execution in the VM, or even before allowing it to be uploaded into the blockchain as the code of a smart contract. Such a static analysis of code for a Turing-complete machine appears to be a time-consuming and non-trivial problem (likely to be equivalent to the stopping problem for Turing machines), something we would rather avoid in a blockchain smart-contract context.
 
-One should bear in mind that one always can implement compilers from statically typed high-level smart-contract languages into the TVM code (and we do expect that most smart contracts for TON will be written in such languages), just as one can compile statically typed languages into conventional machine code (e.g., x86 architecture). If the compiler works correctly, the resulting machine code will never generate any run-time type-checking exceptions. All type tags attached to values processed by TVM will always have expected values and may be safely ignored during the analysis of the resulting TVM code, apart from the fact that the run-time generation and verification of these type tags by TVM will slightly slow down the execution of the TVM code.
+One should bear in mind that one always can implement compilers from statically typed high-level smart-contract languages into the TVM code (and we do expect that most smart contracts for TVM will be written in such languages), just as one can compile statically typed languages into conventional machine code (e.g., x86 architecture). If the compiler works correctly, the resulting machine code will never generate any run-time type-checking exceptions. All type tags attached to values processed by TVM will always have expected values and may be safely ignored during the analysis of the resulting TVM code, apart from the fact that the run-time generation and verification of these type tags by TVM will slightly slow down the execution of the TVM code.
 
 ### 1.1.3. Preliminary list of value types. 
 
 A preliminary list of value types supported by TVM is as follows:
 
 * Integer - Signed 257-bit integers, representing integer numbers in the range $$-2^{256} \ldots 2^{256}-1$$, as well as a special "not-a-number" value $$N a N$$.
-* Cell - A TVM cell consists of at most 1023 bits of data, and of at most four references to other cells. All persistent data (including TVM code) in the TON Blockchain is represented as a collection of TVM cells (cf. \[1, 2.5.14]).
+* Cell - A TVM cell consists of at most 1023 bits of data, and of at most four references to other cells. All persistent data (including TVM code) in the TVM Blockchain is represented as a collection of TVM cells (cf. \[1, 2.5.14]).
 * Tuple - An ordered collection of up to 255 components, having arbitrary value types, possibly distinct. May be used to represent nonpersistent values of arbitrary algebraic data types.
 * Null - A type with exactly one value $$\perp$$, used for representing empty lists, empty branches of binary trees, absence of return value in some situations, and so on.
 * Slice - A TVM cell slice, or slice for short, is a contiguous "sub-cell" of an existing cell, containing some of its bits of data and some of its references. Essentially, a slice is a read-only view for a subcell of a cell. Slices are used for unpacking data previously stored (or serialized) in a cell or a tree of cells.
@@ -92,7 +92,7 @@ TVM instructions, also called primitives and sometimes (built-in) operations, ar
 * Constant or literal primitives - Push into the stack some "constant" or "literal" values embedded into the TVM code itself, thus providing arguments to the other primitives. They are somewhat similar to stack primitives, but are less generic because they work with values of specific types. - Arithmetic primitives - Perform the usual integer arithmetic operations on values of type Integer.
 * Cell (manipulation) primitives - Create new cells and store data in them (cell creation primitives) or read data from previously created cells (cell parsing primitives). Because all memory and persistent storage of TVM consists of cells, these cell manipulation primitives actually correspond to "memory access instructions" of other architectures. Cell creation primitives usually work with values of type Builder, while cell parsing primitives work with Slices.
 * Continuation and control flow primitives - Create and modify Continuations, as well as execute existing Continuations in different ways, including conditional and repeated execution.
-* Custom or application-specific primitives - Efficiently perform specific high-level actions required by the application (in our case, the TON Blockchain), such as computing hash functions, performing elliptic curve cryptography, sending new blockchain messages, creating new smart contracts, and so on. These primitives correspond to standard library functions rather than microprocessor instructions.
+* Custom or application-specific primitives - Efficiently perform specific high-level actions required by the application (in our case, the TVM Blockchain), such as computing hash functions, performing elliptic curve cryptography, sending new blockchain messages, creating new smart contracts, and so on. These primitives correspond to standard library functions rather than microprocessor instructions.
 
 ### Control registers
 
@@ -112,12 +112,12 @@ The original version of TVM defines and uses the following control registers: - 
 * c2 - Contains the exception handler. This value is a Continuation, invoked whenever an exception is triggered.
 * c3 - Contains the current dictionary, essentially a hashmap containing the code of all functions used in the program. For reasons explained later in $$\mathbf{4 . 6}$$, this value is also a Continuation, not a Cell as one might expect.
 * c4 - Contains the root of persistent data, or simply the data. This value is a Cell. When the code of a smart contract is invoked, c4 points to the root cell of its persistent data kept in the blockchain state. If the smart contract needs to modify this data, it changes c4 before returning.
-* c5 - Contains the output actions. It is also a Cell initialized by a reference to an empty cell, but its final value is considered one of the smart contract outputs. For instance, the SENDMSG primitive, specific for the TON Blockchain, simply inserts the message into a list stored in the output actions.
+* c5 - Contains the output actions. It is also a Cell initialized by a reference to an empty cell, but its final value is considered one of the smart contract outputs. For instance, the SENDMSG primitive, specific for the TVM Blockchain, simply inserts the message into a list stored in the output actions.
 * c7 - Contains the root of temporary data. It is a Tuple, initialized by a reference to an empty Tuple before invoking the smart contract and discarded after its termination $$\bigsqcup^{4}$$
 
-More control registers may be defined in the future for specific TON Blockchain or high-level programming language purposes, if necessary.
+More control registers may be defined in the future for specific TVM Blockchain or high-level programming language purposes, if necessary.
 
-$${ }^{4}$$ In the TON Blockchain context, c7 is initialized with a singleton Tuple, the only component of which is a Tuple containing blockchain-specific data. The smart contract is free to modify c7 to store its temporary data provided the first component of this Tuple remains intact.
+$${ }^{4}$$ In the TVM Blockchain context, c7 is initialized with a singleton Tuple, the only component of which is a Tuple containing blockchain-specific data. The smart contract is free to modify c7 to store its temporary data provided the first component of this Tuple remains intact.
 
 ### Total state of TVM (SCCCG)
 

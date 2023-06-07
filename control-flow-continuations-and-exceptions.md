@@ -78,7 +78,7 @@ $${ }^{22}$$ The already used savelist cc. save of the new cc is emptied before 
 
 Determining the number of arguments passed to and/or return values accepted from a subroutine. Similarly to JMPX and RET, CALLX also has special (rarely used) forms, which allow us to explicitly specify the number $$n^{\prime \prime}$$ of arguments passed from the current stack to the called subroutine (by default, $$n^{\prime \prime}$$ equals the depth of the current stack, i.e., it is passed in its entirety). Furthermore, a second number $$n^{\prime \prime \prime}$$ can be specified, used to set nargs of the modified cc continuation before storing it into the new c0; the new nargs equals the depth of the old stack minus $$n^{\prime \prime}$$ plus $$n^{\prime \prime \prime}$$. This means that the caller is willing to pass exactly $$n^{\prime \prime}$$ arguments to the called subroutine, and is willing to accept exactly $$n^{\prime \prime \prime}$$ results in their stead.
 
-Such forms of CALLX and RET are mostly intended for library functions that accept functional arguments and want to invoke them safely. Another application is related to the "virtualization support" of TVM, which enables TVM code to run other TVM code inside a "virtual TVM machine". Such virtualization techniques might be useful for implementing sophisticated payment channels in the TON Blockchain (cf. [1, 5]).
+Such forms of CALLX and RET are mostly intended for library functions that accept functional arguments and want to invoke them safely. Another application is related to the "virtualization support" of TVM, which enables TVM code to run other TVM code inside a "virtual TVM machine". Such virtualization techniques might be useful for implementing sophisticated payment channels in the TVM Blockchain (cf. [1, 5]).
 
 ### 4.1.11. 
 
@@ -175,7 +175,7 @@ When somebody wants to invoke a method $$m$$ of $$o$$ with arguments $$x_{1}, x_
 
 Another way of representing Smalltalk-style objects as continuations, or even as trees of cells, consists in using the JMPREFDATA primitive (a variant of JMPXDATA, cf. $$\mathbf{4 . 1 . 1 1}$$ ), which takes the first cell reference from the code of the current continuation, transforms the cell referred to into a simple ordinary continuation, and transfers control to it, first pushing the remainder of the current continuation as a Slice into the stack. In this way, an object might be represented by a cell $$\tilde{o}$$ that contains JMPREFDATA at the beginning of its data, and the actual code of the object in the first reference (one might say that the first reference of cell $$\tilde{o}$$ is the class of object $$\tilde{o}$$ ). Remaining data and references of this cell will be used for storing the fields of the object.
 
-Such objects have the advantage of being trees of cells, and not just continuations, meaning that they can be stored into the persistent storage of a TON smart contract.
+Such objects have the advantage of being trees of cells, and not just continuations, meaning that they can be stored into the persistent storage of a TVM smart contract.
 
 ### 4.4.3. Unique continuations and capabilities. 
 
@@ -203,7 +203,7 @@ Notice that if the continuation in c2 has a value for c2 in its savelist, it wil
 
 ### 4.5.5. Default exception handler. 
 
-When an instance of TVM is created, c2 contains a reference to the "default exception handler continuation", which is an ec_fatal extraordinary continuation (cf. 4.1.5). Its execution leads to the termination of the execution of TVM, with the arguments $$v$$ and $$n$$ of the exception returned to the outside caller. In the context of the TON Blockchain, $$n$$ will be stored as a part of the transaction's result. 4.5.6. TRY primitive. A TRY primitive can be used to implement $$\mathrm{C}++-$$ like exception handling. This primitive accepts two continuations, $$c$$ and $$c^{\prime}$$. It stores the old value of c2 into the savelist of $$c^{\prime}$$, sets c2 to $$c^{\prime}$$, and executes $$c$$ just as EXECUTE would, but additionally saving the old value of c2 into the savelist of the new c0 as well. Usually a version of the TRY primitive with an explicit number of arguments $$n^{\prime \prime}$$ passed to the continuation $$c$$ is used.
+When an instance of TVM is created, c2 contains a reference to the "default exception handler continuation", which is an ec_fatal extraordinary continuation (cf. 4.1.5). Its execution leads to the termination of the execution of TVM, with the arguments $$v$$ and $$n$$ of the exception returned to the outside caller. In the context of the TVM Blockchain, $$n$$ will be stored as a part of the transaction's result. 4.5.6. TRY primitive. A TRY primitive can be used to implement $$\mathrm{C}++-$$ like exception handling. This primitive accepts two continuations, $$c$$ and $$c^{\prime}$$. It stores the old value of c2 into the savelist of $$c^{\prime}$$, sets c2 to $$c^{\prime}$$, and executes $$c$$ just as EXECUTE would, but additionally saving the old value of c2 into the savelist of the new c0 as well. Usually a version of the TRY primitive with an explicit number of arguments $$n^{\prime \prime}$$ passed to the continuation $$c$$ is used.
 
 The net result is roughly equivalent to $$\mathrm{C}++$$ 's try $$\{c\} \operatorname{catch}(\ldots)$$ $$\left\{c^{\prime}\right\}$$ operator.
 
