@@ -17,7 +17,6 @@ The gas price for most primitives equals the basic gas price, computed as $$P_{b
 - $$B_{w}$$ - The total price of creating new Builders. Currently equal to 0 gas units per builder.
 - $$C_{w}$$ - The total price of creating new Cells from Builders. Currently equal to 500 gas units per cell. By default, the gas price of an instruction equals $$P:=P_{b}+C_{r}+L+B_{w}+C_{w}$$.
 
-
 ## A.2 Stack manipulation primitives
 
 This section includes both the basic (cf. 2.2.1 and the compound (cf. 2.2.3) stack manipulation primitives, as well as some "unsystematic" ones. Some compound stack manipulation primitives, such as XCPU or XCHG2, turn out to have the same length as an equivalent sequence of simpler operations. We have included these primitives regardless, so that they can easily be allocated shorter opcodes in a future revision of TVM-or removed for good.
@@ -886,7 +885,7 @@ stored as a part of the instruction. The dictionary itself is created from the f
 
 ## A.11 Application-specific primitives
 
-Opcode range F8... FB is reserved for the application-specific primitives. When TVM is used to execute TON Blockchain smart contracts, these applicationspecific primitives are in fact TON Blockchain-specific.
+Opcode range F8... FB is reserved for the application-specific primitives. When TVM is used to execute TVM smart contracts, these applicationspecific primitives are in fact TVM Blockchain-specific.
 
 A.11.1. External actions and access to blockchain configuration data. Some of the primitives listed below pretend to produce some externally visible actions, such as sending a message to another smart contract. In fact, the execution of a smart contract in TVM never has any effect apart from a modification of the TVM state. All external actions are collected into a linked list stored in special register c5 ("output actions"). Additionally, some primitives use the data kept in the first component of the Tuple stored in c7 ("root of temporary data", cf. $$\mathbf{1 . 3 . 2}$$ ). Smart contracts are free to modify any other data kept in the cell $$c 7$$, provided the first reference remains intact (otherwise some application-specific primitives would be likely to throw exceptions when invoked).
 
@@ -902,7 +901,7 @@ A.11.2. Gas-related primitives. Of the following primitives, only the first two 
 - F806-F80E - Reserved for gas-related primitives.
 - F80F - COMMIT ( - ), commits the current state of registers c4 ("persistent data") and c5 ("actions") so that the current execution is considered "successful" with the saved values even if an exception is thrown later.
 
-A.11.3. Pseudo-random number generator primitives. The pseudorandom number generator uses the random seed (parameter $$\# 6$$, cf. A.11.4), an unsigned 256-bit Integer, and (sometimes) other data kept in c7. The initial value of the random seed before a smart contract is executed in TON Blockchain is a hash of the smart contract address and the global block random seed. If there are several runs of the same smart contract inside a block, then all of these runs will have the same random seed. This can be fixed, for example, by running LTIME; ADDRAND before using the pseudorandom number generator for the first time.
+A.11.3. Pseudo-random number generator primitives. The pseudorandom number generator uses the random seed (parameter $$\# 6$$, cf. A.11.4), an unsigned 256-bit Integer, and (sometimes) other data kept in c7. The initial value of the random seed before a smart contract is executed in TVM Blockchain is a hash of the smart contract address and the global block random seed. If there are several runs of the same smart contract inside a block, then all of these runs will have the same random seed. This can be fixed, for example, by running LTIME; ADDRAND before using the pseudorandom number generator for the first time.
 
 - F810 - RANDU256 $$(-x)$$, generates a new pseudo-random unsigned 256-bit Integer $$x$$. The algorithm is as follows: if $$r$$ is the old value of the random seed, considered as a 32-byte array (by constructing the big-endian representation of an unsigned 256-bit integer), then its SHA5 $$12(r)$$ is computed; the first 32 bytes of this hash are stored as the new value $$r^{\prime}$$ of the random seed, and the remaining 32 bytes are returned as the next random value $$x$$.
 - F811 - RAND $$(y-z)$$, generates a new pseudo-random integer $$z$$ in the range $$0 \ldots y-1$$ (or $$y \ldots-1$$, if $$y<0$$ ). More precisely, an unsigned random value $$x$$ is generated as in RAND256U; then $$z:=\left\lfloor x y / 2^{256}\right\rfloor$$ is computed. Equivalent to RANDU256; MULRSHIFT 256.
@@ -910,7 +909,7 @@ A.11.3. Pseudo-random number generator primitives. The pseudorandom number gener
 - F815 - ADDRAND $$(x-)$$, mixes unsigned 256-bit Integer $$x$$ into the random seed $$r$$ by setting the random seed to SHA256 of the concatenation of two 32-byte strings: the first with the big-endian representation of the old seed $$r$$, and the second with the big-endian representation of $$x$$.
 - F810-F81F - Reserved for pseudo-random number generator primitives.
 
-A.11.4. Configuration primitives. The following primitives read configuration data provided in the Tuple stored in the first component of the Tuple at c7. Whenever TVM is invoked for executing TON Blockchain smart contracts, this Tuple is initialized by a SmartContractInfo structure; configuration primitives assume that it has remained intact.
+A.11.4. Configuration primitives. The following primitives read configuration data provided in the Tuple stored in the first component of the Tuple at c7. Whenever TVM is invoked for executing TVM Blockchain smart contracts, this Tuple is initialized by a SmartContractInfo structure; configuration primitives assume that it has remained intact.
 
 - F82i - GETPARAM $$i(-x)$$, returns the $$i$$-th parameter from the Tuple provided at $$c 7$$ for $$0 \leq i<16$$. Equivalent to PUSH $$c 7$$; FIRST; INDEX $$i$$. If one of these internal operations fails, throws an appropriate type checking or range checking exception. - F823 - NOW $$(-x)$$, returns the current Unix time as an Integer. If it is impossible to recover the requested value starting from $$c 7$$, throws a type checking or range checking exception as appropriate. Equivalent to GETPARAM 3.
 - F824 - BLOCKLT $$(-x)$$, returns the starting logical time of the current block. Equivalent to GETPARAM 4.

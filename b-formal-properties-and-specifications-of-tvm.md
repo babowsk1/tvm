@@ -1,6 +1,6 @@
 # B Formal properties and specifications of TVM
 
-This appendix discusses certain formal properties of TVM that are necessary for executing smart contracts in the TON Blockchain and validating such executions afterwards.
+This appendix discusses certain formal properties of TVM that are necessary for executing smart contracts in the TVM Blockchain and validating such executions afterwards.
 
 ## B.1 Serialization of the TVM state
 
@@ -88,9 +88,9 @@ We see that using TVM itself as a host machine for a reference implementation of
 
 In that case, one must carefully implement and check only a handful of primitives to obtain a stripped-down version of TVM, and compare the reference implementation $$P$$ running on this stripped-down version to the full custom TVM implementation being verified. In particular, if there are any doubts about the validity of a specific run of a custom TVM implementation, they can now be easily resolved with the aid of the reference implementation.
 
-### B.2.5. Relevance for the TON Blockchain. 
+### B.2.5. Relevance for the TVM Blockchain. 
 
-The TON Blockchain adopts this approach to validate the runs of TVM (e.g., those used for processing inbound messages by smart contracts) when the validators' results do not match one another. In this case, a reference implementation of TVM, stored inside the masterchain as a configurable parameter (thus defining the current revision of TVM), is used to obtain the correct result.
+The TVM Blockchain adopts this approach to validate the runs of TVM (e.g., those used for processing inbound messages by smart contracts) when the validators' results do not match one another. In this case, a reference implementation of TVM, stored inside the masterchain as a configurable parameter (thus defining the current revision of TVM), is used to obtain the correct result.
 
 ### B.2.6. Codepage -1 . 
 
@@ -98,6 +98,6 @@ Codepage -1 of TVM is reserved for the strippeddown version of TVM. Its main pur
 
 ### B.2.7. Codepage -2 . 
 
-This bootstrapping process could be iterated even further, by providing an emulator of the stripped-down version of TVM written for an even simpler version of TVM that supports only boolean values (or integers 0 and 1) -a "codepage - 2". All 64-bit arithmetic used in codepage -1 would then need to be defined by means of boolean operations, thus providing a reference implementation for the stripped-down version of TVM used in codepage -1 . In this way, if some of the TON Blockchain validators did not agree on the results of their 64-bit arithmetic, they could regress to this reference implementation to find the correct answer $${ }^{30}$$
+This bootstrapping process could be iterated even further, by providing an emulator of the stripped-down version of TVM written for an even simpler version of TVM that supports only boolean values (or integers 0 and 1) -a "codepage - 2". All 64-bit arithmetic used in codepage -1 would then need to be defined by means of boolean operations, thus providing a reference implementation for the stripped-down version of TVM used in codepage -1 . In this way, if some of the TVM Blockchain validators did not agree on the results of their 64-bit arithmetic, they could regress to this reference implementation to find the correct answer $${ }^{30}$$
 
 $${ }^{30}$$ The preliminary version of TVM does not use codepage -2 for this purpose. This may change in the future.

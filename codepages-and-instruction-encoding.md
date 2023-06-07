@@ -54,7 +54,7 @@ Alternatively, one might create a couple of codepages-say, 4 and 5 which differ 
 
 ### 5.1.8. Setting the codepage in the code itself. 
 
-For convenience, we reserve some opcode in all codepages-say, FF $$n$$-for the instruction SETCP $$n$$, with $$n$$ from 0 to 255 (cf. A.13). Then by inserting such an instruction into the very beginning of (the main function of) a program (e.g., a TON Blockchain smart contract) or a library function, we can ensure that the code will always be executed in the intended codepage.
+For convenience, we reserve some opcode in all codepages-say, FF $$n$$-for the instruction SETCP $$n$$, with $$n$$ from 0 to 255 (cf. A.13). Then by inserting such an instruction into the very beginning of (the main function of) a program (e.g., a TVM Blockchain smart contract) or a library function, we can ensure that the code will always be executed in the intended codepage.
 
 ## Instruction encoding
 
@@ -134,7 +134,7 @@ This section provides details about the experimental instruction encoding for co
 
 ### 5.3.1. Upgradability. 
 
-First of all, even if this preliminary version somehow gets into the production version of the TON Blockchain, the codepage mechanism (cf. 5.1) enables us to introduce better versions later without compromising backward compatibility. $${ }^{29}$$ So in the meantime, we are free to experiment.
+First of all, even if this preliminary version somehow gets into the production version of the TVM Blockchain, the codepage mechanism (cf. 5.1) enables us to introduce better versions later without compromising backward compatibility. $${ }^{29}$$ So in the meantime, we are free to experiment.
 
 $${ }^{29}$$ Notice that any modifications after launch cannot be done unilaterally; rather they would require the support of at least two-thirds of validators. 5.3.2. Choice of instructions. We opted to include many "experimental" and not strictly necessary instructions in codepage zero just to see how they might be used in real code. For example, we have both the basic (cf. 2.2.1) and the compound (cf. 2.2.3) stack manipulation primitives, as well as some "unsystematic" ones such as ROT (mostly borrowed from Forth). If such primitives are rarely used, their inclusion just wastes some part of the opcode space and makes the encodings of other instructions slightly less effective, something we can afford at this stage of TVM's development.
 
