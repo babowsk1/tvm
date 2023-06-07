@@ -2,13 +2,13 @@
 
 ## Abstract
 
-The aim of this text is to provide a description of the Threaded Virtual Machine (Threaded VM or TVM), used to execute smart contracts in the TVM Blockchain.
+The aim of this text is to provide a description of the Threaded Virtual Machine (TVM), used to execute smart contracts in the TVM Blockchain.
 
 In the context of blockchain, a TVM blockchain refers to any blockchain network that utilizes the TVM as its virtual machine. This means that the blockchain network is compatible with executing smart contracts and dApps that are developed using TVM-compatible programming languages.
 
 ## Introduction
 
-The primary purpose of the Threaded Virtual Machine (Threaded VM or TVM) is to execute smart-contract code in the TVM Blockchain. TVM must support all operations required to parse incoming messages and persistent data, and to create new messages and modify persistent data.
+The primary purpose of the Threaded Virtual Machine (TVM) is to execute smart-contract code in the TVM Blockchain. TVM must support all operations required to parse incoming messages and persistent data, and to create new messages and modify persistent data.
 
 Additionally, TVM must meet the following requirements:
 
