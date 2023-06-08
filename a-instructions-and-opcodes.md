@@ -945,7 +945,7 @@ A.11.5. Global variable primitives. The "global variables" may be helpful in imp
 - F940 - CDATASIZEQ ( $$c n-x y z-1$$ or 0 ), recursively computes the count of distinct cells $$x$$, data bits $$y$$, and cell references $$z$$ in the dag rooted at Cell c, effectively returning the total storage used by this dag taking into account the identification of equal cells. The values of $$x, y$$, and $$z$$ are computed by a depth-first traversal of this dag, with a hash table of visited cell hashes used to prevent visits of already-visited cells. The total count of visited cells $$x$$ cannot exceed non-negative Integer $$n$$; otherwise the computation is aborted before visiting the $$(n+1)$$-st cell and a zero is returned to indicate failure. If $$c$$ is $$N u l l$$, $$\operatorname{returns} x=y=z=0$$.
 - F941 - CDATASIZE $$(c n-x y z)$$, a non-quiet version of CDATASIZEQ that throws a cell overflow exception (8) on failure.
 - F942 - SDATASIZEQ ( $$s n-x y z-1$$ or 0$$)$$, similar to CDATASIZEQ, but accepting a Slice $$s$$ instead of a Cell. The returned value of $$x$$ does not take into account the cell that contains the slice $$s$$ itself; however, the data bits and the cell references of $$s$$ are accounted for in $$y$$ and $$z$$.
-- F943 - SDATASIZE $$(s n-x y z)$$, a non-quiet version of SDATASIZEQ that throws a cell overflow exception (8) on failure. - F944-F97F - Reserved for miscellaneous TON-specific primitives that do not fall into any other specific category.
+- F943 - SDATASIZE $$(s n-x y z)$$, a non-quiet version of SDATASIZEQ that throws a cell overflow exception (8) on failure. - F944-F97F - Reserved for miscellaneous TVM-specific primitives that do not fall into any other specific category.
 
 
 ## A.11.8. Currency manipulation primitives.
