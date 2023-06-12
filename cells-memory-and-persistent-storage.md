@@ -204,7 +204,7 @@ TVM does not offer any ways to modify existing values (cf. [$$\mathbf{2.3.4}$$](
 
 ### 3.2.14. Modifying the persistent storage of a smart contract.
 
-If the TVM code wants to modify its persistent storage, represented by the tree of cells rooted at $$c 4$$, it simply needs to rewrite control register c4 by the root of the tree of cells containing the new value of its persistent storage. (If only part of the persistent storage needs to be modified, cf. 3.2.13.)
+If the TVM code wants to modify its persistent storage, represented by the tree of cells rooted at $$c 4$$, it simply needs to rewrite control register c4 by the root of the tree of cells containing the new value of its persistent storage. (If only part of the persistent storage needs to be modified, cf. [$$\mathbf{3.2.13.}](#3.2.13.-modifying-a-serialized-value-in-a-cell.))
 
 ## Hashmaps, or dictionaries
 
@@ -230,15 +230,13 @@ The serialization of a hashmap into a tree of cells (or, more generally, into a 
 
 The right-hand side of each "equation" is a type, either simple (such as Bit or True) or parametrized (such as Hashmap $$n X$$ ). The parameters of a type must be either natural numbers (i.e., non-negative integers, which are required to fit into 32 bits in practice), such as $$n$$ in Hashmap $$n X$$, or other types, such as $$X$$ in Hashmap $$n X$$.
 
-The left-hand side of each equation describes a way to define, or even to serialize, a value of the type indicated in the right-hand side. Such a description begins with the name of a constructor, such as hm\_edge or hml\_long, immediately followed by an optional constructor tag, such as $$\#\_\$$ or $$\$10\$$, which describes the bitstring used to encode (serialize) the constructor in question. Such tags may be given in either binary (after a dollar sign) or hexadecimal notation (after a hash sign), using the conventions described in $$\mathbf{1 . 0}$$. If a tag is not explicitly provided, TL-B computes a default 32-bit constructor tag by hashing the text of the "equation" defining this constructor in a certain fashion. Therefore, empty tags must be explicitly provided by $$\#\_\$$or $$\$\_\$$. All constructor names must be distinct, and constructor tags for the same type must constitute a prefix code (otherwise the deserialization would not be unique).
+The left-hand side of each equation describes a way to define, or even to serialize, a value of the type indicated in the right-hand side. Such a description begins with the name of a constructor, such as hm\_edge or hml\_long, immediately followed by an optional constructor tag, such as $$\#\_\$$ or $$\$10\$$, which describes the bitstring used to encode (serialize) the constructor in question. Such tags may be given in either binary (after a dollar sign) or hexadecimal notation (after a hash sign), using the conventions described in [$$\mathbf{1.0}$$](README.md/#introduction). If a tag is not explicitly provided, TL-B computes a default 32-bit constructor tag by hashing the text of the "equation" defining this constructor in a certain fashion. Therefore, empty tags must be explicitly provided by $$\#\_\$$or $$\$\_\$$. All constructor names must be distinct, and constructor tags for the same type must constitute a prefix code (otherwise the deserialization would not be unique).
 
-The constructor and its optional tag are followed by field definitions. Each field definition is of the form ident : type-expr, where ident is an identifier with the name of the field $${ }^{16}$$ (replaced by an underscore for anonymous fields), and type-expr is the field's type. The type provided here is a type expression, which may include simple types or parametrized types with suitable parameters. Variables - i.e., the (identifiers of the) previously defined fields of types \\# (natural numbers) or Type (type of types)-may be used as parameters for the parametrized types. The serialization process recursively serializes each field according to its type, and the serialization of a value ultimately consists of the concatenation of bitstrings representing the constructor (i.e., the constructor tag) and the field values.
+The constructor and its optional tag are followed by field definitions. Each field definition is of the form ident : type-expr, where ident is an identifier with the name of the field$${ }^{16}$$ (replaced by an underscore for anonymous fields), and type-expr is the field's type. The type provided here is a type expression, which may include simple types or parametrized types with suitable parameters. Variables - i.e., the (identifiers of the) previously defined fields of types \\# (natural numbers) or Type (type of types)-may be used as parameters for the parametrized types. The serialization process recursively serializes each field according to its type, and the serialization of a value ultimately consists of the concatenation of bitstrings representing the constructor (i.e., the constructor tag) and the field values.
 
 Some fields may be implicit. Their definitions are surrounded by curly braces, which indicate that the field is not actually present in the serialization, but that its value must be deduced from other data (usually the parameters of the type being serialized).
 
-Some occurrences of "variables" (i.e., already-defined fields) are prefixed by a tilde. This indicates that the variable's occurrence is used in the opposite way of the default behavior: in the left-hand side of the equation, it means that the variable will be deduced (computed) based on this occurrence, instead of substituting its previously computed value; in the right-hand side, conversely, it means that the variable will not be deduced from the type being serialized, but rather that it will be computed during the deserialization pro-
-
-$${ }^{16}$$ The field's name is useful for representing values of the type being defined in humanreadable form, but it does not affect the binary serialization. cess. In other words, a tilde transforms an "input argument" into an "output argument", and vice versa. $${ }^{17}$$
+Some occurrences of "variables" (i.e., already-defined fields) are prefixed by a tilde. This indicates that the variable's occurrence is used in the opposite way of the default behavior: in the left-hand side of the equation, it means that the variable will be deduced (computed) based on this occurrence, instead of substituting its previously computed value; in the right-hand side, conversely, it means that the variable will not be deduced from the type being serialized, but rather that it will be computed during the deserialization process. In other words, a tilde transforms an "input argument" into an "output argument", and vice versa.$${ }^{17}$$
 
 Finally, some equalities may be included in curly brackets as well. These are certain "equations", which must be satisfied by the "variables" included in them. If one of the variables is prefixed by a tilde, its value will be uniquely determined by the values of all other variables participating in the equation (which must be known at this point) when the definition is processed from the left to the right.
 
@@ -246,17 +244,23 @@ A caret (^) preceding a type $$X$$ means that instead of serializing a value of 
 
 Parametrized type $$\#<=p$$ with $$p: \#$$ (this notation means " $$p$$ of type \\#", i.e., a natural number) denotes the subtype of the natural numbers type $$\#$$, consisting of integers $$0 \ldots p$$; it is serialized into $$\left\lceil\log _{2}(p+1)\right\rceil$$ bits as an unsigned big-endian integer. Type \\# by itself is serialized as an unsigned 32-bit integer. Parametrized type \\#\\# $$b$$ with $$b: \#<=31$$ is equivalent to \\#<= $$2^{b}-1$$ (i.e., it is an unsigned $$b$$-bit integer).
 
+{% hint style="info" %}
+$${ }^{16}$$ The field's name is useful for representing values of the type being defined in humanreadable form, but it does not affect the binary serialization.
+{% endhint %}
+
+{% hint style="info" %}
+$${ }^{17}$$ This is the "linear negation" operation $$(-)^{\perp}$$ of linear logic, hence our notation $${^~}$$.
+{% endhint %}
+
 ### 3.3.5. Application to the serialization of hashmaps.
 
-Let us explain the net result of applying the general rules described in 3.3.4 to the TL-B scheme presented in $$\mathbf{3 . 3 . 3}$$
+Let us explain the net result of applying the general rules described in [$$\mathbf{3.3.4}$$](#3.3.4.-brief-explanation-of-tl-b-schemes.) to the TL-B scheme presented in [$$\mathbf{3.3.3}$$](3.3.3.-serialization-of-hashmaps.)
 
-Suppose we wish to serialize a value of type HashmapE $$n X$$ for some integer $$0 \leq n \leq 1023$$ and some type $$X$$ (i.e., a dictionary with $$n$$-bit keys and values of type $$X$$, admitting an abstract representation as a Patricia tree $$(\operatorname{cf} .3 .3 .2)$$ ).
+Suppose we wish to serialize a value of type HashmapE $$n X$$ for some integer $$0 \leq n \leq 1023$$ and some type $$X$$ (i.e., a dictionary with $$n$$-bit keys and values of type $$X$$, admitting an abstract representation as a Patricia tree [$$\mathbf{3.3.2)$$](#3.3.2.-hashmaps-as-patricia-trees.).
 
 First of all, if our dictionary is empty, it is serialized into a single binary 0 , which is the tag of nullary constructor hme\_empty. Otherwise, its serialization consists of a binary 1 (the tag of hme\_root), along with a reference to a cell containing the serialization of a value of type Hashmap $$n X$$ (i.e., a necessarily non-empty dictionary).
 
-The only way to serialize a value of type Hashmap $$n X$$ is given by the hm\_edge constructor, which instructs us to serialize first the label label of the edge leading to the root of the subtree under consideration (i.e., the common prefix of all keys in our (sub)dictionary). This label is of type HmLabel $$l^{\perp} n$$, which means that it is a bitstring of length at most $$n$$, serialized in such a way that the true length $$l$$ of the label, $$0 \leq l \leq n$$, becomes known from
-
-$${ }^{17}$$ This is the "linear negation" operation $$(-)^{\perp}$$ of linear logic, hence our notation . the serialization of the label. (This special serialization method is described separately in $$\mathbf{3 . 3 . 6}$$.)
+The only way to serialize a value of type Hashmap $$n X$$ is given by the hm\_edge constructor, which instructs us to serialize first the label label of the edge leading to the root of the subtree under consideration (i.e., the common prefix of all keys in our (sub)dictionary). This label is of type HmLabel $$l^{\perp} n$$, which means that it is a bitstring of length at most $$n$$, serialized in such a way that the true length $$l$$ of the label, $$0 \leq l \leq n$$, becomes known from the serialization of the label. (This special serialization method is described separately in [$$\mathbf{3.3.6}$$](#3.3.6.-serialization-of-labels.).)
 
 The label must be followed by the serialization of a node of type HashmapNode $$m X$$, where $$m=n-l$$. It corresponds to a vertex of the Patricia tree, representing a non-empty subdictionary of the original dictionary with $$m$$-bit keys, obtained by removing from all the keys of the original subdictionary their common prefix of length $$l$$.
 
@@ -317,7 +321,7 @@ One may notice that values of type $$X$$ always occupy the remaining part of an 
 
 Let us present a classification of basic operations with dictionaries (i.e., values $$D$$ of type Hashmap $$E \quad X)$$ : - $$\operatorname{Get}(D, k)$$ - Given $$D: \operatorname{Hashmap} E(n, X)$$ and a key $$k: n \cdot$$ bit, returns the corresponding value $$D[k]: X^{?}$$ kept in $$D$$.
 
-* $$\operatorname{Set}(D, k, x)$$ - Given $$D: \operatorname{Hashmap} E(n, X)$$, a key $$k: n$$ · bit, and a value $$x: X$$, sets $$D^{\prime}[k]$$ to $$x$$ in a copy $$D^{\prime}$$ of $$D$$, and returns the resulting dictionary $$D^{\prime}$$ (cf. 2.3.4).
+* $$\operatorname{Set}(D, k, x)$$ - Given $$D: \operatorname{Hashmap} E(n, X)$$, a key $$k: n$$ · bit, and a value $$x: X$$, sets $$D^{\prime}[k]$$ to $$x$$ in a copy $$D^{\prime}$$ of $$D$$, and returns the resulting dictionary $$D^{\prime}$$ (cf. [$$\mathbf{2.3.4}$$](stacks.md/#2.3.4.-transparency-of-the-implementation-stack-values-are-values-not-references-.)).
 * $$\operatorname{AdD}(D, k, x)$$ - Similar to SET, but adds the key-value pair $$(k, x)$$ to $$D$$ only if key $$k$$ is absent in $$D$$.
 * $$\operatorname{Replace}(D, k, x)$$ - Similar to Set, but changes $$D^{\prime}[k]$$ to $$x$$ only if key $$k$$ is already present in $$D$$.
 * Getset, Getadd, GetReplace - Similar to Set, Add, and RePLACE, respectively, but returns the old value of $$D[k]$$ as well.
@@ -333,13 +337,21 @@ Let us present a classification of basic operations with dictionaries (i.e., val
 * $$\operatorname{DeleteSubdict}\left(D, l, k_{0}\right)$$ - Equivalent to ReplaceSubdict with $$D^{\prime}$$ being an empty dictionary.
 * $$\operatorname{Split}(D)$$ - Given $$D$$ : HashmapE(n,X), returns $$D_{0}:=D / 0$$ and $$D_{1}:=D / 1:$$ Hashmap $$E(n-1, X)$$, the two subdictionaries of $$D$$ consisting of all keys beginning with 0 and 1, respectively.
 * $$\operatorname{Merge}\left(D_{0}, D_{1}\right)$$ - Given $$D_{0}$$ and $$D_{1}: \operatorname{Hashmap} E(n-1, X)$$, computes $$D: \operatorname{Hashmap} E(n, X)$$, such that $$D / 0=D_{0}$$ and $$D / 1=D_{1}$$.
-* Foreach $$(D, f)$$ - Executes a function $$f$$ with two arguments $$k$$ and $$x$$, with $$(k, x)$$ running over all key-value pairs of a dictionary $$D$$ in lexicographical order $${ }^{18}$$
+* Foreach $$(D, f)$$ - Executes a function $$f$$ with two arguments $$k$$ and $$x$$, with $$(k, x)$$ running over all key-value pairs of a dictionary $$D$$ in lexicographical order.$${ }^{18}$$
 * ForeachRev $$(D, f)$$ - Similar to Foreach, but processes all keyvalue pairs in reverse order.
-* TreeReduce $$(D, o, f, g)$$ - Given $$D: \operatorname{Hashmap} E(n, X)$$, a value $$o: X$$, and two functions $$f: X \rightarrow Y$$ and $$g: Y \times Y \rightarrow Y$$, performs a "tree reduction" of $$D$$ by first applying $$f$$ to all the leaves, and then using $$g$$ to compute the value corresponding to a fork starting from the values assigned to its children. $${ }^{19}$$
+* TreeReduce $$(D, o, f, g)$$ - Given $$D: \operatorname{Hashmap} E(n, X)$$, a value $$o: X$$, and two functions $$f: X \rightarrow Y$$ and $$g: Y \times Y \rightarrow Y$$, performs a "tree reduction" of $$D$$ by first applying $$f$$ to all the leaves, and then using $$g$$ to compute the value corresponding to a fork starting from the values assigned to its children.$${ }^{19}$$
 
+{% hint style="info" %}
 $${ }^{18}$$ In fact, $$f$$ may receive $$m$$ extra arguments and return $$m$$ modified values, which are passed to the next invocation of $$f$$. This may be used to implement "map" and "reduce" operations with dictionaries.
+{% endhint %}
 
-$${ }^{19}$$ Versions of this operation may be introduced where $$f$$ and $$g$$ receive an additional bitstring argument, equal to the key (for leaves) or to the common prefix of all keys (for forks) in the corresponding subtree. 3.3.11. Taxonomy of dictionary primitives. The dictionary primitives, described in detail in $$\mathbf{A . 1 0}$$ can be classified according to the following categories:
+{% hint style="info" %}
+$${ }^{19}$$ Versions of this operation may be introduced where $$f$$ and $$g$$ receive an additional bitstring argument, equal to the key (for leaves) or to the common prefix of all keys (for forks) in the corresponding subtree. 
+{% endhint %}
+
+### 3.3.11. Taxonomy of dictionary primitives. 
+
+The dictionary primitives, described in detail in [$$\mathbf{A.10}$$](a-instructions-and-opcodes.md/#a.10-dictionary-manipulation-primitives) can be classified according to the following categories:
 
 * Which dictionary operation (cf. 3.3.10 do they perform?
 * Are they specialized for the case $$X={ }^{\wedge} Y$$ ? If so, do they represent values of type $$Y$$ by Cells or by Slices? (Generic versions always represent values of type $$X$$ as Slices.)
