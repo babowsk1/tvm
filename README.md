@@ -14,9 +14,9 @@ Additionally, TVM must meet the following requirements:
 
 * It must provide for possible future extensions and improvements while retaining backward compatibility and interoperability, because the code of a smart contract, once committed into the blockchain, must continue working in a predictable manner regardless of any future modifications to the VM.
 * It must strive to attain high "(virtual) machine code" density, so that the code of a typical smart contract occupies as little persistent blockchain storage as possible.
-* It must be completely deterministic. In other words, each run of the same code with the same input data must produce the same result, regardless of specific software and hardware used$$|^{1}$$&#x20;
+* It must be completely deterministic. In other words, each run of the same code with the same input data must produce the same result, regardless of specific software and hardware used$$^{1}$$.
 
-The design of TVM is guided by these requirements. While this document describes a preliminary and experimental version of TVM the backward compatibility mechanisms built into the system allow us to be relatively unconcerned with the efficiency of the operation encoding used for TVM code in this preliminary version.
+The design of TVM is guided by these requirements. While this document describes a preliminary and experimental version of TVM$$^{2}$$ the backward compatibility mechanisms built into the system allow us to be relatively unconcerned with the efficiency of the operation encoding used for TVM code in this preliminary version.
 
 TVM is not intended to be implemented in hardware (e.g., in a specialized microprocessor chip); rather, it should be implemented in software running on conventional hardware. This consideration lets us incorporate some highlevel concepts and operations in TVM that would require convoluted microcode in a hardware implementation but pose no significant problems for a software implementation. Such operations are useful for achieving high code density and minimizing the byte (or storage cell) profile of smart-contract code when deployed in the TVM Blockchain.
 
@@ -56,17 +56,21 @@ For instance, 00101101100 corresponds to the sequence of two octets (0x2d, 0x90)
 
 In some cases, it is more convenient to assume the completion is enabled by default rather than store an additional completion tag bit separately. Under such conventions, $$8 n$$-bit strings are represented by $$n+1$$ octets, with the last octet always equal to $$0 \times 80=128$$.
 
-### TVM is a stack machine
+### 1.1 TVM is a stack machine
 
 First of all, $$T V M$$ is a stack machine. This means that, instead of keeping values in some "variables" or "general-purpose registers", they are kept in a (LIFO) stack, at least from the "low-level" (TVM) perspective $$!^{3}$$
 
 Most operations and user-defined functions take their arguments from the top of the stack, and replace them with their result. For example, the integer addition primitive (built-in operation) ADD does not take any arguments describing which registers or immediate values should be added together and where the result should be stored. Instead, the two top values are taken from the stack, they are added together, and their sum is pushed into the stack in their place.
 
-$${ }^{3}$$ A high-level smart-contract language might create a visibility of variables for the ease of programming; however, the high-level source code working with variables will be translated into TVM machine code keeping all the values of these variables in the TVM stack. 1.1.1. TVM values. The entities that can be stored in the TVM stack will be called TVM values, or simply values for brevity. They belong to one of several predefined value types. Each value belongs to exactly one value type. The values are always kept on the stack along with tags uniquely determining their types, and all built-in TVM operations (or primitives) only accept values of predefined types.
+$${ }^{3}$$ A high-level smart-contract language might create a visibility of variables for the ease of programming; however, the high-level source code working with variables will be translated into TVM machine code keeping all the values of these variables in the TVM stack. 
+
+### 1.1.1. 
+
+TVM values. The entities that can be stored in the TVM stack will be called TVM values, or simply values for brevity. They belong to one of several predefined value types. Each value belongs to exactly one value type. The values are always kept on the stack along with tags uniquely determining their types, and all built-in TVM operations (or primitives) only accept values of predefined types.
 
 For example, the integer addition primitive ADD accepts only two integer values, and returns one integer value as a result. One cannot supply ADD with two strings instead of two integers expecting it to concatenate these strings or to implicitly transform the strings into their decimal integer values; any attempt to do so will result in a run-time type-checking exception.
 
-### Static typing, dynamic typing, and run-time type checking.
+### 1.1.2 Static typing, dynamic typing, and run-time type checking.
 
 In some respects TVM performs a kind of dynamic typing using run-time type checking. However, this does not make the TVM code a "dynamically typed language" like PHP or Javascript, because all primitives accept values and return results of predefined (value) types, each value belongs to strictly one type, and values are never implicitly converted from one type to another. If, on the other hand, one compares the TVM code to the conventional microprocessor machine code, one sees that the TVM mechanism of value tagging prevents, for example, using the address of a string as a numberor, potentially even more disastrously, using a number as the address of a string - thus eliminating the possibility of all sorts of bugs and security vulnerabilities related to invalid memory accesses, usually leading to memory corruption and segmentation faults. This property is highly desirable for a VM used to execute smart contracts in a blockchain. In this respect, TVM's insistence on tagging all values with their appropriate types, instead of reinterpreting the bit sequence in a register depending on the needs of the operation it is used in, is just an additional run-time type-safety mechanism.An alternative would be to somehow analyze the smart-contract code for type correctness and type safety before allowing its execution in the VM, or even before allowing it to be uploaded into the blockchain as the code of a smart contract. Such a static analysis of code for a Turing-complete machine appears to be a time-consuming and non-trivial problem (likely to be equivalent to the stopping problem for Turing machines), something we would rather avoid in a blockchain smart-contract context.
 
@@ -83,9 +87,9 @@ A preliminary list of value types supported by TVM is as follows:
 * Slice - A TVM cell slice, or slice for short, is a contiguous "sub-cell" of an existing cell, containing some of its bits of data and some of its references. Essentially, a slice is a read-only view for a subcell of a cell. Slices are used for unpacking data previously stored (or serialized) in a cell or a tree of cells.
 * Builder - A TVM cell builder, or builder for short, is an "incomplete" cell that supports fast operations of appending bitstrings and cell references at its end. Builders are used for packing (or serializing) data from the top of the stack into new cells (e.g., before transferring them to persistent storage). - Continuation - Represents an "execution token" for TVM, which may be invoked (executed) later. As such, it generalizes function addresses (i.e., function pointers and references), subroutine return addresses, instruction pointer addresses, exception handler addresses, closures, partial applications, anonymous functions, and so on.
 
-This list of value types is incomplete and may be extended in future revisions of TVM without breaking the old TVM code, due mostly to the fact that all originally defined primitives accept only values of types known to them and will fail (generate a type-checking exception) if invoked on values of new types. Furthermore, existing value types themselves can also be extended in the future: for example, 257-bit Integer might become 513-bit LongInteger, with originally defined arithmetic primitives failing if either of the arguments or the result does not fit into the original subtype Integer. Backward compatibility with respect to the introduction of new value types and extension of existing value types will be discussed in more detail later (cf. 5.1.4).
+This list of value types is incomplete and may be extended in future revisions of TVM without breaking the old TVM code, due mostly to the fact that all originally defined primitives accept only values of types known to them and will fail (generate a type-checking exception) if invoked on values of new types. Furthermore, existing value types themselves can also be extended in the future: for example, 257-bit Integer might become 513-bit LongInteger, with originally defined arithmetic primitives failing if either of the arguments or the result does not fit into the original subtype Integer. Backward compatibility with respect to the introduction of new value types and extension of existing value types will be discussed in more detail later (cf. [5.1.4](codepages-and-instruction-encoding.md/#514-changing-the-behavior-of-old-operations)).
 
-### Categories of TVM instructions
+### 1.2 Categories of TVM instructions
 
 TVM instructions, also called primitives and sometimes (built-in) operations, are the smallest operations atomically performed by TVM that can be present in the TVM code. They fall into several categories, depending on the types of values (cf. 1.1.3) they work on. The most important of these categories are:
 
@@ -96,7 +100,7 @@ TVM instructions, also called primitives and sometimes (built-in) operations, ar
 * Continuation and control flow primitives - Create and modify Continuations, as well as execute existing Continuations in different ways, including conditional and repeated execution.
 * Custom or application-specific primitives - Efficiently perform specific high-level actions required by the application (in our case, the TVM Blockchain), such as computing hash functions, performing elliptic curve cryptography, sending new blockchain messages, creating new smart contracts, and so on. These primitives correspond to standard library functions rather than microprocessor instructions.
 
-### Control registers
+### 1.3 Control registers
 
 While TVM is a stack machine, some rarely changed values needed in almost all functions are better passed in certain special registers, and not near the top of the stack. Otherwise, a prohibitive number of stack reordering operations would be required to manage all these values.
 
