@@ -58,11 +58,11 @@ In some cases, it is more convenient to assume the completion is enabled by defa
 
 ### 1.1 TVM is a stack machine
 
-First of all, $$T V M$$ is a stack machine. This means that, instead of keeping values in some "variables" or "general-purpose registers", they are kept in a (LIFO) stack, at least from the "low-level" (TVM) perspective $$!^{3}$$
+First of all, $$T V M$$ is a stack machine. This means that, instead of keeping values in some "variables" or "general-purpose registers", they are kept in a (LIFO) stack, at least from the "low-level" (TVM) perspective $$^{3}$$
 
 Most operations and user-defined functions take their arguments from the top of the stack, and replace them with their result. For example, the integer addition primitive (built-in operation) ADD does not take any arguments describing which registers or immediate values should be added together and where the result should be stored. Instead, the two top values are taken from the stack, they are added together, and their sum is pushed into the stack in their place.
 
-$${ }^{3}$$ A high-level smart-contract language might create a visibility of variables for the ease of programming; however, the high-level source code working with variables will be translated into TVM machine code keeping all the values of these variables in the TVM stack. 
+$${ }^{3}$$A high-level smart-contract language might create a visibility of variables for the ease of programming; however, the high-level source code working with variables will be translated into TVM machine code keeping all the values of these variables in the TVM stack. 
 
 ### 1.1.1. 
 
@@ -87,7 +87,7 @@ A preliminary list of value types supported by TVM is as follows:
 * Slice - A TVM cell slice, or slice for short, is a contiguous "sub-cell" of an existing cell, containing some of its bits of data and some of its references. Essentially, a slice is a read-only view for a subcell of a cell. Slices are used for unpacking data previously stored (or serialized) in a cell or a tree of cells.
 * Builder - A TVM cell builder, or builder for short, is an "incomplete" cell that supports fast operations of appending bitstrings and cell references at its end. Builders are used for packing (or serializing) data from the top of the stack into new cells (e.g., before transferring them to persistent storage). - Continuation - Represents an "execution token" for TVM, which may be invoked (executed) later. As such, it generalizes function addresses (i.e., function pointers and references), subroutine return addresses, instruction pointer addresses, exception handler addresses, closures, partial applications, anonymous functions, and so on.
 
-This list of value types is incomplete and may be extended in future revisions of TVM without breaking the old TVM code, due mostly to the fact that all originally defined primitives accept only values of types known to them and will fail (generate a type-checking exception) if invoked on values of new types. Furthermore, existing value types themselves can also be extended in the future: for example, 257-bit Integer might become 513-bit LongInteger, with originally defined arithmetic primitives failing if either of the arguments or the result does not fit into the original subtype Integer. Backward compatibility with respect to the introduction of new value types and extension of existing value types will be discussed in more detail later (cf. [5.1.4](codepages-and-instruction-encoding.md/#514-changing-the-behavior-of-old-operations)).
+This list of value types is incomplete and may be extended in future revisions of TVM without breaking the old TVM code, due mostly to the fact that all originally defined primitives accept only values of types known to them and will fail (generate a type-checking exception) if invoked on values of new types. Furthermore, existing value types themselves can also be extended in the future: for example, 257-bit Integer might become 513-bit LongInteger, with originally defined arithmetic primitives failing if either of the arguments or the result does not fit into the original subtype Integer. Backward compatibility with respect to the introduction of new value types and extension of existing value types will be discussed in more detail later (cf. [5.1.4](codepages-and-instruction-encoding.md/#5.1.4.-changing-the-behavior-of-old-operations.)).
 
 ### 1.2 Categories of TVM instructions
 
