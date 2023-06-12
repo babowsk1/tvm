@@ -8,7 +8,12 @@ This section presents a classification and general descriptions of cell types.
 
 ### 3.1.1. TVM memory and persistent storage consist of cells.
 
-Recall that the TVM memory and persistent storage consist of (TVM) cells. Each cell contains up to 1023 bits of data and up to four references to other cells $${ }^{11}$$ Circular references are forbidden and cannot be created by means of TVM (cf. 2.3.5). In this way, all cells kept in TVM memory and persistent storage constitute a directed acyclic graph (DAG).
+Recall that the TVM memory and persistent storage consist of (TVM) cells. Each cell contains up to 1023 bits of data and up to four references to other cells.$${ }^{11}$$      
+Circular references are forbidden and cannot be created by means of TVM (cf. [2.3.5](stacks.md#2.3.5.-absence-of-circular-references.)). In this way, all cells kept in TVM memory and persistent storage constitute a directed acyclic graph (DAG).
+
+{% hint style="info" %}
+$${ }^{11}$$ From the perspective of low-level cell operations, these data bits and cell references are not intermixed. In other words, an (ordinary) cell essentially is a couple consisting of a list of up to 1023 bits and of a list of up to four cell references, without prescribing an order in which the references and the data bits should be deserialized, even though TL-B schemes appear to suggest such an order. 
+{% endhint %}
 
 ### 3.1.2. Ordinary and exotic cells.
 
@@ -22,7 +27,7 @@ The type of an exotic cell is stored as the first eight bits of its data. If an 
 
 Every cell $$c$$ has another attribute LVL $$(c)$$ called its (de Brujn) level, which currently takes integer values in the range $$0 \ldots 3$$.
 
-$${ }^{11}$$ From the perspective of low-level cell operations, these data bits and cell references are not intermixed. In other words, an (ordinary) cell essentially is a couple consisting of a list of up to 1023 bits and of a list of up to four cell references, without prescribing an order in which the references and the data bits should be deserialized, even though TL-B schemes appear to suggest such an order. The level of an ordinary cell is always equal to the maximum of the levels of all its children $$c_{i}$$ :
+The level of an ordinary cell is always equal to the maximum of the levels of all its children $$c_{i}$$ :
 
 $$
 \operatorname{LVL}(c)=\max _{1 \leq i \leq r} \operatorname{LVL}\left(c_{i}\right)
@@ -50,7 +55,7 @@ $$
 \operatorname{HASH}(c):=\operatorname{SHA} 256(\operatorname{CELlREPR}(c))
 $$
 
-Notice that cyclic cell references are not allowed and cannot be created by means of the TVM (cf. [2.3.5](stacks/#2.3.5.-absence-of-circular-references.)), so this recursion always ends, and the representation hash of any cell is well-defined.
+Notice that cyclic cell references are not allowed and cannot be created by means of the TVM (cf. [2.3.5](stacks.md#2.3.5.-absence-of-circular-references.)), so this recursion always ends, and the representation hash of any cell is well-defined.
 
 ### 3.1.6. The higher hashes of a cell.
 
@@ -69,7 +74,7 @@ $$
 \operatorname{LVL}(c)=\max \left(\operatorname{LVL}\left(c_{1}\right)-1,0\right)
 $$
 
-$${ }^{12}$$ From a theoretical perspective, we might say that a cell $$c$$ has an infinite sequence of hashes $$\left(\mathrm{HASH}_{i}(c)\right)_{i \geq 1}$$, which eventually stabilizes: $$\mathrm{HASH}_{i}(c) \rightarrow \mathrm{HASH}_{\infty}(c)$$. Then the level $$l$$ is simply the largest index $$i$$, such that $$\operatorname{HASH}_{i}(c) \neq \mathrm{HASH}_{\infty}(c)$$. The $$8+256$$ data bits of a Merkle proof cell contain its 8-bit type integer 3 , followed by $$\mathrm{HASH}_{1}\left(c_{1}\right)$$ (assumed to be equal to $$\operatorname{HASH}\left(c_{1}\right)$$ if $$\left.\operatorname{LVL}\left(c_{1}\right)=0\right)$$. The higher hashes $$\mathrm{HASH}_{i}(c)$$ of $$c$$ are computed similarly to the higher hashes of an ordinary cell, but with $$\mathrm{HASH}_{i+1}\left(c_{1}\right)$$ used instead of $$\mathrm{HASH}_{i}\left(c_{1}\right)$$. When loaded, a Merkle proof cell is replaced by $$c_{1}$$.
+The $$8+256$$ data bits of a Merkle proof cell contain its 8-bit type integer 3 , followed by $$\mathrm{HASH}_{1}\left(c_{1}\right)$$ (assumed to be equal to $$\operatorname{HASH}\left(c_{1}\right)$$ if $$\left.\operatorname{LVL}\left(c_{1}\right)=0\right)$$. The higher hashes $$\mathrm{HASH}_{i}(c)$$ of $$c$$ are computed similarly to the higher hashes of an ordinary cell, but with $$\mathrm{HASH}_{i+1}\left(c_{1}\right)$$ used instead of $$\mathrm{HASH}_{i}\left(c_{1}\right)$$. When loaded, a Merkle proof cell is replaced by $$c_{1}$$.
 
 * Type 4: Merkle update cell c-Has two children $$c_{1}$$ and $$c_{2}$$. Its level $$0 \leq l \leq 3$$ is given by
 
@@ -77,23 +82,30 @@ $$
 \operatorname{LVL}(c)=\max \left(\operatorname{LVL}\left(c_{1}\right)-1, \operatorname{LVL}\left(c_{2}\right)-1,0\right)
 $$
 
-A Merkle update behaves like a Merkle proof for both $$c_{1}$$ and $$c_{2}$$, and contains $$8+256+256$$ data bits with $$\mathrm{HASH}_{1}\left(c_{1}\right)$$ and $$\mathrm{HASH}_{1}\left(c_{2}\right)$$. However, an extra requirement is that all pruned branch cells $$c^{\prime}$$ that are descendants of $$c_{2}$$ and are bound by $$c$$ must also be descendants of $$c_{1} \underline{1}^{13}$$ When a Merkle update cell is loaded, it is replaced by $$c_{2}$$.
+A Merkle update behaves like a Merkle proof for both $$c_{1}$$ and $$c_{2}$$, and contains $$8+256+256$$ data bits with $$\mathrm{HASH}_{1}\left(c_{1}\right)$$ and $$\mathrm{HASH}_{1}\left(c_{2}\right)$$. However, an extra requirement is that all pruned branch cells $$c^{\prime}$$ that are descendants of $$c_{2}$$ and are bound by $$c$$ must also be descendants of $$c_{1.} \underline^{13}$$       
+When a Merkle update cell is loaded, it is replaced by $$c_{2}$$.
+
+{% hint style="info" %}
+$${ }^{12}$$ From a theoretical perspective, we might say that a cell $$c$$ has an infinite sequence of hashes $$\left(\mathrm{HASH}_{i}(c)\right)_{i \geq 1}$$, which eventually stabilizes: $$\mathrm{HASH}_{i}(c) \rightarrow \mathrm{HASH}_{\infty}(c)$$. Then the level $$l$$ is simply the largest index $$i$$, such that $$\operatorname{HASH}_{i}(c) \neq \mathrm{HASH}_{\infty}(c)$$.
+{% endhint %}
+
+{% hint style="info" %}
+$${ }^{13} \mathrm{~A}$$ pruned branch cell $$c^{\prime}$$ of level $$l$$ is bound by a Merkle (proof or update) cell $$c$$ if there are exactly $$l$$ Merkle cells on the path from $$c$$ to its descendant $$c^{\prime}$$, including $$c$$.
+{% endhint %}
 
 ### 3.1.8. All values of algebraic data types are trees of cells.
 
-Arbitrary values of arbitrary algebraic data types (e.g., all types used in functional programming languages) can be serialized into trees of cells (of level 0), and such representations are used for representing such values within TVM. The copy-on-write mechanism (cf. [2.3.2](stacks/#2.3.2.-efficient-implementation-of-dup-and-push-instructions-using-copy-on-write.)) allows TVM to identify cells containing the same data and references, and to keep only one copy of such cells. This actually transforms a tree of cells into a directed acyclic graph (with the additional property that all its vertices be accessible from a marked vertex called the "root"). However, this is a storage optimization rather than an essential property of TVM. From the perspective of a TVM code programmer, one should think of TVM data structures as trees of cells.
+Arbitrary values of arbitrary algebraic data types (e.g., all types used in functional programming languages) can be serialized into trees of cells (of level 0), and such representations are used for representing such values within TVM. The copy-on-write mechanism (cf. [2.3.2](stacks.md/2.3.2.-efficient-implementation-of-dup-and-push-instructions-using-copy-on-write.)) allows TVM to identify cells containing the same data and references, and to keep only one copy of such cells. This actually transforms a tree of cells into a directed acyclic graph (with the additional property that all its vertices be accessible from a marked vertex called the "root"). However, this is a storage optimization rather than an essential property of TVM. From the perspective of a TVM code programmer, one should think of TVM data structures as trees of cells.
 
 ### 3.1.9. TVM code is a tree of cells.
 
 The TVM code itself is also represented by a tree of cells. Indeed, TVM code is simply a value of some complex algebraic data type, and as such, it can be serialized into a tree of cells.
 
-The exact way in which the TVM code (e.g., TVM assembly code) is transformed into a tree of cells is explained later (cf. [4.1.4](control-flow-continuations-and-exceptions/#4.1.4.-normal-work-of-tvm-or-the-main-loop.) and [5.2](codepages-and-instruction-encoding/#instruction-encoding)), in sections discussing control flow instructions, continuations, and TVM instruction encoding.
-
-$${ }^{13} \mathrm{~A}$$ pruned branch cell $$c^{\prime}$$ of level $$l$$ is bound by a Merkle (proof or update) cell $$c$$ if there are exactly $$l$$ Merkle cells on the path from $$c$$ to its descendant $$c^{\prime}$$, including $$c$$.
+The exact way in which the TVM code (e.g., TVM assembly code) is transformed into a tree of cells is explained later (cf. [4.1.4](control-flow-continuations-and-exceptions.md/#4.1.4.-normal-work-of-tvm-or-the-main-loop.) and [5.2](codepages-and-instruction-encoding.md/#instruction-encoding)), in sections discussing control flow instructions, continuations, and TVM instruction encoding.
 
 ### 3.1.10. "Everything is a bag of cells" paradigm.
 
-All the data used by the TVM Blockchain, including the blocks themselves and the blockchain state, can be represented - and are represented - as collections, or "bags", of cells. We see that TVM's structure of data (cf. [3.1.8](cells-memory-and-persistent-storage/#3.1.8.-all-values-of-algebraic-data-types-are-trees-of-cells.)) and code (cf. [3.1.9](cells-memory-and-persistent-storage/#3.1.9.-tvm-code-is-a-tree-of-cells.)) nicely fits into this "everything is a bag of cells" paradigm. In this way, TVM can naturally be used to execute smart contracts in the TVM Blockchain, and the TVM Blockchain can be used to store the code and persistent data of these smart contracts between invocations of TVM. (Of course, both TVM and the TVM Blockchain have been designed so that this would become possible.)
+All the data used by the TVM Blockchain, including the blocks themselves and the blockchain state, can be represented - and are represented - as collections, or "bags", of cells. We see that TVM's structure of data (cf. [3.1.8](cells-memory-and-persistent-storage.md/#3.1.8.-all-values-of-algebraic-data-types-are-trees-of-cells.)) and code (cf. [3.1.9](cells-memory-and-persistent-storage.md/#3.1.9.-tvm-code-is-a-tree-of-cells.)) nicely fits into this "everything is a bag of cells" paradigm. In this way, TVM can naturally be used to execute smart contracts in the TVM Blockchain, and the TVM Blockchain can be used to store the code and persistent data of these smart contracts between invocations of TVM. (Of course, both TVM and the TVM Blockchain have been designed so that this would become possible.)
 
 ## Data manipulation instructions and cells
 
@@ -106,7 +118,7 @@ The TVM cell instructions are naturally subdivided into two principal classes:
 * Cell creation instructions or serialization instructions, used to construct new cells from values previously kept in the stack and previously constructed cells.
 * Cell parsing instructions or deserialization instructions, used to extract data previously stored into cells by cell creation instructions.
 
-Additionally, there are exotic cell instructions used to create and inspect exotic cells (cf. [3.1.2](cells-memory-and-persistent-storage/#3.1.2.-ordinary-and-exotic-cells.)), which in particular are used to represent pruned branches of Merkle proofs and Merkle proofs themselves.
+Additionally, there are exotic cell instructions used to create and inspect exotic cells (cf. [3.1.2](cells-memory-and-persistent-storage.md/#3.1.2.-ordinary-and-exotic-cells.)), which in particular are used to represent pruned branches of Merkle proofs and Merkle proofs themselves.
 
 ### 3.2.2. Builder and Slice values.
 
@@ -136,7 +148,7 @@ The mnemonics of cell serialization primitives usually begin with ST. Subsequent
 * The source of the field width in bits to be used (e.g., X for integer serialization instructions means that the bit width $$n$$ is supplied in the stack; otherwise it has to be embedded into the instruction as an immediate value).
 * The action to be performed if the operation cannot be completed (by default, an exception is generated; "quiet" versions of serialization instructions are marked by a $$Q$$ letter in their mnemonics).
 
-This classification scheme is used to create a more complete taxonomy of cell serialization primitives, which can be found in $$\mathbf{A . 7 . 1}$$
+This classification scheme is used to create a more complete taxonomy of cell serialization primitives, which can be found in [$$\mathbf{A.7.1}$$](a-instructions-and-opcodes.md/#a.7.1.-cell-serialization-primitives.).
 
 ### 3.2.7. Integer serialization primitives.
 
@@ -146,7 +158,7 @@ Integer serialization primitives can be classified according to the above taxono
 * The size $$n$$ of the bit field to be used ( $$1 \leq n \leq 257$$ for signed integers, $$0 \leq n \leq 256$$ for unsigned integers) can either come from the top of stack or be embedded into the instruction itself.
 * If the integer $$x$$ to be serialized is not in the range $$-2^{n-1} \leq x<2^{n-1}$$ (for signed integer serialization) or $$0 \leq x<2^{n}$$ (for unsigned integer serialization), a range check exception is usually generated, and if $$n$$ bits cannot be stored into the provided Builder, a cell overflow exception is generated. - Quiet versions of serialization instructions do not throw exceptions; instead, they push -1 on top of the resulting Builder upon success, or return the original Builder with 0 on top of it to indicate failure.
 
-Integer serialization instructions have mnemonics like STU 20 ("store an unsigned 20-bit integer value") or STIXQ ("quietly store an integer value of variable length provided in the stack"). The full list of these instructionsincluding their mnemonics, descriptions, and opcodes - is provided in $$\mathbf{A . 7 . 1}$$
+Integer serialization instructions have mnemonics like STU 20 ("store an unsigned 20-bit integer value") or STIXQ ("quietly store an integer value of variable length provided in the stack"). The full list of these instructionsincluding their mnemonics, descriptions, and opcodes - is provided in [$$\mathbf{A.7.1}$$](a-instructions-and-opcodes.md/#a.7.1.-cell-serialization-primitives.).
 
 ### 3.2.8. Integers in cells are big-endian by default.
 
