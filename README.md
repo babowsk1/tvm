@@ -64,9 +64,9 @@ Most operations and user-defined functions take their arguments from the top of 
 
 $${ }^{3}$$A high-level smart-contract language might create a visibility of variables for the ease of programming; however, the high-level source code working with variables will be translated into TVM machine code keeping all the values of these variables in the TVM stack. 
 
-### 1.1.1. 
+### 1.1.1 TVM values.
 
-TVM values. The entities that can be stored in the TVM stack will be called TVM values, or simply values for brevity. They belong to one of several predefined value types. Each value belongs to exactly one value type. The values are always kept on the stack along with tags uniquely determining their types, and all built-in TVM operations (or primitives) only accept values of predefined types.
+The entities that can be stored in the TVM stack will be called TVM values, or simply values for brevity. They belong to one of several predefined value types. Each value belongs to exactly one value type. The values are always kept on the stack along with tags uniquely determining their types, and all built-in TVM operations (or primitives) only accept values of predefined types.
 
 For example, the integer addition primitive ADD accepts only two integer values, and returns one integer value as a result. One cannot supply ADD with two strings instead of two integers expecting it to concatenate these strings or to implicitly transform the strings into their decimal integer values; any attempt to do so will result in a run-time type-checking exception.
 
@@ -80,8 +80,8 @@ One should bear in mind that one always can implement compilers from statically 
 
 A preliminary list of value types supported by TVM is as follows:
 
-* Integer - Signed 257-bit integers, representing integer numbers in the range $$-2^{256} \ldots 2^{256}-1$$, as well as a special "not-a-number" value $$N a N$$.
-* Cell - A TVM cell consists of at most 1023 bits of data, and of at most four references to other cells. All persistent data (including TVM code) in the TVM Blockchain is represented as a collection of TVM cells (cf. \[1, 2.5.14]).
+* *Integer* - Signed 257-bit integers, representing integer numbers in the range $$-2^{256} \ldots 2^{256}-1$$, as well as a special "not-a-number" value $$N a N$$.
+* Cell - A TVM cell consists of at most 1023 bits of data, and of at most four references to other cells. All persistent data (including TVM code) in the TVM Blockchain is represented as a collection of TVM cells.
 * Tuple - An ordered collection of up to 255 components, having arbitrary value types, possibly distinct. May be used to represent nonpersistent values of arbitrary algebraic data types.
 * Null - A type with exactly one value $$\perp$$, used for representing empty lists, empty branches of binary trees, absence of return value in some situations, and so on.
 * Slice - A TVM cell slice, or slice for short, is a contiguous "sub-cell" of an existing cell, containing some of its bits of data and some of its references. Essentially, a slice is a read-only view for a subcell of a cell. Slices are used for unpacking data previously stored (or serialized) in a cell or a tree of cells.
@@ -91,7 +91,7 @@ This list of value types is incomplete and may be extended in future revisions o
 
 ### 1.2 Categories of TVM instructions
 
-TVM instructions, also called primitives and sometimes (built-in) operations, are the smallest operations atomically performed by TVM that can be present in the TVM code. They fall into several categories, depending on the types of values (cf. 1.1.3) they work on. The most important of these categories are:
+TVM instructions, also called primitives and sometimes (built-in) operations, are the smallest operations atomically performed by TVM that can be present in the TVM code. They fall into several categories, depending on the types of values (cf. [1.1.3](#1.1.3.-preliminary-list-of-value-types.)) they work on. The most important of these categories are:
 
 * Stack (manipulation) primitives - Rearrange data in the TVM stack, so that the other primitives and user-defined functions can later be called with correct arguments. Unlike most other primitives, they are polymorphic, i.e., work with values of arbitrary types.
 * Tuple (manipulation) primitives - Construct, modify, and decompose Tuples. Similarly to the stack primitives, they are polymorphic.
@@ -129,7 +129,7 @@ $${ }^{4}$$ In the TVM Blockchain context, c7 is initialized with a singleton Tu
 
 The total state of TVM consists of the following components:
 
-* Stack (cf. 1.1) - Contains zero or more values (cf. 1.1.1), each belonging to one of value types listed in 1.1.3
+* Stack (cf. [1.1](#1.1-tvm-is-a-stack-machine)) - Contains zero or more values (cf. [1.1.1](#1.1.1-tvm-values.)), each belonging to one of value types listed in 1.1.3
 * Control registers c0-c15 - Contain some specific values as described in 1.3.2. (Only seven control registers are used in the current version.)
 * Current continuation cc - Contains the current continuation (i.e., the code that would be normally executed after the current primitive is completed). This component is similar to the instruction pointer register (ip) in other architectures.
 * Current codepage cp-A special signed 16-bit integer value that selects the way the next TVM opcode will be decoded. For example, future versions of TVM might use different codepages to add new opcodes while preserving backward compatibility.
@@ -137,7 +137,7 @@ The total state of TVM consists of the following components:
 
 Notice that there is no "return stack" containing the return addresses of all previously called but unfinished functions. Instead, only control register c0 is used. The reason for this will be explained later in 4.1.9.
 
-Also notice that there are no general-purpose registers, because TVM is a stack machine (cf. 1.1). So the above list, which can be summarized as "stack, control, continuation, codepage, and gas" (SCCCG), similarly to the classical SECD machine state ("stack, environment, control, dump"), is indeed the total state of TVM 5
+Also notice that there are no general-purpose registers, because TVM is a stack machine (cf. [1.1](#1.1-tvm-is-a-stack-machine)). So the above list, which can be summarized as "stack, control, continuation, codepage, and gas" (SCCCG), similarly to the classical SECD machine state ("stack, environment, control, dump"), is indeed the total state of TVM 5
 
 $${ }^{5}$$ Strictly speaking, there is also the current library context, which consists of a dictionary with 256-bit keys and cell values, used to load library reference cells of 3.1.7.
 
@@ -165,7 +165,7 @@ TVM also has a primitive MODPOW $$2 n$$, which reduces the integer at the top of
 
 ### 1.5.5. Integer is 257-bit, not 256-bit. 
 
-One can understand now why TVM's Integer is (signed) 257-bit, not 256-bit. The reason is that it is the smallest integer type containing both signed 256-bit integers and unsigned 256-bit integers, which does not require automatic reinterpreting of the same 256-bit string depending on the operation used (cf. $$\mathbf{1 . 5 . 1}$$ ).
+One can understand now why TVM's Integer is (signed) 257-bit, not 256-bit. The reason is that it is the smallest integer type containing both signed 256-bit integers and unsigned 256-bit integers, which does not require automatic reinterpreting of the same 256-bit string depending on the operation used (cf. [1.5.1](#1.5.1.-absence-of-automatic-conversion-of-integers.)).
 
 ### 1.5.6. Division and rounding. 
 
