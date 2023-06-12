@@ -9,7 +9,7 @@ This section presents a classification and general descriptions of cell types.
 ### 3.1.1. TVM memory and persistent storage consist of cells.
 
 Recall that the TVM memory and persistent storage consist of (TVM) cells. Each cell contains up to 1023 bits of data and up to four references to other cells.$${ }^{11}$$      
-Circular references are forbidden and cannot be created by means of TVM (cf. [2.3.5](stacks.md#2.3.5.-absence-of-circular-references.)). In this way, all cells kept in TVM memory and persistent storage constitute a directed acyclic graph (DAG).
+Circular references are forbidden and cannot be created by means of TVM (cf. [$$\mathbf{2.3.5}$$](stacks.md/#2.3.5.-absence-of-circular-references.)). In this way, all cells kept in TVM memory and persistent storage constitute a directed acyclic graph (DAG).
 
 {% hint style="info" %}
 $${ }^{11}$$ From the perspective of low-level cell operations, these data bits and cell references are not intermixed. In other words, an (ordinary) cell essentially is a couple consisting of a list of up to 1023 bits and of a list of up to four cell references, without prescribing an order in which the references and the data bits should be deserialized, even though TL-B schemes appear to suggest such an order. 
@@ -55,7 +55,7 @@ $$
 \operatorname{HASH}(c):=\operatorname{SHA} 256(\operatorname{CELlREPR}(c))
 $$
 
-Notice that cyclic cell references are not allowed and cannot be created by means of the TVM (cf. [2.3.5](stacks.md#2.3.5.-absence-of-circular-references.)), so this recursion always ends, and the representation hash of any cell is well-defined.
+Notice that cyclic cell references are not allowed and cannot be created by means of the TVM (cf. [2.3.5](stacks.md/#2.3.5.-absence-of-circular-references.)), so this recursion always ends, and the representation hash of any cell is well-defined.
 
 ### 3.1.6. The higher hashes of a cell.
 
@@ -95,7 +95,7 @@ $${ }^{13} \mathrm{~A}$$ pruned branch cell $$c^{\prime}$$ of level $$l$$ is bou
 
 ### 3.1.8. All values of algebraic data types are trees of cells.
 
-Arbitrary values of arbitrary algebraic data types (e.g., all types used in functional programming languages) can be serialized into trees of cells (of level 0), and such representations are used for representing such values within TVM. The copy-on-write mechanism (cf. [2.3.2](stacks.md/2.3.2.-efficient-implementation-of-dup-and-push-instructions-using-copy-on-write.)) allows TVM to identify cells containing the same data and references, and to keep only one copy of such cells. This actually transforms a tree of cells into a directed acyclic graph (with the additional property that all its vertices be accessible from a marked vertex called the "root"). However, this is a storage optimization rather than an essential property of TVM. From the perspective of a TVM code programmer, one should think of TVM data structures as trees of cells.
+Arbitrary values of arbitrary algebraic data types (e.g., all types used in functional programming languages) can be serialized into trees of cells (of level 0), and such representations are used for representing such values within TVM. The copy-on-write mechanism (cf. [2.3.2](stacks.md/#2.3.2.-efficient-implementation-of-dup-and-push-instructions-using-copy-on-write.)) allows TVM to identify cells containing the same data and references, and to keep only one copy of such cells. This actually transforms a tree of cells into a directed acyclic graph (with the additional property that all its vertices be accessible from a marked vertex called the "root"). However, this is a storage optimization rather than an essential property of TVM. From the perspective of a TVM code programmer, one should think of TVM data structures as trees of cells.
 
 ### 3.1.9. TVM code is a tree of cells.
 
@@ -178,7 +178,7 @@ $${ }^{14}$$Negative numbers are represented using two's complement. For instanc
 
 ### 3.2.11. Taxonomy of cell deserialisation primitives.
 
-Cell parsing, or deserialization, primitives can be classified as described in [$$\mathbf{3.2.6}$$](#326-taxonomy-of-cell-creation-serialization-primitives.), with the following modifications:
+Cell parsing, or deserialization, primitives can be classified as described in [$$\mathbf{3.2.6}$$](#3.2.6.-taxonomy-of-cell-creation-serialization-primitives.), with the following modifications:
 
 * They work with Slices (representing the remainder of the cell being parsed) instead of Builders.
 * They return deserialized values instead of accepting them as arguments.
@@ -187,7 +187,7 @@ Cell parsing, or deserialization, primitives can be classified as described in [
 
 For example, an unsigned big-endian 20-bit integer previously serialized into a cell by a STU 20 instruction is likely to be deserialized later by a matching LDU 20 instruction.
 
-Again, more detailed information about these instructions is provided in $$\mathbf{A . 7 . 2}$$.
+Again, more detailed information about these instructions is provided in [$$\mathbf{A.7.2}$$](a-instructions-and-opcodes.md/#a.7.2.-cell-deserialization-primitives.).
 
 ### 3.2.12. Other cell slice primitives.
 
@@ -197,7 +197,7 @@ In addition to the cell deserialisation primitives outlined above, TVM provides 
 
 The reader might wonder how the values serialized inside a cell may be modified. Suppose a cell contains three serialized 29-bit integers, $$(x, y, z)$$, representing the coordinates of a point in space, and we want to replace $$y$$ with $$y^{\prime}=y+1$$, leaving the other coordinates intact. How would we achieve this?
 
-TVM does not offer any ways to modify existing values (cf. 2.3.4 and 2.3.5, so our example can only be accomplished with a series of operations as follows:
+TVM does not offer any ways to modify existing values (cf. [$$\mathbf{2.3.4}$$](stacks.md/#2.3.4.-transparency-of-the-implementation-stack-values-are-values-not-references-.) and [$$\mathbf{2.3.5}$$](stacks.md/#2.3.5.-absence-of-circular-references.), so our example can only be accomplished with a series of operations as follows:
 
 1. Deserialize the original cell into three Integers $$x, y, z$$ in the stack (e.g., by CTOS; LDI 29; LDI 29; LDI 29; ENDS). 2. Increase $$y$$ by one (e.g., by SWAP; INC; SWAP).
 2. Finally, serialize the resulting Integers into a new cell (e.g., by XCHG s2; NEWC; STI 29; STI 29; STI 29; ENDC).
