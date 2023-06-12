@@ -8,9 +8,9 @@ We conclude this chapter with a discussion of the problem of recursion and of fa
 
 Recall (cf 1.1.3) that Continuation values represent "execution tokens" that can be executed later-for example, by EXECUTE=CALLX ("execute" or "call indirect") or JMPX ("jump indirect") primitives. As such, the continuations are responsible for the execution of the program, and are heavily used by control flow primitives, enabling subroutine calls, conditional expressions, loops, and so on.
 
-### 4.1.1. 
+### 4.1.1. Ordinary continuations. 
 
-Ordinary continuations. The most common kind of continuations are the ordinary continuations, containing the following data:
+The most common kind of continuations are the ordinary continuations, containing the following data:
 
 - A Slice code (cf. $$\mathbf{1 . 1 . 3}$$ and 3.2.2 , containing (the remainder of) the TVM code to be executed.
 - A (possibly empty) Stack stack, containing the original contents of the stack for the code to be executed.
@@ -18,21 +18,21 @@ Ordinary continuations. The most common kind of continuations are the ordinary c
 - A 16-bit integer value cp, selecting the TVM codepage used to interpret the TVM code from code.
 - An optional non-negative integer nargs, indicating the number of arguments expected by the continuation. 4.1.2. Simple ordinary continuations. In most cases, the ordinary continuations are the simplest ones, having empty stack and save. They consist essentially of a reference code to (the remainder of) the code to be executed, and of the codepage $$c$$ to be used while decoding the instructions from this code.
 
-### 4.1.3. 
+### 4.1.3. Current continuation cc. 
 
-Current continuation cc. The "current continuation" cc is an important part of the total state of TVM, representing the code being executed right now (cf. 1.1). In particular, what we call "the current stack" (or simply "the stack") when discussing all other primitives is in fact the stack of the current continuation. All other components of the total state of TVM may be also thought of as parts of the current continuation cc; however, they may be extracted from the current continuation and kept separately as part of the total state for performance reasons. This is why we describe the stack, the control registers, and the codepage as separate parts of the TVM state in 1.4
+The "current continuation" cc is an important part of the total state of TVM, representing the code being executed right now (cf. 1.1). In particular, what we call "the current stack" (or simply "the stack") when discussing all other primitives is in fact the stack of the current continuation. All other components of the total state of TVM may be also thought of as parts of the current continuation cc; however, they may be extracted from the current continuation and kept separately as part of the total state for performance reasons. This is why we describe the stack, the control registers, and the codepage as separate parts of the TVM state in 1.4
 
-### 4.1.4. 
+### 4.1.4. Normal work of TVM, or the main loop. 
 
-Normal work of TVM, or the main loop. TVM usually performs the following operations:
+TVM usually performs the following operations:
 
 If the current continuation cc is an ordinary one, it decodes the first instruction from the Slice code, similarly to the way other cells are deserialized by TVM LD* primitives (cf. 3.2 and 3.2.11): it decodes the opcode first, and then the parameters of the instruction (e.g., 4-bit fields indicating "stack registers" involved for stack manipulation primitives, or constant values for "push constant" or "literal" primitives). The remainder of the Slice is then put into the code of the new cc, and the decoded operation is executed on the current stack. This entire process is repeated until there are no operations left in cc. code.
 
 If the code is empty (i.e., contains no bits of data and no references), or if a (rarely needed) explicit subroutine return (RET) instruction is encountered, the current continuation is discarded, and the "return continuation" from control register c0 is loaded into cc instead (this process is discussed in more detail starting in 4.1.6.$${ }^{20}$$ Then the execution continues by parsing operations from the new current continuation.
 
-### 4.1.5. 
+### 4.1.5. Extraordinary continuations. 
 
-Extraordinary continuations. In addition to the ordinary continuations considered so far (cf. 4.1.1), TVM includes some extraordinary contin-
+In addition to the ordinary continuations considered so far (cf. 4.1.1), TVM includes some extraordinary contin-
 
 $${ }^{20}$$ If there are no bits of data left in code, but there is still exactly one reference, an implicit JMP to the cell at that reference is performed instead of an implicit RET. uations, representing certain less common states. Examples of extraordinary continuations include:
 
@@ -41,27 +41,25 @@ $${ }^{20}$$ If there are no bits of data left in code, but there is still exact
 
 Execution of an extraordinary continuation by TVM depends on its specific class, and differs from the operations for ordinary continuations described in 4.1.4
 
-### 4.1.6. 
+### 4.1.6. Switching to another continuation: JMP and RET. 
 
-Switching to another continuation: JMP and RET. The process of switching to another continuation $$c$$ may be performed by such instructions as JMPX (which takes $$c$$ from the stack) or RET (which uses c0 as $$c$$ ). This process is slightly more complex than simply setting the value of cc to $$c$$ : before doing this, either all values or the top $$n$$ values in the current stack are moved to the stack of the continuation $$c$$, and only then is the remainder of the current stack discarded.
+The process of switching to another continuation $$c$$ may be performed by such instructions as JMPX (which takes $$c$$ from the stack) or RET (which uses c0 as $$c$$ ). This process is slightly more complex than simply setting the value of cc to $$c$$ : before doing this, either all values or the top $$n$$ values in the current stack are moved to the stack of the continuation $$c$$, and only then is the remainder of the current stack discarded.
 
 If all values need to be moved (the most common case), and if the continuation $$c$$ has an empty stack (also the most common case; notice that extraordinary continuations are assumed to have an empty stack), then the new stack of $$c$$ equals the stack of the current continuation, so we can simply transfer the current stack in its entirety to $$c$$. (If we keep the current stack as a separate part of the total state of TVM, we have to do nothing at all.)
 
-### Determining the number $$n$$ of arguments passed to the next
-
- continuation $$c$$. By default, $$n$$ equals the depth of the current stack. However, if $$c$$ has an explicit value of nargs (number of arguments to be provided), then $$n$$ is computed as $$n^{\prime}$$, equal to $$c$$.nargs minus the current depth of $$c$$ 's stack.Furthermore, there are special forms of JMPX and RET that provide an explicit value $$n^{\prime \prime}$$, the number of parameters from the current stack to be passed to continuation $$c$$. If $$n^{\prime \prime}$$ is provided, it must be less than or equal to
+Determining the number $$n$$ of arguments passed to the next continuation $$c$$. By default, $$n$$ equals the depth of the current stack. However, if $$c$$ has an explicit value of nargs (number of arguments to be provided), then $$n$$ is computed as $$n^{\prime}$$, equal to $$c$$.nargs minus the current depth of $$c$$ 's stack.Furthermore, there are special forms of JMPX and RET that provide an explicit value $$n^{\prime \prime}$$, the number of parameters from the current stack to be passed to continuation $$c$$. If $$n^{\prime \prime}$$ is provided, it must be less than or equal to
 
 $${ }^{21}$$ Technically, TVM may simply invoke a virtual method run() of the continuation currently in cc. the depth of the current stack, or else a stack underflow exception occurs. If both $$n^{\prime}$$ and $$n^{\prime \prime}$$ are provided, we must have $$n^{\prime} \leq n^{\prime \prime}$$, in which case $$n=n^{\prime}$$ is used. If $$n^{\prime \prime}$$ is provided and $$n^{\prime}$$ is not, then $$n=n^{\prime \prime}$$ is used.
 
 One could also imagine that the default value of $$n^{\prime \prime}$$ equals the depth of the original stack, and that $$n^{\prime \prime}$$ values are always removed from the top of the original stack even if only $$n^{\prime}$$ of them are actually moved to the stack of the next continuation $$c$$. Even though the remainder of the current stack is discarded afterwards, this description will become useful later.
 
-### 4.1.8. 
+### 4.1.8. Restoring control registers from the new continuation $$c$$. 
 
-Restoring control registers from the new continuation $$c$$. After the new stack is computed, the values of control registers present in c.save are restored accordingly, and the current codepage $$\mathrm{cp}$$ is also set to c.cp. Only then does TVM set cc equal to the new $$c$$ and begin its execution. $${ }^{22}$$
+After the new stack is computed, the values of control registers present in c.save are restored accordingly, and the current codepage $$\mathrm{cp}$$ is also set to c.cp. Only then does TVM set cc equal to the new $$c$$ and begin its execution. $${ }^{22}$$
 
-### 4.1.9. 
+### 4.1.9. Subroutine calls: CALLX or EXECUTE primitives. 
 
-Subroutine calls: CALLX or EXECUTE primitives. The execution of continuations as subroutines is slightly more complicated than switching to continuations.
+The execution of continuations as subroutines is slightly more complicated than switching to continuations.
 
 Consider the CALLX or EXECUTE primitive, which takes a continuation $$c$$ from the (current) stack and executes it as a subroutine.
 
@@ -74,39 +72,39 @@ Apart from doing the stack manipulations described in $$\mathbf{4 . 1 . 6}$$ and
 
 $${ }^{22}$$ The already used savelist cc. save of the new cc is emptied before the execution starts. In this way, the called subroutine can return control to the caller by switching the current continuation to the return continuation saved in c0. Nested subroutine calls work correctly because the previous value of c0 ends up saved into the new c0's control register savelist c0. save, from which it is restored later.
 
-### 4.1.10. 
+### 4.1.10. Determining the number of arguments passed to and/or return values accepted from a subroutine. 
 
-Determining the number of arguments passed to and/or return values accepted from a subroutine. Similarly to JMPX and RET, CALLX also has special (rarely used) forms, which allow us to explicitly specify the number $$n^{\prime \prime}$$ of arguments passed from the current stack to the called subroutine (by default, $$n^{\prime \prime}$$ equals the depth of the current stack, i.e., it is passed in its entirety). Furthermore, a second number $$n^{\prime \prime \prime}$$ can be specified, used to set nargs of the modified cc continuation before storing it into the new c0; the new nargs equals the depth of the old stack minus $$n^{\prime \prime}$$ plus $$n^{\prime \prime \prime}$$. This means that the caller is willing to pass exactly $$n^{\prime \prime}$$ arguments to the called subroutine, and is willing to accept exactly $$n^{\prime \prime \prime}$$ results in their stead.
+Similarly to JMPX and RET, CALLX also has special (rarely used) forms, which allow us to explicitly specify the number $$n^{\prime \prime}$$ of arguments passed from the current stack to the called subroutine (by default, $$n^{\prime \prime}$$ equals the depth of the current stack, i.e., it is passed in its entirety). Furthermore, a second number $$n^{\prime \prime \prime}$$ can be specified, used to set nargs of the modified cc continuation before storing it into the new c0; the new nargs equals the depth of the old stack minus $$n^{\prime \prime}$$ plus $$n^{\prime \prime \prime}$$. This means that the caller is willing to pass exactly $$n^{\prime \prime}$$ arguments to the called subroutine, and is willing to accept exactly $$n^{\prime \prime \prime}$$ results in their stead.
 
 Such forms of CALLX and RET are mostly intended for library functions that accept functional arguments and want to invoke them safely. Another application is related to the "virtualization support" of TVM, which enables TVM code to run other TVM code inside a "virtual TVM machine". Such virtualization techniques might be useful for implementing sophisticated payment channels in the TVM Blockchain (cf. [1, 5]).
 
-### 4.1.11. 
+### 4.1.11. CALLCC: call with current continuation. Notice that TVM supports a form of the "call with current continuation" primitive. 
 
-CALLCC: call with current continuation. Notice that TVM supports a form of the "call with current continuation" primitive. Namely, primitive CALLCC is similar to CALLX or JMPX in that it takes a continuation $$c$$ from the stack and switches to it; however, CALLCC does not discard the previous current continuation $$c^{\prime}$$ (as JMPX does) and does not write $$c^{\prime}$$ to c0 (as CALLX does), but rather pushes $$c^{\prime}$$ into the (new) stack as an extra argument to $$c$$. The primitive JMPXDATA does a similar thing, but pushes only the (remainder of the) code of the previous current continuation as a Slice.
+Namely, primitive CALLCC is similar to CALLX or JMPX in that it takes a continuation $$c$$ from the stack and switches to it; however, CALLCC does not discard the previous current continuation $$c^{\prime}$$ (as JMPX does) and does not write $$c^{\prime}$$ to c0 (as CALLX does), but rather pushes $$c^{\prime}$$ into the (new) stack as an extra argument to $$c$$. The primitive JMPXDATA does a similar thing, but pushes only the (remainder of the) code of the previous current continuation as a Slice.
 
 ## Control flow primitives: conditional and iterated execution
 
-### 4.2.1. 
+### 4.2.1. Conditional execution: IF, IFNOT, IFELSE. 
 
-Conditional execution: IF, IFNOT, IFELSE. An important modification of EXECUTE (or CALLX) consists in its conditional forms. For example, IF accepts an integer $$x$$ and a continuation $$c$$, and executes $$c$$ (in the same way as EXECUTE would do it) only if $$x$$ is non-zero; otherwise both values are simply discarded from the stack. Similarly, IFNOT accepts $$x$$ and $$c$$, but executes $$c$$ only if $$x=0$$. Finally, IFELSE accepts $$x, c$$, and $$c^{\prime}$$, removes these values from the stack, and executes $$c$$ if $$x \neq 0$$ or $$c^{\prime}$$ if $$x=0$$.
+An important modification of EXECUTE (or CALLX) consists in its conditional forms. For example, IF accepts an integer $$x$$ and a continuation $$c$$, and executes $$c$$ (in the same way as EXECUTE would do it) only if $$x$$ is non-zero; otherwise both values are simply discarded from the stack. Similarly, IFNOT accepts $$x$$ and $$c$$, but executes $$c$$ only if $$x=0$$. Finally, IFELSE accepts $$x, c$$, and $$c^{\prime}$$, removes these values from the stack, and executes $$c$$ if $$x \neq 0$$ or $$c^{\prime}$$ if $$x=0$$.
 
-### 4.2.2. 
+### 4.2.2. Iterated execution and loops. 
 
-Iterated execution and loops. More sophisticated modifications of EXECUTE include:
+More sophisticated modifications of EXECUTE include:
 
 - REPEAT - Takes an integer $$n$$ and a continuation $$c$$, and executes $$c n$$ times, 23
 - WHILE - Takes $$c^{\prime}$$ and $$c^{\prime \prime}$$, executes $$c^{\prime}$$, and then takes the top value $$x$$ from the stack. If $$x$$ is non-zero, it executes $$c^{\prime \prime}$$ and then begins a new loop by executing $$c^{\prime}$$ again; if $$x$$ is zero, it stops.
 - UNTIL - Takes $$c$$, executes it, and then takes the top integer $$x$$ from the stack. If $$x$$ is zero, a new iteration begins; if $$x$$ is non-zero, the previously executed code is resumed.
 
-### 4.2.3. 
+### 4.2.3. Constant, or literal, continuations. 
 
-Constant, or literal, continuations. We see that we can create arbitrarily complex conditional expressions and loops in the TVM code, provided we have a means to push constant continuations into the stack. In fact, TVM includes special versions of "literal" or "constant" primitives that cut the next $$n$$ bytes or bits from the remainder of the current code cc.code into a cell slice, and then push it into the stack not as a Slice (as a PUSHSLICE does) but as a simple ordinary Continuation (which has only code and $$\mathrm{cp}$$ ).
+We see that we can create arbitrarily complex conditional expressions and loops in the TVM code, provided we have a means to push constant continuations into the stack. In fact, TVM includes special versions of "literal" or "constant" primitives that cut the next $$n$$ bytes or bits from the remainder of the current code cc.code into a cell slice, and then push it into the stack not as a Slice (as a PUSHSLICE does) but as a simple ordinary Continuation (which has only code and $$\mathrm{cp}$$ ).
 
 The simplest of these primitives is PUSHCONT, which has an immediate argument $$n$$ describing the number of subsequent bytes (in a byte-oriented version of TVM) or bits to be converted into a simple continuation. Another primitive is PUSHREFCONT, which removes the first cell reference from the current continuation cc.code, converts the cell referred to into a cell slice, and finally converts the cell slice into a simple continuation.
 
-### 4.2.4. 
+### 4.2.4. Constant continuations combined with conditional or iterated execution primitives. 
 
-Constant continuations combined with conditional or iterated execution primitives. Because constant continuations are very often used as arguments to conditional or iterated execution primitives, combined
+Because constant continuations are very often used as arguments to conditional or iterated execution primitives, combined
 
 $${ }^{23}$$ The implementation of REPEAT involves an extraordinary continuation that remembers the remaining number of iterations, the body of the loop $$c$$, and the return continuation $$c^{\prime}$$. (The latter term represents the remainder of the body of the function that invoked REPEAT, which would be normally stored in c0 of the new cc.) versions of these primitives (e.g., IFCONT or UNTILREFCONT) may be defined in a future revision of TVM, which combine a PUSHCONT or PUSHREFCONT with another primitive. If one inspects the resulting code, IFCONT looks very much like the more customary "conditional-branch-forward" instruction.
 
