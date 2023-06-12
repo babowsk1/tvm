@@ -172,11 +172,13 @@ Other cell creation primitives serialize bitstrings (i.e., cell slices without r
 
 In addition to the cell serialization primitives for certain built-in value types described above, there are simple primitives that create a new empty Builder and push it into the stack (NEWC), or transform a Builder into a Cell (ENDC), thus finishing the cell creation process. An ENDC can be combined with a STREF into a single instruction ENDCST, which finishes the creation of a cell and immediately stores a reference to it in an "outer" Builder. There are also primitives that obtain the quantity of data bits or references already stored in a Builder, and check how many data bits or references can be stored.
 
+{% hint style="info" %}
 $${ }^{14}$$Negative numbers are represented using two's complement. For instance, integer -17 is serialized by instruction STI 8 into bitstring $$\mathrm{xEF}$$.
+{% endhint %}
 
 ### 3.2.11. Taxonomy of cell deserialisation primitives.
 
-Cell parsing, or deserialization, primitives can be classified as described in 3.2.6, with the following modifications:
+Cell parsing, or deserialization, primitives can be classified as described in [$$3.2.6$$](#326-taxonomy-of-cell-creation-serialization-primitives), with the following modifications:
 
 * They work with Slices (representing the remainder of the cell being parsed) instead of Builders.
 * They return deserialized values instead of accepting them as arguments.
