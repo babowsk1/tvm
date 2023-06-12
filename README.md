@@ -20,9 +20,9 @@ The design of TVM is guided by these requirements. While this document describes
 
 TVM is not intended to be implemented in hardware (e.g., in a specialized microprocessor chip); rather, it should be implemented in software running on conventional hardware. This consideration lets us incorporate some highlevel concepts and operations in TVM that would require convoluted microcode in a hardware implementation but pose no significant problems for a software implementation. Such operations are useful for achieving high code density and minimizing the byte (or storage cell) profile of smart-contract code when deployed in the TVM Blockchain.
 
-$${ }^{1}$$ For example, there are no floating-point arithmetic operations (which could be efficiently implemented using hardware-supported double type on most modern CPUs) present in TVM, because the result of performing such operations is dependent on the specific underlying hardware implementation and rounding mode settings. Instead, TVM supports special integer arithmetic operations, which can be used to simulate fixed-point arithmetic if needed.
+$${ }^{1}$$For example, there are no floating-point arithmetic operations (which could be efficiently implemented using hardware-supported double type on most modern CPUs) present in TVM, because the result of performing such operations is dependent on the specific underlying hardware implementation and rounding mode settings. Instead, TVM supports special integer arithmetic operations, which can be used to simulate fixed-point arithmetic if needed.
 
-$${ }^{2}$$ The production version will likely require some tweaks and modifications prior to launch, which will become apparent only after using the experimental version in the test environment for some time.
+$${ }^{2}$$The production version will likely require some tweaks and modifications prior to launch, which will become apparent only after using the experimental version in the test environment for some time.
 
 ## Overview
 
@@ -116,30 +116,30 @@ The original version of TVM defines and uses the following control registers: - 
 
 * c1 - Contains the alternative (return) continuation; this value must be a Continuation. It is used in some (experimental) control flow primitives, allowing TVM to define and call "subroutines with two exit points".
 * c2 - Contains the exception handler. This value is a Continuation, invoked whenever an exception is triggered.
-* c3 - Contains the current dictionary, essentially a hashmap containing the code of all functions used in the program. For reasons explained later in $$\mathbf{4 . 6}$$, this value is also a Continuation, not a Cell as one might expect.
+* c3 - Contains the current dictionary, essentially a hashmap containing the code of all functions used in the program. For reasons explained later in [4.6](control-flow-continuations-and-exceptions#functions-recursion-and-dictionaries), this value is also a Continuation, not a Cell as one might expect.
 * c4 - Contains the root of persistent data, or simply the data. This value is a Cell. When the code of a smart contract is invoked, c4 points to the root cell of its persistent data kept in the blockchain state. If the smart contract needs to modify this data, it changes c4 before returning.
 * c5 - Contains the output actions. It is also a Cell initialized by a reference to an empty cell, but its final value is considered one of the smart contract outputs. For instance, the SENDMSG primitive, specific for the TVM Blockchain, simply inserts the message into a list stored in the output actions.
 * c7 - Contains the root of temporary data. It is a Tuple, initialized by a reference to an empty Tuple before invoking the smart contract and discarded after its termination $$\bigsqcup^{4}$$
 
 More control registers may be defined in the future for specific TVM Blockchain or high-level programming language purposes, if necessary.
 
-$${ }^{4}$$ In the TVM Blockchain context, c7 is initialized with a singleton Tuple, the only component of which is a Tuple containing blockchain-specific data. The smart contract is free to modify c7 to store its temporary data provided the first component of this Tuple remains intact.
+$${ }^{4}$$In the TVM Blockchain context, c7 is initialized with a singleton Tuple, the only component of which is a Tuple containing blockchain-specific data. The smart contract is free to modify c7 to store its temporary data provided the first component of this Tuple remains intact.
 
 ### Total state of TVM (SCCCG)
 
 The total state of TVM consists of the following components:
 
-* Stack (cf. [1.1](#1.1-tvm-is-a-stack-machine)) - Contains zero or more values (cf. [1.1.1](#1.1.1-tvm-values.)), each belonging to one of value types listed in 1.1.3
-* Control registers c0-c15 - Contain some specific values as described in 1.3.2. (Only seven control registers are used in the current version.)
+* Stack (cf. [1.1](#1.1-tvm-is-a-stack-machine)) - Contains zero or more values (cf. [1.1.1](#1.1.1-tvm-values.)), each belonging to one of value types listed in [1.1.3](#1.1.3.-preliminary-list-of-value-types.)
+* Control registers c0-c15 - Contain some specific values as described in [1.3.2.](#1.3.2.-list-of-control-registers.) (Only seven control registers are used in the current version.)
 * Current continuation cc - Contains the current continuation (i.e., the code that would be normally executed after the current primitive is completed). This component is similar to the instruction pointer register (ip) in other architectures.
 * Current codepage cp-A special signed 16-bit integer value that selects the way the next TVM opcode will be decoded. For example, future versions of TVM might use different codepages to add new opcodes while preserving backward compatibility.
 * Gas limits gas - Contains four signed 64-bit integers: the current gas limit $$g_{l}$$, the maximal gas limit $$g_{m}$$, the remaining gas $$g_{r}$$, and the gas credit $$g_{c}$$. Always $$0 \leq g_{l} \leq g_{m}, g_{c} \geq 0$$, and $$g_{r} \leq g_{l}+g_{c} ; g_{c}$$ is usually initialized by zero, $$g_{r}$$ is initialized by $$g_{l}+g_{c}$$ and gradually decreases as the TVM runs. When $$g_{r}$$ becomes negative or if the final value of $$g_{r}$$ is less than $$g_{c}$$, an out of gas exception is triggered.
 
-Notice that there is no "return stack" containing the return addresses of all previously called but unfinished functions. Instead, only control register c0 is used. The reason for this will be explained later in 4.1.9.
+Notice that there is no "return stack" containing the return addresses of all previously called but unfinished functions. Instead, only control register c0 is used. The reason for this will be explained later in [4.1.9](control-flow-continuations-and-exceptions#4.1.9.-subroutine-calls-callx-or-execute-primitives.).
 
 Also notice that there are no general-purpose registers, because TVM is a stack machine (cf. [1.1](#1.1-tvm-is-a-stack-machine)). So the above list, which can be summarized as "stack, control, continuation, codepage, and gas" (SCCCG), similarly to the classical SECD machine state ("stack, environment, control, dump"), is indeed the total state of TVM 5
 
-$${ }^{5}$$ Strictly speaking, there is also the current library context, which consists of a dictionary with 256-bit keys and cell values, used to load library reference cells of 3.1.7.
+$${ }^{5}$$Strictly speaking, there is also the current library context, which consists of a dictionary with 256-bit keys and cell values, used to load library reference cells of 3.1.7.
 
 ### Integer arithmetic
 
