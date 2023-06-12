@@ -54,7 +54,7 @@ In contrast, arithmetic instructions (built-in operations) on register machines 
 - Two-address form - Uses one of the two operand registers (usually $$r(i))$$ to store the result of an operation, so that $$k=i$$ is never indicated explicitly. Only $$i$$ and $$j$$ are encoded inside the instruction. This is the most common form of arithmetic operations on register machines, and is quite popular on microprocessors (including the x86 family).
 - One-address form - Always takes one of the arguments from the accumulator $$r 0$$, and stores the result in $$r 0$$ as well; then $$i=k=0$$, and only $$j$$ needs to be specified by the instruction. This form is used by some simpler microprocessors (such as Intel 8080).
 
-Note that this flexibility is available only for built-in operations, but not for user-defined functions. In this respect, register machines are not as easily "upgradable" as stack machines. 7
+Note that this flexibility is available only for built-in operations, but not for user-defined functions. In this respect, register machines are not as easily "upgradable" as stack machines.$${ }^{7}$$
 
 ### 2.1.8. Return values of functions. 
 
@@ -85,7 +85,7 @@ The stack notation is extensively used throughout Appendix $$\mathbf{A}$$, where
 
 ## Explicitly defining the number of arguments to a function.
 
- Stack machines usually pass the current stack in its entirety to the invoked primitive or function. That primitive or function accesses only the several values near the top of the stack that represent its arguments, and pushes the return values in their place, by convention leaving all deeper values intact. Then the resulting stack, again in its entirety, is returned to the caller.Most TVM primitives behave in this way, and we expect most user-defined functions to be implemented under such conventions. However, TVM provides mechanisms to specify how many arguments must be passed to a called function (cf. [4.1.10](control-flow-continuations-and-exceptions#4.1.10.-determining-the-number-of-arguments-passed-to-and-or-return-values-accepted-from-a-subroutin)). When these mechanisms are employed, the specified number of values are moved from the caller's stack into the (usually initially empty) stack of the called function, while deeper values remain in the caller's stack and are inaccessible to the callee. The caller can also specify how many return values it expects from the called function.
+ Stack machines usually pass the current stack in its entirety to the invoked primitive or function. That primitive or function accesses only the several values near the top of the stack that represent its arguments, and pushes the return values in their place, by convention leaving all deeper values intact. Then the resulting stack, again in its entirety, is returned to the caller.Most TVM primitives behave in this way, and we expect most user-defined functions to be implemented under such conventions. However, TVM provides mechanisms to specify how many arguments must be passed to a called function (cf. [4.1.10](control-flow-continuations-and-exceptions#4.1.10.-determining-the-number-of-arguments-passed-to-and-or-return-values-accepted-from-a-subroutine.)). When these mechanisms are employed, the specified number of values are moved from the caller's stack into the (usually initially empty) stack of the called function, while deeper values remain in the caller's stack and are inaccessible to the callee. The caller can also specify how many return values it expects from the called function.
 
 Such argument-checking mechanisms might be useful, for example, for a library function that calls user-provided functions passed as arguments to it.
 
@@ -180,7 +180,7 @@ Regardless of the implementation details just discussed, all stack values are re
 
 In other words, the programmer should always act as if the objects themselves were directly manipulated by stack, arithmetic, and other data transformation primitives, and treat the previous discussion only as an explanation of the high efficiency of the stack manipulation primitives.
 
-### 2.3.5. Absence of circular references. O
+### 2.3.5. Absence of circular references.
   
 One might attempt to create a circular reference between two cells, $$A$$ and $$B$$, as follows: first create $$A$$ and write some data into it; then create $$B$$ and write some data into it, along with a reference to previously constructed cell $$A$$; finally, add a reference to $$B$$ into $$A$$. While it may seem that after this sequence of operations we obtain a cell $$A$$, which refers to $$B$$, which in turn refers to $$A$$, this is not the case. In fact, we obtain a new cell $$A^{\prime}$$, which contains a copy of the data originally stored into cell $$A$$ along with a reference to cell $$B$$, which contains a reference to (the original) cell $$A$$.
 

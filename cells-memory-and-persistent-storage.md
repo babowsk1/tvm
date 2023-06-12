@@ -8,7 +8,7 @@ This section presents a classification and general descriptions of cell types.
 
 ### 3.1.1. TVM memory and persistent storage consist of cells. 
 
-Recall that the TVM memory and persistent storage consist of (TVM) cells. Each cell contains up to 1023 bits of data and up to four references to other cells $${ }^{11}$$ Circular references are forbidden and cannot be created by means of TVM (cf. 2.3.5). In this way, all cells kept in TVM memory and persistent storage constitute a directed acyclic graph (DAG).
+Recall that the TVM memory and persistent storage consist of (TVM) cells. Each cell contains up to 1023 bits of data and up to four references to other cells $${ }^{11}$$ Circular references are forbidden and cannot be created by means of TVM (cf. [2.3.5](stacks#2.3.5.-absence-of-circular-references.)). In this way, all cells kept in TVM memory and persistent storage constitute a directed acyclic graph (DAG).
 
 ### 3.1.2. Ordinary and exotic cells. 
 
@@ -50,7 +50,7 @@ $$
 \operatorname{HASH}(c):=\operatorname{SHA} 256(\operatorname{CELlREPR}(c))
 $$
 
-Notice that cyclic cell references are not allowed and cannot be created by means of the TVM (cf. 2.3.5), so this recursion always ends, and the representation hash of any cell is well-defined.
+Notice that cyclic cell references are not allowed and cannot be created by means of the TVM (cf. [2.3.5](stacks#2.3.5.-absence-of-circular-references.)), so this recursion always ends, and the representation hash of any cell is well-defined.
 
 ### 3.1.6. The higher hashes of a cell. 
 
@@ -81,15 +81,19 @@ A Merkle update behaves like a Merkle proof for both $$c_{1}$$ and $$c_{2}$$, an
 
 ### 3.1.8. All values of algebraic data types are trees of cells. 
 
-Arbitrary values of arbitrary algebraic data types (e.g., all types used in functional programming languages) can be serialized into trees of cells (of level 0), and such representations are used for representing such values within TVM. The copy-on-write mechanism (cf. 2.3.2 allows TVM to identify cells containing the same data and references, and to keep only one copy of such cells. This actually transforms a tree of cells into a directed acyclic graph (with the additional property that all its vertices be accessible from a marked vertex called the "root"). However, this is a storage optimization rather than an essential property of TVM. From the perspective of a TVM code programmer, one should think of TVM data structures as trees of cells.
+Arbitrary values of arbitrary algebraic data types (e.g., all types used in functional programming languages) can be serialized into trees of cells (of level 0), and such representations are used for representing such values within TVM. The copy-on-write mechanism (cf. [2.3.2](stacks#2.3.2.-efficient-implementation-of-dup-and-push-instructions-using-copy-on-write.)) allows TVM to identify cells containing the same data and references, and to keep only one copy of such cells. This actually transforms a tree of cells into a directed acyclic graph (with the additional property that all its vertices be accessible from a marked vertex called the "root"). However, this is a storage optimization rather than an essential property of TVM. From the perspective of a TVM code programmer, one should think of TVM data structures as trees of cells.
 
 ### 3.1.9. TVM code is a tree of cells. 
 
 The TVM code itself is also represented by a tree of cells. Indeed, TVM code is simply a value of some complex algebraic data type, and as such, it can be serialized into a tree of cells.
 
-The exact way in which the TVM code (e.g., TVM assembly code) is transformed into a tree of cells is explained later (cf. $$\mathbf{4 . 1 . 4}$$ and $$\mathbf{5 . 2}$$, in sections discussing control flow instructions, continuations, and TVM instruction encoding.
+The exact way in which the TVM code (e.g., TVM assembly code) is transformed into a tree of cells is explained later (cf. [4.1.4](control-flow-continuations-and-exceptions#4.1.4.-normal-work-of-tvm-or-the-main-loop.) and [5.2](codepages-and-instruction-encoding#instruction-encoding)), in sections discussing control flow instructions, continuations, and TVM instruction encoding.
 
-$${ }^{13} \mathrm{~A}$$ pruned branch cell $$c^{\prime}$$ of level $$l$$ is bound by a Merkle (proof or update) cell $$c$$ if there are exactly $$l$$ Merkle cells on the path from $$c$$ to its descendant $$c^{\prime}$$, including $$c$$. 3.1.10. "Everything is a bag of cells" paradigm. As described in 1 , 2.5.14], all the data used by the TVM Blockchain, including the blocks themselves and the blockchain state, can be represented - and are represented - as collections, or "bags", of cells. We see that TVM's structure of data (cf. 3.1.8) and code (cf. 3.1.9 nicely fits into this "everything is a bag of cells" paradigm. In this way, TVM can naturally be used to execute smart contracts in the TVM Blockchain, and the TVM Blockchain can be used to store the code and persistent data of these smart contracts between invocations of TVM. (Of course, both TVM and the TVM Blockchain have been designed so that this would become possible.)
+$${ }^{13} \mathrm{~A}$$ pruned branch cell $$c^{\prime}$$ of level $$l$$ is bound by a Merkle (proof or update) cell $$c$$ if there are exactly $$l$$ Merkle cells on the path from $$c$$ to its descendant $$c^{\prime}$$, including $$c$$. 
+
+### 3.1.10. "Everything is a bag of cells" paradigm. 
+
+All the data used by the TVM Blockchain, including the blocks themselves and the blockchain state, can be represented - and are represented - as collections, or "bags", of cells. We see that TVM's structure of data (cf. [3.1.8](cells-memory-and-persistent-storage#3.1.8.-all-values-of-algebraic-data-types-are-trees-of-cells.)) and code (cf. [3.1.9](cells-memory-and-persistent-storage#3.1.9.-tvm-code-is-a-tree-of-cells.)) nicely fits into this "everything is a bag of cells" paradigm. In this way, TVM can naturally be used to execute smart contracts in the TVM Blockchain, and the TVM Blockchain can be used to store the code and persistent data of these smart contracts between invocations of TVM. (Of course, both TVM and the TVM Blockchain have been designed so that this would become possible.)
 
 ## Data manipulation instructions and cells
 
@@ -102,11 +106,11 @@ The TVM cell instructions are naturally subdivided into two principal classes:
 - Cell creation instructions or serialization instructions, used to construct new cells from values previously kept in the stack and previously constructed cells.
 - Cell parsing instructions or deserialization instructions, used to extract data previously stored into cells by cell creation instructions.
 
-Additionally, there are exotic cell instructions used to create and inspect exotic cells (cf. 3.1.2), which in particular are used to represent pruned branches of Merkle proofs and Merkle proofs themselves.
+Additionally, there are exotic cell instructions used to create and inspect exotic cells (cf. [3.1.2](cells-memory-and-persistent-storage#3.1.2.-ordinary-and-exotic-cells.)), which in particular are used to represent pruned branches of Merkle proofs and Merkle proofs themselves.
 
 ### 3.2.2. Builder and Slice values. 
 
-Cell creation instructions usually work with Builder values, which can be kept only in the stack (cf. $$\mathbf{1 . 1 . 3}$$. Such values represent partially constructed cells, for which fast operations for appending bitstrings, integers, other cells, and references to other cells can be defined. Similarly, cell parsing instructions make heavy use of Slice values, which represent either the remainder of a partially parsed cell, or a value (subcell) residing inside such a cell and extracted from it by a parsing instruction. 3.2.3. Builder and Slice values exist only as stack values. Notice that Builder and Slice objects appear only as values in a TVM stack. They cannot be stored in "memory" (i.e., trees of cells) or "persistent storage" (which is also a bag of cells). In this sense, there are far more Cell objects than Builder or Slice objects in a TVM environment, but, somewhat paradoxically, a TVM program sees Builder and Slice objects in its stack more often than Cells. In fact, a TVM program does not have much use for Cell values, because they are immutable and opaque; all cell manipulation primitives require that a Cell value be transformed into either a Builder or a Slice first, before it can be modified or inspected.
+Cell creation instructions usually work with Builder values, which can be kept only in the stack (cf. [1.1.3](#1.1.3.-preliminary-list-of-value-types.)). Such values represent partially constructed cells, for which fast operations for appending bitstrings, integers, other cells, and references to other cells can be defined. Similarly, cell parsing instructions make heavy use of Slice values, which represent either the remainder of a partially parsed cell, or a value (subcell) residing inside such a cell and extracted from it by a parsing instruction. 3.2.3. Builder and Slice values exist only as stack values. Notice that Builder and Slice objects appear only as values in a TVM stack. They cannot be stored in "memory" (i.e., trees of cells) or "persistent storage" (which is also a bag of cells). In this sense, there are far more Cell objects than Builder or Slice objects in a TVM environment, but, somewhat paradoxically, a TVM program sees Builder and Slice objects in its stack more often than Cells. In fact, a TVM program does not have much use for Cell values, because they are immutable and opaque; all cell manipulation primitives require that a Cell value be transformed into either a Builder or a Slice first, before it can be modified or inspected.
 
 ### 3.2.4. TVM has no separate Bitstring value type. 
 
