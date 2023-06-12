@@ -277,7 +277,9 @@ The most useful of these operations are DIV, DIVMOD, MOD, DIVR, DIVC, MODPOW2 $$
 
 ## A.6 Comparison primitives
 
-A.6.1. Integer comparison. All integer comparison primitives return integer -1 ("true") or 0 ("false") to indicate the result of the comparison. We do not define their "boolean circuit" counterparts, which would transfer control to $$c 0$$ or $$c 1$$ depending on the result of the comparison. If needed, such instructions can be simulated with the aid of RETBOOL.
+### A.6.1. 
+
+Integer comparison. All integer comparison primitives return integer -1 ("true") or 0 ("false") to indicate the result of the comparison. We do not define their "boolean circuit" counterparts, which would transfer control to $$c 0$$ or $$c 1$$ depending on the result of the comparison. If needed, such instructions can be simulated with the aid of RETBOOL.
 
 Quiet versions of integer comparison primitives are also available, encoded with the aid of the QUIET prefix (B7). If any of the integers being compared are NaNs, the result of a quiet comparison will also be a $$\mathrm{NaN}$$ ("undefined"), instead of a -1 ("yes") or 0 ("no"), thus effectively supporting ternary logic.
 
@@ -330,11 +332,13 @@ Most of these "other comparison" primitives actually compare the data portions o
 - C713 - SDCNTTRAIL1 $$(s-n)$$, returns the number of trailing ones in $$s$$.
 
 
-## A.7 $$\quad$$ Cell primitives
+## A.7 Cell primitives
 
 The cell primitives are mostly either cell serialization primitives, which work with Builders, or cell deserialization primitives, which work with Slices.
 
-A.7.1. Cell serialization primitives. All these primitives first check whether there is enough space in the Builder, and only then check the range of the value being serialized.
+### A.7.1. Cell serialization primitives. 
+
+All these primitives first check whether there is enough space in the Builder, and only then check the range of the value being serialized.
 
 - C8 - NEWC $$(-b)$$, creates a new empty Builder.
 - C9 - ENDC $$(b-c)$$, converts a Builder into an ordinary Cell.
@@ -343,10 +347,6 @@ A.7.1. Cell serialization primitives. All these primitives first check whether t
 - CC - STREF $$\left(c b-b^{\prime}\right)$$, stores a reference to Cell c into Builder $$b$$.
 - CD - STBREFR or ENDCST $$\left(b b^{\prime \prime}-b\right)$$, equivalent to ENDC; SWAP; STREF.
 - CE - STSLICE $$\left(s b-b^{\prime}\right)$$, stores Slice $$s$$ into Builder $$b$$.
-
-
-## A.7. Cell primitives
-
 - CF00 - STIX $$\left(x b l-b^{\prime}\right)$$, stores a signed $$l$$-bit integer $$x$$ into $$b$$ for $$0 \leq l \leq 257$$
 - CF01 - STUX $$\left(x b l-b^{\prime}\right)$$, stores an unsigned $$l$$-bit integer $$x$$ into $$b$$ for $$0 \leq l \leq 256$$
 - CF02 - STIXR $$\left(b x l-b^{\prime}\right)$$, similar to STIX, but with arguments in a different order.
@@ -384,10 +384,6 @@ A.7.1. Cell serialization primitives. All these primitives first check whether t
 - CF28 - STILE4 $$\left(x b-b^{\prime}\right)$$, stores a little-endian signed 32-bit integer.
 - CF29 - STULE4 $$\left(x b-b^{\prime}\right)$$, stores a little-endian unsigned 32-bit integer.
 - CF2A - STILE8 $$\left(x b-b^{\prime}\right)$$, stores a little-endian signed 64-bit integer.
-
-
-## A.7. Cell primitives
-
 - CF2B - STULE8 $$\left(x b-b^{\prime}\right)$$, stores a little-endian unsigned 64-bit integer.
 - CF30 - BDEPTH $$(b-x)$$, returns the depth of Builder b. If no cell references are stored in $$b$$, then $$x=0$$; otherwise $$x$$ is one plus the maximum of depths of cells referred to from $$b$$.
 - CF31 - BBITS $$(b-x)$$, returns the number of data bits already stored in Builder $$b$$.
@@ -414,8 +410,7 @@ A.7.1. Cell serialization primitives. All these primitives first check whether t
 - $$\mathrm{CFC} 2$$ - equivalent to STREF2CONST.
 - CFE2 - STREF3CONST.
 
-
-## A.7.2. Cell deserialization primitives.
+### A.7.2. Cell deserialization primitives.
 
 - DO - CTOS $$(c-s)$$, converts a Cell into a Slice. Notice that $$c$$ must be either an ordinary cell, or an exotic cell (cf. 3.1.2) which is automatically loaded to yield an ordinary cell $$c^{\prime}$$, converted into a Slice afterwards.
 - D1 - ENDS $$(s-)$$, removes a Slice $$s$$ from the stack, and throws an exception if it is not empty.

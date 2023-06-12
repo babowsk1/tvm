@@ -8,7 +8,12 @@ This section presents a classification and general descriptions of cell types.
 
 ### 3.1.1. TVM memory and persistent storage consist of cells.
 
-Recall that the TVM memory and persistent storage consist of (TVM) cells. Each cell contains up to 1023 bits of data and up to four references to other cells $${ }^{11}$$ Circular references are forbidden and cannot be created by means of TVM (cf. 2.3.5). In this way, all cells kept in TVM memory and persistent storage constitute a directed acyclic graph (DAG).
+Recall that the TVM memory and persistent storage consist of (TVM) cells. Each cell contains up to 1023 bits of data and up to four references to other cells.$${ }^{11}$$      
+Circular references are forbidden and cannot be created by means of TVM (cf. [$$\mathbf{2.3.5}$$](stacks.md/#2.3.5.-absence-of-circular-references.)). In this way, all cells kept in TVM memory and persistent storage constitute a directed acyclic graph (DAG).
+
+{% hint style="info" %}
+$${ }^{11}$$ From the perspective of low-level cell operations, these data bits and cell references are not intermixed. In other words, an (ordinary) cell essentially is a couple consisting of a list of up to 1023 bits and of a list of up to four cell references, without prescribing an order in which the references and the data bits should be deserialized, even though TL-B schemes appear to suggest such an order. 
+{% endhint %}
 
 ### 3.1.2. Ordinary and exotic cells.
 
@@ -22,7 +27,7 @@ The type of an exotic cell is stored as the first eight bits of its data. If an 
 
 Every cell $$c$$ has another attribute LVL $$(c)$$ called its (de Brujn) level, which currently takes integer values in the range $$0 \ldots 3$$.
 
-$${ }^{11}$$ From the perspective of low-level cell operations, these data bits and cell references are not intermixed. In other words, an (ordinary) cell essentially is a couple consisting of a list of up to 1023 bits and of a list of up to four cell references, without prescribing an order in which the references and the data bits should be deserialized, even though TL-B schemes appear to suggest such an order. The level of an ordinary cell is always equal to the maximum of the levels of all its children $$c_{i}$$ :
+The level of an ordinary cell is always equal to the maximum of the levels of all its children $$c_{i}$$ :
 
 $$
 \operatorname{LVL}(c)=\max _{1 \leq i \leq r} \operatorname{LVL}\left(c_{i}\right)
@@ -50,7 +55,7 @@ $$
 \operatorname{HASH}(c):=\operatorname{SHA} 256(\operatorname{CELlREPR}(c))
 $$
 
-Notice that cyclic cell references are not allowed and cannot be created by means of the TVM (cf. [2.3.5](stacks/#2.3.5.-absence-of-circular-references.)), so this recursion always ends, and the representation hash of any cell is well-defined.
+Notice that cyclic cell references are not allowed and cannot be created by means of the TVM (cf. [2.3.5](stacks.md/#2.3.5.-absence-of-circular-references.)), so this recursion always ends, and the representation hash of any cell is well-defined.
 
 ### 3.1.6. The higher hashes of a cell.
 
@@ -69,7 +74,7 @@ $$
 \operatorname{LVL}(c)=\max \left(\operatorname{LVL}\left(c_{1}\right)-1,0\right)
 $$
 
-$${ }^{12}$$ From a theoretical perspective, we might say that a cell $$c$$ has an infinite sequence of hashes $$\left(\mathrm{HASH}_{i}(c)\right)_{i \geq 1}$$, which eventually stabilizes: $$\mathrm{HASH}_{i}(c) \rightarrow \mathrm{HASH}_{\infty}(c)$$. Then the level $$l$$ is simply the largest index $$i$$, such that $$\operatorname{HASH}_{i}(c) \neq \mathrm{HASH}_{\infty}(c)$$. The $$8+256$$ data bits of a Merkle proof cell contain its 8-bit type integer 3 , followed by $$\mathrm{HASH}_{1}\left(c_{1}\right)$$ (assumed to be equal to $$\operatorname{HASH}\left(c_{1}\right)$$ if $$\left.\operatorname{LVL}\left(c_{1}\right)=0\right)$$. The higher hashes $$\mathrm{HASH}_{i}(c)$$ of $$c$$ are computed similarly to the higher hashes of an ordinary cell, but with $$\mathrm{HASH}_{i+1}\left(c_{1}\right)$$ used instead of $$\mathrm{HASH}_{i}\left(c_{1}\right)$$. When loaded, a Merkle proof cell is replaced by $$c_{1}$$.
+The $$8+256$$ data bits of a Merkle proof cell contain its 8-bit type integer 3 , followed by $$\mathrm{HASH}_{1}\left(c_{1}\right)$$ (assumed to be equal to $$\operatorname{HASH}\left(c_{1}\right)$$ if $$\left.\operatorname{LVL}\left(c_{1}\right)=0\right)$$. The higher hashes $$\mathrm{HASH}_{i}(c)$$ of $$c$$ are computed similarly to the higher hashes of an ordinary cell, but with $$\mathrm{HASH}_{i+1}\left(c_{1}\right)$$ used instead of $$\mathrm{HASH}_{i}\left(c_{1}\right)$$. When loaded, a Merkle proof cell is replaced by $$c_{1}$$.
 
 * Type 4: Merkle update cell c-Has two children $$c_{1}$$ and $$c_{2}$$. Its level $$0 \leq l \leq 3$$ is given by
 
@@ -77,23 +82,30 @@ $$
 \operatorname{LVL}(c)=\max \left(\operatorname{LVL}\left(c_{1}\right)-1, \operatorname{LVL}\left(c_{2}\right)-1,0\right)
 $$
 
-A Merkle update behaves like a Merkle proof for both $$c_{1}$$ and $$c_{2}$$, and contains $$8+256+256$$ data bits with $$\mathrm{HASH}_{1}\left(c_{1}\right)$$ and $$\mathrm{HASH}_{1}\left(c_{2}\right)$$. However, an extra requirement is that all pruned branch cells $$c^{\prime}$$ that are descendants of $$c_{2}$$ and are bound by $$c$$ must also be descendants of $$c_{1} \underline{1}^{13}$$ When a Merkle update cell is loaded, it is replaced by $$c_{2}$$.
+A Merkle update behaves like a Merkle proof for both $$c_{1}$$ and $$c_{2}$$, and contains $$8+256+256$$ data bits with $$\mathrm{HASH}_{1}\left(c_{1}\right)$$ and $$\mathrm{HASH}_{1}\left(c_{2}\right)$$. However, an extra requirement is that all pruned branch cells $$c^{\prime}$$ that are descendants of $$c_{2}$$ and are bound by $$c$$ must also be descendants of $$c_{1.} \underline^{13}$$       
+When a Merkle update cell is loaded, it is replaced by $$c_{2}$$.
+
+{% hint style="info" %}
+$${ }^{12}$$ From a theoretical perspective, we might say that a cell $$c$$ has an infinite sequence of hashes $$\left(\mathrm{HASH}_{i}(c)\right)_{i \geq 1}$$, which eventually stabilizes: $$\mathrm{HASH}_{i}(c) \rightarrow \mathrm{HASH}_{\infty}(c)$$. Then the level $$l$$ is simply the largest index $$i$$, such that $$\operatorname{HASH}_{i}(c) \neq \mathrm{HASH}_{\infty}(c)$$.
+{% endhint %}
+
+{% hint style="info" %}
+$${ }^{13} \mathrm{~A}$$ pruned branch cell $$c^{\prime}$$ of level $$l$$ is bound by a Merkle (proof or update) cell $$c$$ if there are exactly $$l$$ Merkle cells on the path from $$c$$ to its descendant $$c^{\prime}$$, including $$c$$.
+{% endhint %}
 
 ### 3.1.8. All values of algebraic data types are trees of cells.
 
-Arbitrary values of arbitrary algebraic data types (e.g., all types used in functional programming languages) can be serialized into trees of cells (of level 0), and such representations are used for representing such values within TVM. The copy-on-write mechanism (cf. [2.3.2](stacks/#2.3.2.-efficient-implementation-of-dup-and-push-instructions-using-copy-on-write.)) allows TVM to identify cells containing the same data and references, and to keep only one copy of such cells. This actually transforms a tree of cells into a directed acyclic graph (with the additional property that all its vertices be accessible from a marked vertex called the "root"). However, this is a storage optimization rather than an essential property of TVM. From the perspective of a TVM code programmer, one should think of TVM data structures as trees of cells.
+Arbitrary values of arbitrary algebraic data types (e.g., all types used in functional programming languages) can be serialized into trees of cells (of level 0), and such representations are used for representing such values within TVM. The copy-on-write mechanism (cf. [2.3.2](stacks.md/#2.3.2.-efficient-implementation-of-dup-and-push-instructions-using-copy-on-write.)) allows TVM to identify cells containing the same data and references, and to keep only one copy of such cells. This actually transforms a tree of cells into a directed acyclic graph (with the additional property that all its vertices be accessible from a marked vertex called the "root"). However, this is a storage optimization rather than an essential property of TVM. From the perspective of a TVM code programmer, one should think of TVM data structures as trees of cells.
 
 ### 3.1.9. TVM code is a tree of cells.
 
 The TVM code itself is also represented by a tree of cells. Indeed, TVM code is simply a value of some complex algebraic data type, and as such, it can be serialized into a tree of cells.
 
-The exact way in which the TVM code (e.g., TVM assembly code) is transformed into a tree of cells is explained later (cf. [4.1.4](control-flow-continuations-and-exceptions/#4.1.4.-normal-work-of-tvm-or-the-main-loop.) and [5.2](codepages-and-instruction-encoding/#instruction-encoding)), in sections discussing control flow instructions, continuations, and TVM instruction encoding.
-
-$${ }^{13} \mathrm{~A}$$ pruned branch cell $$c^{\prime}$$ of level $$l$$ is bound by a Merkle (proof or update) cell $$c$$ if there are exactly $$l$$ Merkle cells on the path from $$c$$ to its descendant $$c^{\prime}$$, including $$c$$.
+The exact way in which the TVM code (e.g., TVM assembly code) is transformed into a tree of cells is explained later (cf. [4.1.4](control-flow-continuations-and-exceptions.md/#4.1.4.-normal-work-of-tvm-or-the-main-loop.) and [5.2](codepages-and-instruction-encoding.md/#instruction-encoding)), in sections discussing control flow instructions, continuations, and TVM instruction encoding.
 
 ### 3.1.10. "Everything is a bag of cells" paradigm.
 
-All the data used by the TVM Blockchain, including the blocks themselves and the blockchain state, can be represented - and are represented - as collections, or "bags", of cells. We see that TVM's structure of data (cf. [3.1.8](cells-memory-and-persistent-storage/#3.1.8.-all-values-of-algebraic-data-types-are-trees-of-cells.)) and code (cf. [3.1.9](cells-memory-and-persistent-storage/#3.1.9.-tvm-code-is-a-tree-of-cells.)) nicely fits into this "everything is a bag of cells" paradigm. In this way, TVM can naturally be used to execute smart contracts in the TVM Blockchain, and the TVM Blockchain can be used to store the code and persistent data of these smart contracts between invocations of TVM. (Of course, both TVM and the TVM Blockchain have been designed so that this would become possible.)
+All the data used by the TVM Blockchain, including the blocks themselves and the blockchain state, can be represented - and are represented - as collections, or "bags", of cells. We see that TVM's structure of data (cf. [3.1.8](cells-memory-and-persistent-storage.md/#3.1.8.-all-values-of-algebraic-data-types-are-trees-of-cells.)) and code (cf. [3.1.9](cells-memory-and-persistent-storage.md/#3.1.9.-tvm-code-is-a-tree-of-cells.)) nicely fits into this "everything is a bag of cells" paradigm. In this way, TVM can naturally be used to execute smart contracts in the TVM Blockchain, and the TVM Blockchain can be used to store the code and persistent data of these smart contracts between invocations of TVM. (Of course, both TVM and the TVM Blockchain have been designed so that this would become possible.)
 
 ## Data manipulation instructions and cells
 
@@ -106,7 +118,7 @@ The TVM cell instructions are naturally subdivided into two principal classes:
 * Cell creation instructions or serialization instructions, used to construct new cells from values previously kept in the stack and previously constructed cells.
 * Cell parsing instructions or deserialization instructions, used to extract data previously stored into cells by cell creation instructions.
 
-Additionally, there are exotic cell instructions used to create and inspect exotic cells (cf. [3.1.2](cells-memory-and-persistent-storage/#3.1.2.-ordinary-and-exotic-cells.)), which in particular are used to represent pruned branches of Merkle proofs and Merkle proofs themselves.
+Additionally, there are exotic cell instructions used to create and inspect exotic cells (cf. [3.1.2](cells-memory-and-persistent-storage.md/#3.1.2.-ordinary-and-exotic-cells.)), which in particular are used to represent pruned branches of Merkle proofs and Merkle proofs themselves.
 
 ### 3.2.2. Builder and Slice values.
 
@@ -136,7 +148,7 @@ The mnemonics of cell serialization primitives usually begin with ST. Subsequent
 * The source of the field width in bits to be used (e.g., X for integer serialization instructions means that the bit width $$n$$ is supplied in the stack; otherwise it has to be embedded into the instruction as an immediate value).
 * The action to be performed if the operation cannot be completed (by default, an exception is generated; "quiet" versions of serialization instructions are marked by a $$Q$$ letter in their mnemonics).
 
-This classification scheme is used to create a more complete taxonomy of cell serialization primitives, which can be found in $$\mathbf{A . 7 . 1}$$
+This classification scheme is used to create a more complete taxonomy of cell serialization primitives, which can be found in [$$\mathbf{A.7.1}$$](a-instructions-and-opcodes.md/#a.7.1.-cell-serialization-primitives.).
 
 ### 3.2.7. Integer serialization primitives.
 
@@ -146,7 +158,7 @@ Integer serialization primitives can be classified according to the above taxono
 * The size $$n$$ of the bit field to be used ( $$1 \leq n \leq 257$$ for signed integers, $$0 \leq n \leq 256$$ for unsigned integers) can either come from the top of stack or be embedded into the instruction itself.
 * If the integer $$x$$ to be serialized is not in the range $$-2^{n-1} \leq x<2^{n-1}$$ (for signed integer serialization) or $$0 \leq x<2^{n}$$ (for unsigned integer serialization), a range check exception is usually generated, and if $$n$$ bits cannot be stored into the provided Builder, a cell overflow exception is generated. - Quiet versions of serialization instructions do not throw exceptions; instead, they push -1 on top of the resulting Builder upon success, or return the original Builder with 0 on top of it to indicate failure.
 
-Integer serialization instructions have mnemonics like STU 20 ("store an unsigned 20-bit integer value") or STIXQ ("quietly store an integer value of variable length provided in the stack"). The full list of these instructionsincluding their mnemonics, descriptions, and opcodes - is provided in $$\mathbf{A . 7 . 1}$$
+Integer serialization instructions have mnemonics like STU 20 ("store an unsigned 20-bit integer value") or STIXQ ("quietly store an integer value of variable length provided in the stack"). The full list of these instructionsincluding their mnemonics, descriptions, and opcodes - is provided in [$$\mathbf{A.7.1}$$](a-instructions-and-opcodes.md/#a.7.1.-cell-serialization-primitives.).
 
 ### 3.2.8. Integers in cells are big-endian by default.
 
@@ -160,11 +172,13 @@ Other cell creation primitives serialize bitstrings (i.e., cell slices without r
 
 In addition to the cell serialization primitives for certain built-in value types described above, there are simple primitives that create a new empty Builder and push it into the stack (NEWC), or transform a Builder into a Cell (ENDC), thus finishing the cell creation process. An ENDC can be combined with a STREF into a single instruction ENDCST, which finishes the creation of a cell and immediately stores a reference to it in an "outer" Builder. There are also primitives that obtain the quantity of data bits or references already stored in a Builder, and check how many data bits or references can be stored.
 
+{% hint style="info" %}
 $${ }^{14}$$Negative numbers are represented using two's complement. For instance, integer -17 is serialized by instruction STI 8 into bitstring $$\mathrm{xEF}$$.
+{% endhint %}
 
 ### 3.2.11. Taxonomy of cell deserialisation primitives.
 
-Cell parsing, or deserialization, primitives can be classified as described in 3.2.6, with the following modifications:
+Cell parsing, or deserialization, primitives can be classified as described in [$$\mathbf{3.2.6}$$](#3.2.6.-taxonomy-of-cell-creation-serialization-primitives.), with the following modifications:
 
 * They work with Slices (representing the remainder of the cell being parsed) instead of Builders.
 * They return deserialized values instead of accepting them as arguments.
@@ -173,7 +187,7 @@ Cell parsing, or deserialization, primitives can be classified as described in 3
 
 For example, an unsigned big-endian 20-bit integer previously serialized into a cell by a STU 20 instruction is likely to be deserialized later by a matching LDU 20 instruction.
 
-Again, more detailed information about these instructions is provided in $$\mathbf{A . 7 . 2}$$.
+Again, more detailed information about these instructions is provided in [$$\mathbf{A.7.2}$$](a-instructions-and-opcodes.md/#a.7.2.-cell-deserialization-primitives.).
 
 ### 3.2.12. Other cell slice primitives.
 
@@ -183,14 +197,14 @@ In addition to the cell deserialisation primitives outlined above, TVM provides 
 
 The reader might wonder how the values serialized inside a cell may be modified. Suppose a cell contains three serialized 29-bit integers, $$(x, y, z)$$, representing the coordinates of a point in space, and we want to replace $$y$$ with $$y^{\prime}=y+1$$, leaving the other coordinates intact. How would we achieve this?
 
-TVM does not offer any ways to modify existing values (cf. 2.3.4 and 2.3.5, so our example can only be accomplished with a series of operations as follows:
+TVM does not offer any ways to modify existing values (cf. [$$\mathbf{2.3.4}$$](stacks.md/#2.3.4.-transparency-of-the-implementation-stack-values-are-values-not-references-.) and [$$\mathbf{2.3.5}$$](stacks.md/#2.3.5.-absence-of-circular-references.), so our example can only be accomplished with a series of operations as follows:
 
 1. Deserialize the original cell into three Integers $$x, y, z$$ in the stack (e.g., by CTOS; LDI 29; LDI 29; LDI 29; ENDS). 2. Increase $$y$$ by one (e.g., by SWAP; INC; SWAP).
 2. Finally, serialize the resulting Integers into a new cell (e.g., by XCHG s2; NEWC; STI 29; STI 29; STI 29; ENDC).
 
 ### 3.2.14. Modifying the persistent storage of a smart contract.
 
-If the TVM code wants to modify its persistent storage, represented by the tree of cells rooted at $$c 4$$, it simply needs to rewrite control register c4 by the root of the tree of cells containing the new value of its persistent storage. (If only part of the persistent storage needs to be modified, cf. 3.2.13.)
+If the TVM code wants to modify its persistent storage, represented by the tree of cells rooted at $$c 4$$, it simply needs to rewrite control register c4 by the root of the tree of cells containing the new value of its persistent storage. (If only part of the persistent storage needs to be modified, cf. [$$\mathbf{3.2.13.}](#3.2.13.-modifying-a-serialized-value-in-a-cell.))
 
 ## Hashmaps, or dictionaries
 
@@ -216,15 +230,13 @@ The serialization of a hashmap into a tree of cells (or, more generally, into a 
 
 The right-hand side of each "equation" is a type, either simple (such as Bit or True) or parametrized (such as Hashmap $$n X$$ ). The parameters of a type must be either natural numbers (i.e., non-negative integers, which are required to fit into 32 bits in practice), such as $$n$$ in Hashmap $$n X$$, or other types, such as $$X$$ in Hashmap $$n X$$.
 
-The left-hand side of each equation describes a way to define, or even to serialize, a value of the type indicated in the right-hand side. Such a description begins with the name of a constructor, such as hm\_edge or hml\_long, immediately followed by an optional constructor tag, such as $$\#\_\$$ or $$\$10\$$, which describes the bitstring used to encode (serialize) the constructor in question. Such tags may be given in either binary (after a dollar sign) or hexadecimal notation (after a hash sign), using the conventions described in $$\mathbf{1 . 0}$$. If a tag is not explicitly provided, TL-B computes a default 32-bit constructor tag by hashing the text of the "equation" defining this constructor in a certain fashion. Therefore, empty tags must be explicitly provided by $$\#\_\$$or $$\$\_\$$. All constructor names must be distinct, and constructor tags for the same type must constitute a prefix code (otherwise the deserialization would not be unique).
+The left-hand side of each equation describes a way to define, or even to serialize, a value of the type indicated in the right-hand side. Such a description begins with the name of a constructor, such as hm\_edge or hml\_long, immediately followed by an optional constructor tag, such as $$\#\_\$$ or $$\$10\$$, which describes the bitstring used to encode (serialize) the constructor in question. Such tags may be given in either binary (after a dollar sign) or hexadecimal notation (after a hash sign), using the conventions described in [$$\mathbf{1.0}$$](README.md/#introduction). If a tag is not explicitly provided, TL-B computes a default 32-bit constructor tag by hashing the text of the "equation" defining this constructor in a certain fashion. Therefore, empty tags must be explicitly provided by $$\#\_\$$or $$\$\_\$$. All constructor names must be distinct, and constructor tags for the same type must constitute a prefix code (otherwise the deserialization would not be unique).
 
-The constructor and its optional tag are followed by field definitions. Each field definition is of the form ident : type-expr, where ident is an identifier with the name of the field $${ }^{16}$$ (replaced by an underscore for anonymous fields), and type-expr is the field's type. The type provided here is a type expression, which may include simple types or parametrized types with suitable parameters. Variables - i.e., the (identifiers of the) previously defined fields of types \\# (natural numbers) or Type (type of types)-may be used as parameters for the parametrized types. The serialization process recursively serializes each field according to its type, and the serialization of a value ultimately consists of the concatenation of bitstrings representing the constructor (i.e., the constructor tag) and the field values.
+The constructor and its optional tag are followed by field definitions. Each field definition is of the form ident : type-expr, where ident is an identifier with the name of the field$${ }^{16}$$ (replaced by an underscore for anonymous fields), and type-expr is the field's type. The type provided here is a type expression, which may include simple types or parametrized types with suitable parameters. Variables - i.e., the (identifiers of the) previously defined fields of types \\# (natural numbers) or Type (type of types)-may be used as parameters for the parametrized types. The serialization process recursively serializes each field according to its type, and the serialization of a value ultimately consists of the concatenation of bitstrings representing the constructor (i.e., the constructor tag) and the field values.
 
 Some fields may be implicit. Their definitions are surrounded by curly braces, which indicate that the field is not actually present in the serialization, but that its value must be deduced from other data (usually the parameters of the type being serialized).
 
-Some occurrences of "variables" (i.e., already-defined fields) are prefixed by a tilde. This indicates that the variable's occurrence is used in the opposite way of the default behavior: in the left-hand side of the equation, it means that the variable will be deduced (computed) based on this occurrence, instead of substituting its previously computed value; in the right-hand side, conversely, it means that the variable will not be deduced from the type being serialized, but rather that it will be computed during the deserialization pro-
-
-$${ }^{16}$$ The field's name is useful for representing values of the type being defined in humanreadable form, but it does not affect the binary serialization. cess. In other words, a tilde transforms an "input argument" into an "output argument", and vice versa. $${ }^{17}$$
+Some occurrences of "variables" (i.e., already-defined fields) are prefixed by a tilde. This indicates that the variable's occurrence is used in the opposite way of the default behavior: in the left-hand side of the equation, it means that the variable will be deduced (computed) based on this occurrence, instead of substituting its previously computed value; in the right-hand side, conversely, it means that the variable will not be deduced from the type being serialized, but rather that it will be computed during the deserialization process. In other words, a tilde transforms an "input argument" into an "output argument", and vice versa.$${ }^{17}$$
 
 Finally, some equalities may be included in curly brackets as well. These are certain "equations", which must be satisfied by the "variables" included in them. If one of the variables is prefixed by a tilde, its value will be uniquely determined by the values of all other variables participating in the equation (which must be known at this point) when the definition is processed from the left to the right.
 
@@ -232,17 +244,23 @@ A caret (^) preceding a type $$X$$ means that instead of serializing a value of 
 
 Parametrized type $$\#<=p$$ with $$p: \#$$ (this notation means " $$p$$ of type \\#", i.e., a natural number) denotes the subtype of the natural numbers type $$\#$$, consisting of integers $$0 \ldots p$$; it is serialized into $$\left\lceil\log _{2}(p+1)\right\rceil$$ bits as an unsigned big-endian integer. Type \\# by itself is serialized as an unsigned 32-bit integer. Parametrized type \\#\\# $$b$$ with $$b: \#<=31$$ is equivalent to \\#<= $$2^{b}-1$$ (i.e., it is an unsigned $$b$$-bit integer).
 
+{% hint style="info" %}
+$${ }^{16}$$ The field's name is useful for representing values of the type being defined in humanreadable form, but it does not affect the binary serialization.
+{% endhint %}
+
+{% hint style="info" %}
+$${ }^{17}$$ This is the "linear negation" operation $$(-)^{\perp}$$ of linear logic, hence our notation $${^~}$$.
+{% endhint %}
+
 ### 3.3.5. Application to the serialization of hashmaps.
 
-Let us explain the net result of applying the general rules described in 3.3.4 to the TL-B scheme presented in $$\mathbf{3 . 3 . 3}$$
+Let us explain the net result of applying the general rules described in [$$\mathbf{3.3.4}$$](#3.3.4.-brief-explanation-of-tl-b-schemes.) to the TL-B scheme presented in [$$\mathbf{3.3.3}$$](3.3.3.-serialization-of-hashmaps.)
 
-Suppose we wish to serialize a value of type HashmapE $$n X$$ for some integer $$0 \leq n \leq 1023$$ and some type $$X$$ (i.e., a dictionary with $$n$$-bit keys and values of type $$X$$, admitting an abstract representation as a Patricia tree $$(\operatorname{cf} .3 .3 .2)$$ ).
+Suppose we wish to serialize a value of type HashmapE $$n X$$ for some integer $$0 \leq n \leq 1023$$ and some type $$X$$ (i.e., a dictionary with $$n$$-bit keys and values of type $$X$$, admitting an abstract representation as a Patricia tree [$$\mathbf{3.3.2)$$](#3.3.2.-hashmaps-as-patricia-trees.).
 
 First of all, if our dictionary is empty, it is serialized into a single binary 0 , which is the tag of nullary constructor hme\_empty. Otherwise, its serialization consists of a binary 1 (the tag of hme\_root), along with a reference to a cell containing the serialization of a value of type Hashmap $$n X$$ (i.e., a necessarily non-empty dictionary).
 
-The only way to serialize a value of type Hashmap $$n X$$ is given by the hm\_edge constructor, which instructs us to serialize first the label label of the edge leading to the root of the subtree under consideration (i.e., the common prefix of all keys in our (sub)dictionary). This label is of type HmLabel $$l^{\perp} n$$, which means that it is a bitstring of length at most $$n$$, serialized in such a way that the true length $$l$$ of the label, $$0 \leq l \leq n$$, becomes known from
-
-$${ }^{17}$$ This is the "linear negation" operation $$(-)^{\perp}$$ of linear logic, hence our notation . the serialization of the label. (This special serialization method is described separately in $$\mathbf{3 . 3 . 6}$$.)
+The only way to serialize a value of type Hashmap $$n X$$ is given by the hm\_edge constructor, which instructs us to serialize first the label label of the edge leading to the root of the subtree under consideration (i.e., the common prefix of all keys in our (sub)dictionary). This label is of type HmLabel $$l^{\perp} n$$, which means that it is a bitstring of length at most $$n$$, serialized in such a way that the true length $$l$$ of the label, $$0 \leq l \leq n$$, becomes known from the serialization of the label. (This special serialization method is described separately in [$$\mathbf{3.3.6}$$](#3.3.6.-serialization-of-labels.).)
 
 The label must be followed by the serialization of a node of type HashmapNode $$m X$$, where $$m=n-l$$. It corresponds to a vertex of the Patricia tree, representing a non-empty subdictionary of the original dictionary with $$m$$-bit keys, obtained by removing from all the keys of the original subdictionary their common prefix of length $$l$$.
 
@@ -303,7 +321,7 @@ One may notice that values of type $$X$$ always occupy the remaining part of an 
 
 Let us present a classification of basic operations with dictionaries (i.e., values $$D$$ of type Hashmap $$E \quad X)$$ : - $$\operatorname{Get}(D, k)$$ - Given $$D: \operatorname{Hashmap} E(n, X)$$ and a key $$k: n \cdot$$ bit, returns the corresponding value $$D[k]: X^{?}$$ kept in $$D$$.
 
-* $$\operatorname{Set}(D, k, x)$$ - Given $$D: \operatorname{Hashmap} E(n, X)$$, a key $$k: n$$ · bit, and a value $$x: X$$, sets $$D^{\prime}[k]$$ to $$x$$ in a copy $$D^{\prime}$$ of $$D$$, and returns the resulting dictionary $$D^{\prime}$$ (cf. 2.3.4).
+* $$\operatorname{Set}(D, k, x)$$ - Given $$D: \operatorname{Hashmap} E(n, X)$$, a key $$k: n$$ · bit, and a value $$x: X$$, sets $$D^{\prime}[k]$$ to $$x$$ in a copy $$D^{\prime}$$ of $$D$$, and returns the resulting dictionary $$D^{\prime}$$ (cf. [$$\mathbf{2.3.4}$$](stacks.md/#2.3.4.-transparency-of-the-implementation-stack-values-are-values-not-references-.)).
 * $$\operatorname{AdD}(D, k, x)$$ - Similar to SET, but adds the key-value pair $$(k, x)$$ to $$D$$ only if key $$k$$ is absent in $$D$$.
 * $$\operatorname{Replace}(D, k, x)$$ - Similar to Set, but changes $$D^{\prime}[k]$$ to $$x$$ only if key $$k$$ is already present in $$D$$.
 * Getset, Getadd, GetReplace - Similar to Set, Add, and RePLACE, respectively, but returns the old value of $$D[k]$$ as well.
@@ -319,13 +337,21 @@ Let us present a classification of basic operations with dictionaries (i.e., val
 * $$\operatorname{DeleteSubdict}\left(D, l, k_{0}\right)$$ - Equivalent to ReplaceSubdict with $$D^{\prime}$$ being an empty dictionary.
 * $$\operatorname{Split}(D)$$ - Given $$D$$ : HashmapE(n,X), returns $$D_{0}:=D / 0$$ and $$D_{1}:=D / 1:$$ Hashmap $$E(n-1, X)$$, the two subdictionaries of $$D$$ consisting of all keys beginning with 0 and 1, respectively.
 * $$\operatorname{Merge}\left(D_{0}, D_{1}\right)$$ - Given $$D_{0}$$ and $$D_{1}: \operatorname{Hashmap} E(n-1, X)$$, computes $$D: \operatorname{Hashmap} E(n, X)$$, such that $$D / 0=D_{0}$$ and $$D / 1=D_{1}$$.
-* Foreach $$(D, f)$$ - Executes a function $$f$$ with two arguments $$k$$ and $$x$$, with $$(k, x)$$ running over all key-value pairs of a dictionary $$D$$ in lexicographical order $${ }^{18}$$
+* Foreach $$(D, f)$$ - Executes a function $$f$$ with two arguments $$k$$ and $$x$$, with $$(k, x)$$ running over all key-value pairs of a dictionary $$D$$ in lexicographical order.$${ }^{18}$$
 * ForeachRev $$(D, f)$$ - Similar to Foreach, but processes all keyvalue pairs in reverse order.
-* TreeReduce $$(D, o, f, g)$$ - Given $$D: \operatorname{Hashmap} E(n, X)$$, a value $$o: X$$, and two functions $$f: X \rightarrow Y$$ and $$g: Y \times Y \rightarrow Y$$, performs a "tree reduction" of $$D$$ by first applying $$f$$ to all the leaves, and then using $$g$$ to compute the value corresponding to a fork starting from the values assigned to its children. $${ }^{19}$$
+* TreeReduce $$(D, o, f, g)$$ - Given $$D: \operatorname{Hashmap} E(n, X)$$, a value $$o: X$$, and two functions $$f: X \rightarrow Y$$ and $$g: Y \times Y \rightarrow Y$$, performs a "tree reduction" of $$D$$ by first applying $$f$$ to all the leaves, and then using $$g$$ to compute the value corresponding to a fork starting from the values assigned to its children.$${ }^{19}$$
 
+{% hint style="info" %}
 $${ }^{18}$$ In fact, $$f$$ may receive $$m$$ extra arguments and return $$m$$ modified values, which are passed to the next invocation of $$f$$. This may be used to implement "map" and "reduce" operations with dictionaries.
+{% endhint %}
 
-$${ }^{19}$$ Versions of this operation may be introduced where $$f$$ and $$g$$ receive an additional bitstring argument, equal to the key (for leaves) or to the common prefix of all keys (for forks) in the corresponding subtree. 3.3.11. Taxonomy of dictionary primitives. The dictionary primitives, described in detail in $$\mathbf{A . 1 0}$$ can be classified according to the following categories:
+{% hint style="info" %}
+$${ }^{19}$$ Versions of this operation may be introduced where $$f$$ and $$g$$ receive an additional bitstring argument, equal to the key (for leaves) or to the common prefix of all keys (for forks) in the corresponding subtree. 
+{% endhint %}
+
+### 3.3.11. Taxonomy of dictionary primitives. 
+
+The dictionary primitives, described in detail in [$$\mathbf{A.10}$$](a-instructions-and-opcodes.md/#a.10-dictionary-manipulation-primitives) can be classified according to the following categories:
 
 * Which dictionary operation (cf. 3.3.10 do they perform?
 * Are they specialized for the case $$X={ }^{\wedge} Y$$ ? If so, do they represent values of type $$Y$$ by Cells or by Slices? (Generic versions always represent values of type $$X$$ as Slices.)
