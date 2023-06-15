@@ -12,7 +12,7 @@ Recall that the TVM memory and persistent storage consist of (TVM) cells. Each c
 Circular references are forbidden and cannot be created by means of TVM (cf. [$$\mathbf{2.3.5}$$](stacks.md/#2.3.5.-absence-of-circular-references.)). In this way, all cells kept in TVM memory and persistent storage constitute a directed acyclic graph (DAG).
 
 {% hint style="info" %}
-$${ }^{11}$$ From the perspective of low-level cell operations, these data bits and cell references are not intermixed. In other words, an (ordinary) cell essentially is a couple consisting of a list of up to 1023 bits and of a list of up to four cell references, without prescribing an order in which the references and the data bits should be deserialized, even though TL-B schemes appear to suggest such an order. 
+$${ }^{11}$$From the perspective of low-level cell operations, these data bits and cell references are not intermixed. In other words, an (ordinary) cell essentially is a couple consisting of a list of up to 1023 bits and of a list of up to four cell references, without prescribing an order in which the references and the data bits should be deserialized, even though TL-B schemes appear to suggest such an order. 
 {% endhint %}
 
 ### 3.1.2. Ordinary and exotic cells.
@@ -86,11 +86,11 @@ A Merkle update behaves like a Merkle proof for both $$c_{1}$$ and $$c_{2}$$, an
 When a Merkle update cell is loaded, it is replaced by $$c_{2}$$.
 
 {% hint style="info" %}
-$${ }^{12}$$ From a theoretical perspective, we might say that a cell $$c$$ has an infinite sequence of hashes $$\left(\mathrm{HASH}_{i}(c)\right)_{i \geq 1}$$, which eventually stabilizes: $$\mathrm{HASH}_{i}(c) \rightarrow \mathrm{HASH}_{\infty}(c)$$. Then the level $$l$$ is simply the largest index $$i$$, such that $$\operatorname{HASH}_{i}(c) \neq \mathrm{HASH}_{\infty}(c)$$.
+$${ }^{12}$$From a theoretical perspective, we might say that a cell $$c$$ has an infinite sequence of hashes $$\left(\mathrm{HASH}_{i}(c)\right)_{i \geq 1}$$, which eventually stabilizes: $$\mathrm{HASH}_{i}(c) \rightarrow \mathrm{HASH}_{\infty}(c)$$. Then the level $$l$$ is simply the largest index $$i$$, such that $$\operatorname{HASH}_{i}(c) \neq \mathrm{HASH}_{\infty}(c)$$.
 {% endhint %}
 
 {% hint style="info" %}
-$${ }^{13} \mathrm{~A}$$ pruned branch cell $$c^{\prime}$$ of level $$l$$ is bound by a Merkle (proof or update) cell $$c$$ if there are exactly $$l$$ Merkle cells on the path from $$c$$ to its descendant $$c^{\prime}$$, including $$c$$.
+$${ }^{13}\mathrm{~A}$$ pruned branch cell $$c^{\prime}$$ of level $$l$$ is bound by a Merkle (proof or update) cell $$c$$ if there are exactly $$l$$ Merkle cells on the path from $$c$$ to its descendant $$c^{\prime}$$, including $$c$$.
 {% endhint %}
 
 ### 3.1.8. All values of algebraic data types are trees of cells.
@@ -107,7 +107,7 @@ The exact way in which the TVM code (e.g., TVM assembly code) is transformed int
 
 All the data used by the TVM Blockchain, including the blocks themselves and the blockchain state, can be represented - and are represented - as collections, or "bags", of cells. We see that TVM's structure of data (cf. [3.1.8](cells-memory-and-persistent-storage.md/#3.1.8.-all-values-of-algebraic-data-types-are-trees-of-cells.)) and code (cf. [3.1.9](cells-memory-and-persistent-storage.md/#3.1.9.-tvm-code-is-a-tree-of-cells.)) nicely fits into this "everything is a bag of cells" paradigm. In this way, TVM can naturally be used to execute smart contracts in the TVM Blockchain, and the TVM Blockchain can be used to store the code and persistent data of these smart contracts between invocations of TVM. (Of course, both TVM and the TVM Blockchain have been designed so that this would become possible.)
 
-## Data manipulation instructions and cells
+## 3.2 Data manipulation instructions and cells
 
 The next large group of TVM instructions consists of data manipulation instructions, also known as cell manipulation instructions or simply cell instructions. They correspond to memory access instructions of other architectures.
 
@@ -206,7 +206,7 @@ TVM does not offer any ways to modify existing values (cf. [$$\mathbf{2.3.4}$$](
 
 If the TVM code wants to modify its persistent storage, represented by the tree of cells rooted at $$c 4$$, it simply needs to rewrite control register c4 by the root of the tree of cells containing the new value of its persistent storage. (If only part of the persistent storage needs to be modified, cf. [$$\mathbf{3.2.13.}](#3.2.13.-modifying-a-serialized-value-in-a-cell.))
 
-## Hashmaps, or dictionaries
+## 3.3 Hashmaps, or dictionaries
 
 Hashmaps, or dictionaries, are a specific data structure represented by a tree of cells. Essentially, a hashmap represents a map from keys, which are bitstrings of either fixed or variable length, into values of an arbitrary type $$X$$, in such a way that fast lookups and modifications be possible. While any such structure might be inspected or modified with the aid of generic cell serialization and deserialization primitives, TVM introduces special primitives to facilitate working with these hashmaps.
 
@@ -245,11 +245,11 @@ A caret (^) preceding a type $$X$$ means that instead of serializing a value of 
 Parametrized type $$\#<=p$$ with $$p: \#$$ (this notation means " $$p$$ of type \\#", i.e., a natural number) denotes the subtype of the natural numbers type $$\#$$, consisting of integers $$0 \ldots p$$; it is serialized into $$\left\lceil\log _{2}(p+1)\right\rceil$$ bits as an unsigned big-endian integer. Type \\# by itself is serialized as an unsigned 32-bit integer. Parametrized type \\#\\# $$b$$ with $$b: \#<=31$$ is equivalent to \\#<= $$2^{b}-1$$ (i.e., it is an unsigned $$b$$-bit integer).
 
 {% hint style="info" %}
-$${ }^{16}$$ The field's name is useful for representing values of the type being defined in humanreadable form, but it does not affect the binary serialization.
+$${ }^{16}$$The field's name is useful for representing values of the type being defined in humanreadable form, but it does not affect the binary serialization.
 {% endhint %}
 
 {% hint style="info" %}
-$${ }^{17}$$ This is the "linear negation" operation $$(-)^{\perp}$$ of linear logic, hence our notation $${^~}$$.
+$${ }^{17}$$This is the "linear negation" operation $$(-)^{\perp}$$ of linear logic, hence our notation $${^~}$$.
 {% endhint %}
 
 ### 3.3.5. Application to the serialization of hashmaps.
@@ -308,7 +308,7 @@ A total of 93 data bits and 5 references in 6 cells have been used to serialize 
 
 Notice that the built-in TVM primitives for dictionary manipulation need to know something about the serialization of type $$X$$; otherwise, they would not be able to work correctly with Hashmap $$n X$$, because values of type $$X$$ are immediately contained in the Patricia tree leaf cells. There are several options available to describe the serialization of type $$X$$ :
 
-* The simplest case is when $$X=^{\wedge} Y$$ for some other type $$Y$$. In this case the serialization of $$X$$ itself always consists of one reference to a cell, which in fact must contain a value of type $$Y$$, something that is not relevant for dictionary manipulation primitives.
+* The simplest case is when $$X=^Y$$ for some other type $$Y$$. In this case the serialization of $$X$$ itself always consists of one reference to a cell, which in fact must contain a value of type $$Y$$, something that is not relevant for dictionary manipulation primitives.
 * Another simple case is when the serialization of any value of type $$X$$ always consists of $$0 \leq b \leq 1023$$ data bits and $$0 \leq r \leq 4$$ references. Integers $$b$$ and $$r$$ can then be passed to a dictionary manipulation primitive as a simple description of $$X$$. (Notice that the previous case corresponds to $$b=0, r=1$$.)
 * A more sophisticated case can be described by four integers $$1 \leq b_{0}, b_{1} \leq$$ 1023, $$0 \leq r_{0}, r_{1} \leq 4$$, with $$b_{i}$$ and $$r_{i}$$ used when the first bit of the serialization equals $$i$$. When $$b_{0}=b_{1}$$ and $$r_{0}=r_{1}$$, this case reduces to the previous one.
 * Finally, the most general description of the serialization of a type $$X$$ is given by a splitting function split $$_{X}$$ for $$X$$, which accepts one Slice parameter $$s$$, and returns two Slices, $$s^{\prime}$$ and $$s^{\prime \prime}$$, where $$s^{\prime}$$ is the only prefix of $$s$$ that is the serialization of a value of type $$X$$, and $$s^{\prime \prime}$$ is the remainder of $$s$$. If no such prefix exists, the splitting function is expected to throw an exception. Notice that a compiler for a high-level language, which supports some or all algebraic TL-B types, is likely to automatically generate splitting functions for all types defined in the program.
@@ -342,11 +342,11 @@ Let us present a classification of basic operations with dictionaries (i.e., val
 * TreeReduce $$(D, o, f, g)$$ - Given $$D: \operatorname{Hashmap} E(n, X)$$, a value $$o: X$$, and two functions $$f: X \rightarrow Y$$ and $$g: Y \times Y \rightarrow Y$$, performs a "tree reduction" of $$D$$ by first applying $$f$$ to all the leaves, and then using $$g$$ to compute the value corresponding to a fork starting from the values assigned to its children.$${ }^{19}$$
 
 {% hint style="info" %}
-$${ }^{18}$$ In fact, $$f$$ may receive $$m$$ extra arguments and return $$m$$ modified values, which are passed to the next invocation of $$f$$. This may be used to implement "map" and "reduce" operations with dictionaries.
+$${ }^{18}$$In fact, $$f$$ may receive $$m$$ extra arguments and return $$m$$ modified values, which are passed to the next invocation of $$f$$. This may be used to implement "map" and "reduce" operations with dictionaries.
 {% endhint %}
 
 {% hint style="info" %}
-$${ }^{19}$$ Versions of this operation may be introduced where $$f$$ and $$g$$ receive an additional bitstring argument, equal to the key (for leaves) or to the common prefix of all keys (for forks) in the corresponding subtree. 
+$${ }^{19}$$Versions of this operation may be introduced where $$f$$ and $$g$$ receive an additional bitstring argument, equal to the key (for leaves) or to the common prefix of all keys (for forks) in the corresponding subtree. 
 {% endhint %}
 
 ### 3.3.11. Taxonomy of dictionary primitives. 
@@ -367,7 +367,7 @@ TVM provides some support for dictionaries, or hashmaps, with variablelength key
 
 ### 3.4.1. Serialization of dictionaries with variable-length keys.
 
-The serialization of a VarHashmap into a tree of cells (or, more generally, into a Slice) is defined by a TL-B scheme, similar to that described in $$\mathbf{3 . 3 . 3}$$
+The serialization of a VarHashmap into a tree of cells (or, more generally, into a Slice) is defined by a TL-B scheme, similar to that described in [$$\mathbf{3.3.3}$$](#3.3.3.-serialization-of-hashmaps.)
 
 ![](https://cdn.mathpix.com/cropped/2023\_06\_02\_174e9ec2591c06b3f394g-047.jpg?height=412\&width=1322\&top\_left\_y=1952\&top\_left\_x=369)
 
