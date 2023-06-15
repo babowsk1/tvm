@@ -821,7 +821,7 @@ These primitives are completely similar to their non-prefix code counterparts DI
 - F47E - DICTUGETPREV $$\left(i D n-x^{\prime} i^{\prime}-1\right.$$ or 0$$)$$.
 - F47F - DICTUGETPREVEQ $$\left(i D n-x^{\prime} i^{\prime}-1\right.$$ or 0$$)$$.
 
-A.10.10. GetMin, GetMax, RemoveMin, RemoveMax operations.
+## A.10.10. GetMin, GetMax, RemoveMin, RemoveMax operations.
 
 - F482 - DICTMIN ( $$D n-x k-1$$ or 0$$)$$, computes the minimal key $$k$$ (represented by a Slice with $$n$$ data bits) in dictionary $$D$$, and returns $$k$$ along with the associated value $$x$$.
 - F483 - DICTMINREF ( $$D n-c k-1$$ or 0$$)$$, similar to DICTMIN, but returns the only reference in the value as a Cell c.
@@ -846,7 +846,7 @@ A.10.10. GetMin, GetMax, RemoveMin, RemoveMax operations.
 - F49E - DICTUREMMAX $$\left(D n-D^{\prime} x i-1\right.$$ or $$\left.D 0\right)$$.
 - F49F - DICTUREMMAXREF $$\left(D n-D^{\prime} c i-1\right.$$ or $$\left.D 0\right)$$.
 
-A.10.11. Special GET dictionary and prefix code dictionary operations, and constant dictionaries.
+## A.10.11. Special GET dictionary and prefix code dictionary operations, and constant dictionaries.
 
 - F4A0 - DICTIGETJMP $$(i D n-)$$, similar to DICTIGET (cf. A.10.12), but with $$x$$ BLESSed into a continuation with a subsequent JMPX to it on success. On failure, does nothing. This is useful for implementing switch/case constructions.
 - F4A1 - DICTUGETJMP $$(i D n-)$$, similar to DICTIGETJMP, but performs DICTUGET instead of DICTIGET.

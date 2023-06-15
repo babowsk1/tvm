@@ -32,7 +32,7 @@ $${ }^{2}$$The production version will likely require some tweaks and modificati
 
 This chapter provides an overview of the main features and design principles of TVM. More detail on each topic is provided in subsequent chapters.
 
-### Notation for bitstrings
+### 1.0 Notation for bitstrings
 
 The following notation is used for bit strings (or bitstrings)-i.e., finite strings consisting of binary digits (bits), 0 and 1 -throughout this document.
 
@@ -133,7 +133,7 @@ More control registers may be defined in the future for specific TVM Blockchain 
 $${ }^{4}$$In the TVM Blockchain context, c7 is initialized with a singleton Tuple, the only component of which is a Tuple containing blockchain-specific data. The smart contract is free to modify c7 to store its temporary data provided the first component of this Tuple remains intact.
 {% endhint %}
 
-### Total state of TVM (SCCCG)
+### 1.4 Total state of TVM (SCCCG)
 
 The total state of TVM consists of the following components:
 
@@ -151,7 +151,7 @@ Also notice that there are no general-purpose registers, because TVM is a stack 
 $${ }^{5}$$Strictly speaking, there is also the current library context, which consists of a dictionary with 256-bit keys and cell values, used to load library reference cells of [3.1.7.](cells-memory-and-persistent-storage.md#3.1.7.-types-of-exotic-cells.)
 {% endhint %}
 
-### Integer arithmetic
+### 1.5 Integer arithmetic
 
 All arithmetic primitives of TVM operate on several arguments of type Integer, taken from the top of the stack, and return their results, of the same type, into the stack. Recall that Integer represents all integer values in the range $$-2^{256} \leq x<2^{256}$$, and additionally contains a special value $$\mathrm{NaN}$$ ("nota-number").
 
