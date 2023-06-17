@@ -98,6 +98,8 @@ Codepage -1 of TVM is reserved for the strippeddown version of TVM. Its main pur
 
 ### B.2.7. Codepage -2 . 
 
-This bootstrapping process could be iterated even further, by providing an emulator of the stripped-down version of TVM written for an even simpler version of TVM that supports only boolean values (or integers 0 and 1) -a "codepage - 2". All 64-bit arithmetic used in codepage -1 would then need to be defined by means of boolean operations, thus providing a reference implementation for the stripped-down version of TVM used in codepage -1 . In this way, if some of the TVM Blockchain validators did not agree on the results of their 64-bit arithmetic, they could regress to this reference implementation to find the correct answer $${ }^{30}$$
+This bootstrapping process could be iterated even further, by providing an emulator of the stripped-down version of TVM written for an even simpler version of TVM that supports only boolean values (or integers 0 and 1) -a "codepage - 2". All 64-bit arithmetic used in codepage -1 would then need to be defined by means of boolean operations, thus providing a reference implementation for the stripped-down version of TVM used in codepage -1 . In this way, if some of the TVM Blockchain validators did not agree on the results of their 64-bit arithmetic, they could regress to this reference implementation to find the correct answer.$${ }^{30}$$
 
-$${ }^{30}$$ The preliminary version of TVM does not use codepage -2 for this purpose. This may change in the future.
+{% hint style="info" %}
+$${ }^{30}$$The preliminary version of TVM does not use codepage -2 for this purpose. This may change in the future.
+{% endhint %}
