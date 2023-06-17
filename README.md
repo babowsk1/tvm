@@ -1,4 +1,4 @@
-# Introduction
+# 1. Introduction
 
 ## Abstract
 
@@ -28,7 +28,7 @@ $${ }^{1}$$For example, there are no floating-point arithmetic operations (which
 $${ }^{2}$$The production version will likely require some tweaks and modifications prior to launch, which will become apparent only after using the experimental version in the test environment for some time.
 {% endhint %}
 
-## Overview
+## 1. Overview
 
 This chapter provides an overview of the main features and design principles of TVM. More detail on each topic is provided in subsequent chapters.
 
