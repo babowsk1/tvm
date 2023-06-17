@@ -771,7 +771,6 @@ The following operations assume that a dictionary is used to store values $$c^{\
 These are some basic operations for constructing prefix code dictionaries (cf. [$$\mathbf{3.4.2}$$](cells-memory-and-persistent-storage.md/#3.4.2.-serialization-of-prefix-codes.)). The primary application for prefix code dictionaries is deserializing TL-B serialized data structures, or, more generally, parsing prefix codes. Therefore, most prefix code dictionaries will be constant and created at compile time, not by the following primitives.
 
 Some GET operations for prefix code dictionaries may be found in [$$\mathbf{A.10.11}$$](a-instructions-and-opcodes.md/#a.10.11.-special-get-dictionary-and-prefix-code-dictionary-operations-and-constant-dictionaries.) Other prefix code dictionary operations include:
-
 - F470 - PFXDICTSET $$\left(x k D n-D^{\prime}-1\right.$$ or $$\left.D 0\right)$$.
 - F471 - PFXDICTREPLACE $$\left(x k D n-D^{\prime}-1\right.$$ or $$\left.D 0\right)$$.
 - F472 - PFXDICTADD $$\left(x k D n-D^{\prime}-1\right.$$ or $$\left.D 0\right)$$.
@@ -820,8 +819,7 @@ These primitives are completely similar to their non-prefix code counterparts DI
 
 ## A.10.11. Special GET dictionary and prefix code dictionary operations, and constant dictionaries.
 
-- F4A0 - DICTIGETJMP $$(i D n-)$$, similar to DICTIGET (cf. [$$\mathbf{A.10.12}$$](a-instructions-and-opcodes.md/#a.10.12.-subdict-dictionary-operations.)), but with $$x$$ BLESSed into a continuation with a subsequent JMPX to it on success. On failure, does nothing. This is useful for implementing switch/case constructions.
-- F4A1 - DICTUGETJMP $$(i D n-)$$, similar to DICTIGETJMP, but performs DICTUGET instead of DICTIGET.
+- F4A0 - DICTIGETJMP $$(i D n-)$$, similar to DICTIGET (cf. [$$\mathbf{A.10.12}$$](a-instructions-and-opcodes.md/#a.10.12.-subdict-dictionary-operations.)), but with $$x$$ BLESSed into a continuation with a subsequent JMPX to it on success. On failure, does nothing. This is useful for implementing switch/case constructions.- F4A1 - DICTUGETJMP $$(i D n-)$$, similar to DICTIGETJMP, but performs DICTUGET instead of DICTIGET.
 - F4A2 - DICTIGETEXEC $$(i D n-)$$, similar to DICTIGETJMP, but with EXECUTE instead of JMPX.
 - F4A3 - DICTUGETEXEC $$(i D n-)$$, similar to DICTUGETJMP, but with EXECUTE instead of JMPX.
 - F4A6_ $$n-$$ DICTPUSHCONST $$n(-D n)$$, pushes a non-empty constant ![](https://cdn.mathpix.com/cropped/2023_06_02_174e9ec2591c06b3f394g-126.jpg?height=57&width=1260&top_left_y=1934&top_left_x=476) stored as a part of the instruction. The dictionary itself is created from the first of remaining references of the current continuation. In this way, the complete DICTPUSHCONST instruction can be obtained by first serializing $$\mathrm{xF}_{4} \mathrm{A8}_{-}$$, then the non-empty dictionary itself (one 1 bit and a cell reference), and then the unsigned 10-bit integer $$n$$ (as if by a STU 10 instruction). An empty dictionary can be pushed by a NEWDICT primitive (cf. [$$\mathbf{A.10.1}$$](a-instructions-and-opcodes.md/#a.10.1.-dictionary-creation.)) instead. 
@@ -930,9 +928,7 @@ A.11.5. Global variable primitives. The "global variables" may be helpful in imp
 - FA06 - STVARUINT32 $$\left(b x-b^{\prime}\right)$$, serializes an Integer $$0 \leq x<2^{248}$$ as a VarUInteger 32. - FA07 - STVARINT32 $$\left(b x-b^{\prime}\right)$$, serializes an Integer $$-2^{247} \leq x<2^{247}$$ as a VarInteger 32.
 - FA08-FA1F - Reserved for currency manipulation primitives.
 
-## A.11.9. Message and address manipulation primitives. 
-
-The message and address manipulation primitives listed below serialize and deserialize values according to the following TL-B scheme (cf. 3.3.4):
+A.11.9. Message and address manipulation primitives. The message and address manipulation primitives listed below serialize and deserialize values according to the following TL-B scheme (cf. [$$\mathbf{3.3.4}$$](#3.3.4.-brief-explanation-of-tl-b-schemes.)):
 
 ![](https://cdn.mathpix.com/cropped/2023_06_02_174e9ec2591c06b3f394g-135.jpg?height=912&width=1355&top_left_y=833&top_left_x=362)
 
@@ -996,8 +992,9 @@ A.12.2. Debug primitives as operations without side-effect. Next we describe the
 
 ## A.13 Codepage primitives
 
-The following primitives, which begin with byte FF, typically are used at the very beginning of a smart contract's code or a library subroutine to select another TVM codepage. Notice that we expect all codepages to contain these primitives with the same codes, otherwise switching back to another codepage might be impossible (cf. 5.1.8).
+The following primitives, which begin with byte FF, typically are used at the very beginning of a smart contract's code or a library subroutine to select another TVM codepage. Notice that we expect all codepages to contain these primitives with the same codes, otherwise switching back to another codepage might be impossible (cf. [$$\mathbf{5.1.8}$$](codepages-and-instruction-encoding.md/#5.1.8.-setting-the-codepage-in-the-code-itself.)).
 
 - FFnn - SETCP $$n n$$, selects TVM codepage $$0 \leq n n<240$$. If the codepage is not supported, throws an invalid opcode exception.
-- FFOO - SETCPO, selects TVM (test) codepage zero as described in this document. - $$\mathrm{FFF} z$$ - SETCP $$z-16$$, selects TVM codepage $$z-16$$ for $$1 \leq z \leq 15$$. Negative codepages $$-13 \ldots-1$$ are reserved for restricted versions of TVM needed to validate runs of TVM in other codepages as explained in B.2.6. Negative codepage -14 is reserved for experimental codepages, not necessarily compatible between different TVM implementations, and should be disabled in the production versions of TVM.
-- FFFO - SETCPX $$(c-)$$, selects codepage $$c$$ with $$-2^{15} \leq c<2^{15}$$ passed in the top of the stack. B.1. Serialization of the TVM state
+- FFOO - SETCPO, selects TVM (test) codepage zero as described in this document. 
+- $$\mathrm{FFF} z$$ - SETCP $$z-16$$, selects TVM codepage $$z-16$$ for $$1 \leq z \leq 15$$. Negative codepages $$-13 \ldots-1$$ are reserved for restricted versions of TVM needed to validate runs of TVM in other codepages as explained in [$$\mathbf{B.2.6}$$](b-formal-properties-and-specifications-of-tvm.md/#b.2.6.-codepage-1-.). Negative codepage -14 is reserved for experimental codepages, not necessarily compatible between different TVM implementations, and should be disabled in the production versions of TVM.
+- FFFO - SETCPX $$(c-)$$, selects codepage $$c$$ with $$-2^{15} \leq c<2^{15}$$ passed in the top of the stack.
