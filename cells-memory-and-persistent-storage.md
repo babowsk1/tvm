@@ -345,7 +345,6 @@ C_
    A68054C_
    A08090C_
   BEFDF21
-
 ```
 
 A total of 93 data bits and 5 references in 6 cells have been used to serialize this dictionary. Notice that a straightforward representation of three 16bit keys and their corresponding 16-bit values would already require 96 bits (albeit without any references), so this particular serialization turns out to be quite efficient.

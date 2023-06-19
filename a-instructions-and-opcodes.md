@@ -904,7 +904,9 @@ A.11.5. Global variable primitives. The "global variables" may be helpful in imp
 * FA06 - STVARUINT32 $$\left(b x-b^{\prime}\right)$$, serializes an Integer $$0 \leq x<2^{248}$$ as a VarUInteger 32. - FA07 - STVARINT32 $$\left(b x-b^{\prime}\right)$$, serializes an Integer $$-2^{247} \leq x<2^{247}$$ as a VarInteger 32.
 * FA08-FA1F - Reserved for currency manipulation primitives.
 
-A.11.9. Message and address manipulation primitives. The message and address manipulation primitives listed below serialize and deserialize values according to the following TL-B scheme (cf. [$$\mathbf{3.3.4}$$](a-instructions-and-opcodes.md#3.3.4.-brief-explanation-of-tl-b-schemes.)):
+#### A.11.9. Message and address manipulation primitives.&#x20;
+
+The message and address manipulation primitives listed below serialize and deserialize values according to the following TL-B scheme (cf. [$$\mathbf{3.3.4}$$](a-instructions-and-opcodes.md#3.3.4.-brief-explanation-of-tl-b-schemes.)):
 
 ```
 addr_none$00 = MsgAddressExt;
@@ -925,6 +927,7 @@ value:CurrencyCollection ihr_fee:Grams fwd_fee:Grams
 created_lt:uint64 created_at:uint32 = CommonMsgInfoRelaxed;
 ext_out_msg_info$1l src:MsgAddress dest:MsgAddressExt
 created_lt:uint64 created_at:uint32 = CommonMsgInfoRelaxed;
+
 ```
 
 A deserialized MsgAddress is represented by a Tuple $$t$$ as follows:

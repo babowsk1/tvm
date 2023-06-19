@@ -258,7 +258,27 @@ $${ }^{24}$$An important point here is that the tree of cells representing a TVM
 
 One way of dealing with the problem of recursion is by passing a copy of the continuation representing the body of a recursive function as an extra argument to itself. Consider, for example, the following code for a factorial function:
 
-$$\begin{array}{ll}71 & \text { PUSHINT 1 } \\ \text { 9C } & \text { PUSHCONT }\{ \\ 22 & \text { PUSH s2 } \\ 72 & \text { PUSHINT } 2 \\ \text { B9 } & \text { LESS } \\ \text { DC } & \text { IFRET } \\ 59 & \text { ROTREV } \\ 21 & \text { PUSH s1 } \\ \text { A8 } & \text { MUL } \\ 01 & \text { SWAP } \\ \text { A5 } & \text { DEC } \\ \text { 02 } & \text { XCHG s2 } \\ 20 & \text { DUP } \\ \text { D9 } & \text { JMPX } \\ & \text { \} } \\ 20 & \text { DUP } \\ \text { D8 } & \text { EXECUTE } \\ 30 & \text { DROP } \\ 31 & \text { NIP }\end{array}$$
+```
+71 PUSHINT 1
+9C PUSHCONT {
+22 PUSH s2
+72 PUSHINT 2
+B9 LESS
+DC IFRET
+59 ROTREV
+21 PUSH s1
+A8 MUL
+01 SWAP
+A5 DEC
+02 XCHG s2
+20 DUP
+D9 JMPX
+}
+20 DUP
+D8 EXECUTE
+30 DROP
+31 NIP
+```
 
 This roughly corresponds to defining an auxiliary function body with three arguments $$n, x$$, and $$f$$, such that $$\operatorname{body}(n, x, f)$$ equals $$x$$ if $$n<2$$ and $$f(n-$$ $$1, n x, f)$$ otherwise, then invoking $$\operatorname{bod} y(n, 1, \operatorname{body})$$ to compute the factorial of $$n$$. The recursion is then implemented with the aid of the DUP; EXECUTE construction, or DUP; JMPX in the case of tail recursion. This trick is equivalent to applying $$Y$$-combinator to a function body.
 
@@ -270,7 +290,25 @@ $$
 \operatorname{fact}(n):= \begin{cases}1 & \text { if } n<2 \\ n \cdot \operatorname{fact}(n-1) & \text { otherwise }\end{cases}
 $$
 
-$$\begin{array}{ll}\text { 9D } & \text { PUSHCONT }\{ \\ 21 & \text { OVER } \\ \text { C102 } & \text { LESSINT } 2 \\ 92 & \text { PUSHCONT }\{ \\ 5 B & \text { 2DROP } \\ 71 & \text { PUSHINT } 1 \\ & \text { F } \\ \text { E0 } & \text { IFJMP } \\ 21 & \text { OVER } \\ \text { A5 } & \text { DEC } \\ 01 & \text { SWAP } \\ 20 & \text { DUP } \\ \text { D8 } & \text { EXECUTE } \\ \text { A8 } & \text { MUL } \\ & \text { 3 } \\ 20 & \text { DUP } \\ \text { D9 } & \text { JMPX }\end{array}$$
+```
+9D PUSHCONT {
+21 OVER
+C102 LESSINT 2
+92 PUSHCONT {
+5B 2DROP
+71 PUSHINT 1
+}
+E0 IFJMP
+21 OVER
+A5 DEC
+01 SWAP
+20 DUP
+D8 EXECUTE
+A8 MUL
+}
+20 DUP
+D9 JMPX
+```
 
 This definition of the factorial function is two bytes shorter than the previous one, but it uses general recursion instead of tail recursion, so it cannot be easily transformed into a loop.
 
@@ -278,7 +316,19 @@ This definition of the factorial function is two bytes shorter than the previous
 
 Incidentally, a non-recursive definition of the factorial with the aid of a REPEAT loop is also possible, and it is much shorter than both recursive definitions:
 
-$$\begin{array}{ll}71 & \text { PUSHINT } 1 \\ 01 & \text { SWAP } \\ 20 & \text { DUP } \\ 94 & \text { PUSHCONT }\{ \\ 66 & \text { TUCK } \\ \text { A8 } & \text { MUL } \\ 01 & \text { SWAP } \\ \text { A5 } & \text { DEC } \\ & \text { \} } \\ \text { E4 } & \text { REPEAT } \\ 30 & \text { DROP }\end{array}$$
+```
+71 PUSHINT 1
+01 SWAP
+20 DUP
+94 PUSHCONT {
+66 TUCK
+A8 MUL
+01 SWAP
+A5 DEC
+}
+E4 REPEAT
+30 DROP
+```
 
 ### 4.6.5. Several mutually recursive functions.
 

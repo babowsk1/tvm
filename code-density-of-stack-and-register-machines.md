@@ -87,9 +87,31 @@ Secondly, the encoding used for arithmetic and move operations is less optimisti
 
 The machine code for a oneaddress register machine might look as follows:
 
-![](https://cdn.mathpix.com/cropped/2023\_06\_02\_174e9ec2591c06b3f394g-149.jpg?height=358\&width=910\&top\_left\_y=1602\&top\_left\_x=369)
-
-![](https://cdn.mathpix.com/cropped/2023\_06\_02\_174e9ec2591c06b3f394g-150.jpg?height=813\&width=705\&top\_left\_y=447\&top\_left\_x=366)
+```
+MOV r8,r0 // r8 := r0 = a
+XCHG r1 // r0 <-> r1; r0 := b, r1 := a
+MOV r6,r0 // r6 := b
+IMUL r2 // r0 := r0*r2; r0 := bc
+MOV r7,r0 // r7 := bc
+MOV r0,r8 // r0 := a
+IMUL r3 // r0 := ad
+SUB r7 // r0 := ad-bc = D
+XCHG r1 // r1 := D, r0 := b
+IMUL r5 // r0 := bf
+XCHG r3 // r0 := d, r3 := bf
+IMUL r4 // r0 := de
+SUB r3 // r0 := de-bf = Dx
+IDIV r1 // r0 := Dx/D = x
+XCHG r2 // r0 := c, r2 := x
+IMUL r4 // r0 := ce
+XCHG r5 // r0 := f, r5 := ce
+IMUL r8 // r0 := af
+SUB r5 // r0 := af-ce = Dy
+IDIV r1 // r0 := Dy/D = y
+MOV r1,r0 // r1 := y
+MOV r0,r2 // r0 := x
+RET
+```
 
 We have used 23 operations; if we assume one-byte encoding for all arithmetic operations and XCHG, and two-byte encodings for MOV, the total size of the code will be 29 bytes. Notice, however, that to obtain the compact code shown above we had to choose a specific order of computation, and made heavy use of the commutativity of multiplication. (For example, we compute $$b c$$ before $$a f$$, and $$a f-b c$$ immediately after $$a f$$.) It is not clear whether a compiler would be able to make all such optimizations by itself.
 
@@ -97,9 +119,37 @@ We have used 23 operations; if we assume one-byte encoding for all arithmetic op
 
 The machine code for a stack machine equipped with basic stack manipulation primitives described in [$$\mathbf{2.2.1}$$](stacks.md#2.2.1.-basic-stack-manipulation-primitives.) might look as follows:
 
-![](https://cdn.mathpix.com/cropped/2023\_06\_02\_174e9ec2591c06b3f394g-150.jpg?height=512\&width=737\&top\_left\_y=1850\&top\_left\_x=369)
-
-![](https://cdn.mathpix.com/cropped/2023\_06\_02\_174e9ec2591c06b3f394g-151.jpg?height=962\&width=748\&top\_left\_y=449\&top\_left\_x=366)
+```
+PUSH s5 // a b c d e f a
+PUSH s3 // a b c d e f a d
+IMUL // a b c d e f ad
+PUSH s5 // a b c d e f ad b
+PUSH s5 // a b c d e f ad b c
+IMUL // a b c d e f ad bc
+SUB // a b c d e f ad-bc
+XCHG s3 // a b c ad-bc e f d
+PUSH s2 // a b c ad-bc e f d e
+IMUL // a b c ad-bc e f de
+XCHG s5 // a de c ad-bc e f b
+PUSH s1 // a de c ad-bc e f b f
+IMUL // a de c ad-bc e f bf
+XCHG s1,s5 // a f c ad-bc e de bf
+SUB // a f c ad-bc e de-bf
+XCHG s3 // a f de-bf ad-bc e c
+IMUL // a f de-bf ad-bc ec
+XCHG s3 // a ec de-bf ad-bc f
+XCHG s1,s4 // ad-bc ec de-bf a f
+IMUL // D ec Dx af
+XCHG s1 // D ec af Dx
+XCHG s2 // D Dx af ec
+SUB // D Dx Dy
+XCHG s1 // D Dy Dx
+PUSH s2 // D Dy Dx D
+IDIV // D Dy x
+XCHG s2 // x Dy D
+IDIV // x y
+RET
+```
 
 We have used 29 operations; assuming one-byte encodings for all stack operations involved (including XCHG s1, s(i)), we have used 29 code bytes as well. Notice that with one-byte encoding, the "unsystematic" operation ROT (equivalent to XCHG s1; XCHG s2) would reduce the operation and byte count to 28. This shows that such "unsystematic" operations, borrowed from Forth, may indeed reduce the code size on some occasions.
 
@@ -111,11 +161,35 @@ The code presented above might have been produced by a rather unsophisticated co
 
 A stack machine with compound stack primitives (cf. [$$\mathbf{2.2.3}$$](stacks.md#2.2.3.-compound-stack-manipulation-primitives.)) would not significantly improve code density of the code presented above, at least in terms of bytes used. The only difference is that, if we were not allowed to use commutativity of multiplication, the extra XCHG s1 inserted before the third IMUL might be combined with two previous operations XCHG s3, PUSH s2 into one compound operation PUXC s2, s3; we provide the resulting code below. To make this less redundant, we show a version of the code that computes subexpression af before $$e c$$ as specified in the original source file. We see that this replaces six operations (starting from line 15) with five other operations, and disables the ROT optimization:
 
-![](https://cdn.mathpix.com/cropped/2023\_06\_02\_174e9ec2591c06b3f394g-152.jpg?height=1266\&width=748\&top\_left\_y=1102\&top\_left\_x=366)
-
-IDIV $$/ / \mathrm{x} \mathrm{y}$$
-
+```
+PUSH s5 // a b c d e f a
+PUSH s3 // a b c d e f a d
+IMUL // a b c d e f ad
+PUSH s5 // a b c d e f ad b
+PUSH s5 // a b c d e f ad b c
+IMUL // a b c d e f ad bc
+SUB // a b c d e f ad-bc
+PUXC s2,s3 // a b c ad-bc e f e d
+IMUL // a b c ad-bc e f ed
+XCHG s5 // a ed c ad-bc e f b
+PUSH s1 // a ed c ad-bc e f b f
+IMUL // a ed c ad-bc e f bf
+XCHG s1,s5 // a f c ad-bc e ed bf
+SUB // a f c ad-bc e ed-bf
+XCHG s4 // a ed-bf c ad-bc e f
+XCHG s1,s5 // e Dx c D a f
+IMUL // e Dx c D af
+XCHG s2 // e Dx af D c
+XCHG s1,s4 // D Dx af e c
+IMUL // D Dx af ec
+SUB // D Dx Dy
+XCHG s1 // D Dy Dx
+PUSH s2 // D Dy Dx D
+IDIV // D Dy x
+XCHG s2 // x Dy D
+IDIV // x y
 RET
+```
 
 We have used a total of 27 operations and 28 bytes, the same as the previous version (with the ROT optimization). However, we did not use the commutativity of multiplication here, so we can say that compound stack manipulation primitives enable us to reduce the code size from 29 to 28 bytes.
 
@@ -127,9 +201,31 @@ The previous version of code for a stack machine with compound stack primitives 
 
 By interchanging XCHG operations with preceding XCHG, PUSH, and arithmetic operations whenever possible, we obtain code fragment XCHG s2, s6; XCHG s1,s0; XCHG 0 , s5, which can then be replaced by compound operation XCHG3 s6,s0,s5. This compound operation would admit a two-byte encoding, thus leading to 27-byte code using only 21 operations:
 
-![](https://cdn.mathpix.com/cropped/2023\_06\_02\_174e9ec2591c06b3f394g-153.jpg?height=814\&width=1368\&top\_left\_y=1550\&top\_left\_x=365)
+```
+PUSH2 s5,s2 // a b c d e f a d
+IMUL // a b c d e f ad
+PUSH2 s5,s4 // a b c d e f ad b c
+IMUL // a b c d e f ad bc
+SUB // a b c d e f ad-bc
+PUXC s2,s3 // a b c ad-bc e f e d
+IMUL // a b c D e f ed
+XCHG3 s6,s0,s5 // (same as XCHG s2,s6; XCHG s1,s0; XCHG s0,s5)
+// e f c D a ed b
+PUSH s5 // e f c D a ed b f
+IMUL // e f c D a ed bf
+SUB // e f c D a ed-bf
+XCHG s4 // e Dx c D a f
+IMUL // e Dx c D af
+XCHG2 s4,s2 // D Dx af e c
+IMUL // D Dx af ec
+SUB // D Dx Dy
+XCPU s1,s2 // D Dy Dx D
+IDIV // D Dy x
+XCHG s2 // x Dy D
+IDIV // x y
+RET
 
-$$\begin{array}{ll}\text { SUB } & / / \text { D Dx Dy } \\ \text { XCPU s1,s2 } & / / \text { D Dy Dx D } \\ \text { IDIV } & / / \text { D Dy x } \\ \text { XCHG s2 } & / / \text { x Dy D } \\ \text { IDIV } & / / \text { x y } \\ \text { RET } & \end{array}$$
+```
 
 It is interesting to note that this version of stack machine code contains only 9 stack manipulation primitives for 11 arithmetic operations. It is not clear, however, whether an optimizing compiler would be able to reorganize the code in such a manner by itself.
 
@@ -266,7 +362,20 @@ This section compares the machine code for different register machines for a sam
 
 A sample source file may be obtained by replacing the built-in integer type with a custom Rational type, represented by a pointer to an object in memory, in our function for solving systems of two linear equations (cf. [$$\mathbf{C.1.1}$$](code-density-of-stack-and-register-machines.md#c11-sample-source-file-for-a-leaf-function)):
 
-![](https://cdn.mathpix.com/cropped/2023\_06\_02\_174e9ec2591c06b3f394g-160.jpg?height=658\&width=1265\&top\_left\_y=1697\&top\_left\_x=366)
+```
+struct Rational;
+typedef struct Rational *num;
+extern num r_add(num, num);
+extern num r_sub(num, num);
+extern num r_mul(num, num);
+extern num r_div(num, num);
+(num, num) r_f(num a, num b, num c, num d, num e, num f) {
+num D = r_sub(r_mul(a, d), r_mul(b, c)); // a*d-b*c
+num Dx = r_sub(r_mul(e, d), r_mul(b, f)); // e*d-b*f
+num Dy = r_sub(r_mul(a, f), r_mul(e, c)); // a*f-e*c
+return (r_div(Dx, D), r_div(Dy, D)); // Dx/D, Dy/D
+}
+```
 
 We will ignore all questions related to allocating new objects of type Rational in memory (e.g., in heap), and to preventing memory leaks. We may assume that the called subroutines $$r_{-}$$sub, $$r_{-} m u l$$, and so on allocate new objects simply by advancing some pointer in a pre-allocated buffer, and that unused objects are later freed by a garbage collector, external to the code being analysed.
 
@@ -280,14 +389,55 @@ Because our sample function does not use built-in arithmetic instructions at all
 
 We first assume that $$m=0$$ (i.e., that all subroutines are free to destroy the values of all registers). In this case, our machine code for r\_f does not have to preserve any registers, but has to save all registers containing useful values into the stack before calling any subroutines. A size-optimizing compiler might produce the following code:
 
-![](https://cdn.mathpix.com/cropped/2023\_06\_02\_174e9ec2591c06b3f394g-161.jpg?height=466\&width=741\&top\_left\_y=1900\&top\_left\_x=364)
+```
+PUSH r4 // STACK: e
+PUSH r1 // STACK: e b
+PUSH r0 // .. e b a
+PUSH r6 // .. e b a f
+PUSH r2 // .. e b a f c
+PUSH r3 // .. e b a f c d
+MOV r0,r1 // b
+MOV r1,r2 // c
+CALL r_mul // bc
+PUSH r0 // .. e b a f c d bc
+MOV r0,s4 // a
+MOV r1,s1 // d
+CALL r_mul // ad
+POP r1 // bc; .. e b a f c d
+CALL r_sub // D:=ad-bc
+XCHG r0,s4 // b ; .. e D a f c d
+MOV r1,s2 // f
+CALL r_mul // bf
+POP r1 // d ; .. e D a f c
+PUSH r0 // .. e D a f c bf
+MOV r0,s5 // e
+CALL r_mul // ed
+POP r1 // bf; .. e D a f c
+CALL r_sub // Dx:=ed-bf
+XCHG r0,s4 // e ; .. Dx D a f c
+POP r1 // c ; .. Dx D a f
+CALL r_mul // ec
+XCHG r0,s1 // a ; .. Dx D ec f
+POP r1 // f ; .. Dx D ec
+CALL r_mul // af
+POP r1 // ec; .. Dx D
+CALL r_sub // Dy:=af-ec
+XCHG r0,s1 // Dx; .. Dy D
+MOV r1,s0 // D
+CALL r_div // x:=Dx/D
+XCHG r0,s1 // Dy; .. x D
+POP r1 // D ; .. x
+CALL r_div // y:=Dy/D
+MOV r1,r0 // y
+POP r0 // x ; ..
+RET
 
-![](https://cdn.mathpix.com/cropped/2023\_06\_02\_174e9ec2591c06b3f394g-162.jpg?height=1613\&width=791\&top\_left\_y=446\&top\_left\_x=366)
+```
 
 We have used 41 instructions: 17 one-byte (eight PUSH/POP pairs and one RET), 13 two-byte (MOV and XCHG; out of them 11 "new" ones, involving the stack), and 11 three-byte (CALL), for a total of $$17 \cdot 1+13 \cdot 2+11 \cdot 3=76$$ bytes. $${ }^{32}$$
 
 {% hint style="info" %}
-$${ }^{32}$$Code produced for this function by an optimizing compiler for $$\mathrm{x} 86-64$$ architecture
+$${ }^{32}$$Code produced for this function by an optimizing compiler for $$\mathrm{x} 86-64$$ architecture with size-optimization enabled actually occupied 150 bytes, due mostly to the fact that actual instruction encodings are about twice as long as we had optimistically assumed.
 {% endhint %}
 
 ### C.3.3. Three-address and two-address register machines, $$m=8$$ preserved registers.
@@ -298,11 +448,48 @@ Now we have eight registers, r8 to r15, that are preserved by subroutine calls. 
 
 This time all registers must be preserved by the subroutines, excluding those used for returning the results. This means that our code must preserve the original values of $$r 2$$ to $$r 5$$, as well as any other registers it uses for temporary values. A straightforward way of writing the code of our subroutine would be to push registers r2 up to, say, r8 into the stack, then perform all the operations required, using $$r 6-r 8$$ for intermediate values, and finally restore registers from the stack. However, this would not optimize code size. We choose another approach:
 
-![](https://cdn.mathpix.com/cropped/2023\_06\_02\_174e9ec2591c06b3f394g-163.jpg?height=761\&width=628\&top\_left\_y=1476\&top\_left\_x=369)
+```
+PUSH r0 // STACK: a
+PUSH r1 // STACK: a b
+MOV r0,r1 // b
+MOV r1,r2 // c
+CALL r_mul // bc
+PUSH r0 // .. a b bc
+MOV r0,s2 // a
+MOV r1,r3 // d
+CALL r_mul // ad
+POP r1 // bc; .. a b
+CALL r_sub // D:=ad-bc
+XCHG r0,s0 // b; .. a D
+MOV r1,r5 // f
+CALL r_mul // bf
+PUSH r0 // .. a D bf
+MOV r0,r4 // e
+MOV r1,r3 // d
+CALL r_mul // ed
+POP r1 // bf; .. a D
+CALL r_sub // Dx:=ed-bf
+XCHG r0,s1 // a ; .. Dx D
+MOV r1,r5 // f
+CALL r_mul // af
+PUSH r0 // .. Dx D af
+MOV r0,r4 // e
+MOV r1,r2 // c
+CALL r_mul // ec
+MOV r1,r0 // ec
+POP r0 // af; .. Dx D
+CALL r_sub // Dy:=af-ec
+XCHG r0,s1 // Dx; .. Dy D
+MOV r1,s0 // D
+CALL r_div // x:=Dx/D
+XCHG r0,s1 // Dy; .. x D
+POP r1 // D ; .. x
+CALL r_div // y:=Dy/D
+MOV r1,r0 // y
+POP r0 // x
+RET
 
-with size-optimization enabled actually occupied 150 bytes, due mostly to the fact that actual instruction encodings are about twice as long as we had optimistically assumed.
-
-![](https://cdn.mathpix.com/cropped/2023\_06\_02\_174e9ec2591c06b3f394g-164.jpg?height=1206\&width=640\&top\_left\_y=449\&top\_left\_x=366)
+```
 
 We have used 39 instructions: 11 one-byte, 17 two-byte (among them 5 "new" instructions), and 11 three-byte, for a total of $$11 \cdot 1+17 \cdot 2+11 \cdot 3=78$$ bytes. Somewhat paradoxically, the code size in bytes is slightly longer than in the previous case (cf. [$$\mathbf{C.3.2}$$](code-density-of-stack-and-register-machines.md#c32-three-address-and-two-address-register-machines-preserved-registers)), contrary to what one might have expected. This is partially due to the fact that we have assumed two-byte encodings for "new" MOV and XCHG instructions involving the stack, similarly to the "old" instructions. Most existing architectures (such as x86-64) use longer encodings (maybe even twice as long) for their counterparts of our "new" move and exchange instructions compared to the "usual" register-register ones. Taking this into account, we see that we would have obtained here 83 bytes (versus 87 for the code in [$$\mathbf{C.3.2}$$](code-density-of-stack-and-register-machines.md#c32-three-address-and-two-address-register-machines-preserved-registers) assuming three-byte encodings of new operations, and 88 bytes (versus 98) assuming four-byte encodings. This shows that, for two-address architectures without optimized encodings for register-stack move and exchange operations, $$m=16$$ preserved registers might result in slightly shorter code for some non-leaf functions, at the expense of leaf functions (cf. [$$\mathbf{C.2.3}$$](code-density-of-stack-and-register-machines.md#c23-case--all-registers-must-be-preserved) and [$$\mathbf{C.2.4}$$](code-density-of-stack-and-register-machines.md#c24-case--registers-r8r15-must-be-preserved)), which would become considerably longer.
 
@@ -312,9 +499,53 @@ For our one-address register machine, we assume that new register-stack instruct
 
 By adapting the code provided in [$$\mathbf{C.3.2}$$](code-density-of-stack-and-register-machines.md#c32-three-address-and-two-address-register-machines-preserved-registers) to the one-address machine, we obtain the following:
 
-![](https://cdn.mathpix.com/cropped/2023\_06\_02\_174e9ec2591c06b3f394g-165.jpg?height=1209\&width=791\&top\_left\_y=1149\&top\_left\_x=366)
-
-![](https://cdn.mathpix.com/cropped/2023\_06\_02\_174e9ec2591c06b3f394g-166.jpg?height=1060\&width=719\&top\_left\_y=446\&top\_left\_x=367)
+```
+PUSH r4 // STACK: e
+PUSH r1 // STACK: e b
+PUSH r0 // .. e b a
+PUSH r6 // .. e b a f
+PUSH r2 // .. e b a f c
+PUSH r3 // .. e b a f c d
+LD s1 // r0:=c
+XCHG r1 // r0:=b, r1:=c
+CALL r_mul // bc
+PUSH r0 // .. e b a f c d bc
+LD s1 // d
+XCHG r1 // r1:=d
+LD s4 // a
+CALL r_mul // ad
+POP r1 // bc; .. e b a f c d
+CALL r_sub // D:=ad-bc
+XCHG s4 // b ; .. e D a f c d
+XCHG r1
+LD s2 // f
+XCHG r1 // r0:=b, r1:=f
+CALL r_mul // bf
+POP r1 // d ; .. e D a f c
+PUSH r0 // .. e D a f c bf
+LD s5 // e
+CALL r_mul // ed
+POP r1 // bf; .. e D a f c
+CALL r_sub // Dx:=ed-bf
+XCHG s4 // e ; .. Dx D a f c
+POP r1 // c ; .. Dx D a f
+CALL r_mul // ec
+XCHG s1 // a ; .. Dx D ec f
+POP r1 // f ; .. Dx D ec
+CALL r_mul // af
+POP r1 // ec; .. Dx D
+CALL r_sub // Dy:=af-ec
+XCHG s1 // Dx; .. Dy D
+POP r1 // D ; .. Dy
+PUSH r1 // .. Dy D
+CALL r_div // x:=Dx/D
+XCHG s1 // Dy; .. x D
+POP r1 // D ; .. x
+CALL r_div // y:=Dy/D
+XCHG r1 // r1:=y
+POP r0 // r0:=x ; ..
+RET
+```
 
 We have used 45 instructions: 34 one-byte and 11 three-byte, for a total of 67 bytes. Compared to the 76 bytes used by two- and three-address machines in [$$\mathbf{C.3.2}$$](code-density-of-stack-and-register-machines.md#c32-three-address-and-two-address-register-machines-preserved-registers) we see that, again, the one-address register machine code may be denser than that of two-register machines, at the expense of utilizing more opcode space (just as shown in [$$\mathbf{C.2}$$](code-density-of-stack-and-register-machines.md#c2-comparison-of-machine-code-for-sample-leaf-func--tion)). However, this time the extra 3/16 of the opcode space was used for data manipulation instructions, which do not depend on specific arithmetic operations or user functions invoked.
 
@@ -326,11 +557,47 @@ As explained in [$$\mathbf{C.3.3}$$](code-density-of-stack-and-register-machines
 
 We simply adapt the code provided in [$$\mathbf{C.3.4}$$](code-density-of-stack-and-register-machines.md#c34-three-address-and-two-address-register-machines-preserved-registers) to the one-address register machine:
 
-PUSH rO // STACK : a
-
-![](https://cdn.mathpix.com/cropped/2023\_06\_02\_174e9ec2591c06b3f394g-167.jpg?height=1911\&width=653\&top\_left\_y=446\&top\_left\_x=365)
-
-## RET
+```
+PUSH r1 // STACK: a b
+MOV r0,r1 // b
+MOV r1,r2 // c
+CALL r_mul // bc
+PUSH r0 // .. a b bc
+LD s2 // a
+MOV r1,r3 // d
+CALL r_mul // ad
+POP r1 // bc; .. a b
+CALL r_sub // D:=ad-bc
+XCHG s0 // b; .. a D
+MOV r1,r5 // f
+CALL r_mul // bf
+PUSH r0 // .. a D bf
+MOV r0,r4 // e
+MOV r1,r3 // d
+CALL r_mul // ed
+POP r1 // bf; .. a D
+CALL r_sub // Dx:=ed-bf
+XCHG s1 // a ; .. Dx D
+MOV r1,r5 // f
+CALL r_mul // af
+PUSH r0 // .. Dx D af
+MOV r0,r4 // e
+MOV r1,r2 // c
+CALL r_mul // ec
+MOV r1,r0 // ec
+POP r0 // af; .. Dx D
+CALL r_sub // Dy:=af-ec
+XCHG s1 // Dx; .. Dy D
+POP r1 // D ; .. Dy
+PUSH r1 // .. Dy D
+CALL r_div // x:=Dx/D
+XCHG s1 // Dy; .. x D
+POP r1 // D ; .. x
+CALL r_div // y:=Dy/D
+MOV r1,r0 // y
+POP r0 // x
+RET
+```
 
 We have used 40 instructions: 18 one-byte, 11 two-byte, and 11 three-byte, for a total of $$18 \cdot 1+11 \cdot 2+11 \cdot 3=73$$ bytes.
 
@@ -338,13 +605,37 @@ We have used 40 instructions: 18 one-byte, 11 two-byte, and 11 three-byte, for a
 
 We reuse the code provided in [$$\mathbf{C.1.5}$$](code-density-of-stack-and-register-machines.md#c15-stack-machine-with-basic-stack-primitives) simply replacing arithmetic primitives (VM instructions) with subroutine calls. The only substantive modification is the insertion of the previously optional XCHG s1 before the third multiplication, because even an optimizing compiler cannot now know whether CALL r\_mul is a commutative operation. We have also used the "tail recursion optimization" by replacing the final CALL $$r_{-}$$div followed by RET with JMP $$r_{-} d i v$$.
 
-![](https://cdn.mathpix.com/cropped/2023\_06\_02\_174e9ec2591c06b3f394g-168.jpg?height=1317\&width=770\&top\_left\_y=1049\&top\_left\_x=366)
-
-CALL r\_div // D Dy $$x$$
-
-XCHG s 2 // $$\mathrm{x}$$ D $$\mathrm{D}$$
-
-JMP $$r_{-} \mathrm{div} / / \mathrm{x}$$ y
+```
+PUSH s5 // a b c d e f a
+PUSH s3 // a b c d e f a d
+CALL r_mul // a b c d e f ad
+PUSH s5 // a b c d e f ad b
+PUSH s5 // a b c d e f ad b c
+CALL r_mul // a b c d e f ad bc
+CALL r_sub // a b c d e f ad-bc
+XCHG s3 // a b c ad-bc e f d
+PUSH s2 // a b c ad-bc e f d e
+XCHG s1 // a b c ad-bc e f e d
+CALL r_mul // a b c ad-bc e f ed
+XCHG s5 // a ed c ad-bc e f b
+PUSH s1 // a ed c ad-bc e f b f
+CALL r_mul // a ed c ad-bc e f bf
+XCHG s1,s5 // a f c ad-bc e ed bf
+CALL r_sub // a f c ad-bc e ed-bf
+XCHG s3 // a f ed-bf ad-bc e c
+CALL r_mul // a f ed-bf ad-bc ec
+XCHG s3 // a ec ed-bf ad-bc f
+XCHG s1,s4 // ad-bc ec ed-bf a f
+CALL r_mul // D ec Dx af
+XCHG s1 // D ec af Dx
+XCHG s2 // D Dx af ec
+CALL r_sub // D Dx Dy
+XCHG s1 // D Dy Dx
+PUSH s2 // D Dy Dx D
+CALL r_div // D Dy x
+XCHG s2 // x Dy D
+JMP r_div // x y
+```
 
 We have used 29 instructions; assuming one-byte encodings for all stack operations, and three-byte encodings for CALL and JMP instructions, we end up with 51 bytes.
 
@@ -352,7 +643,29 @@ We have used 29 instructions; assuming one-byte encodings for all stack operatio
 
 We again reuse the code provided in [$$\mathbf{C.1.7}$$](code-density-of-stack-and-register-machines.md#c17-stack-machine-with-compound-stack-primitives-and-manually-optimized-code), replacing arithmetic primitives with subroutine calls and making the tail recursion optimization:
 
-![](https://cdn.mathpix.com/cropped/2023\_06\_02\_174e9ec2591c06b3f394g-169.jpg?height=1063\&width=1369\&top\_left\_y=1000\&top\_left\_x=367)
+```
+PUSH2 s5,s2 // a b c d e f a d
+CALL r_mul // a b c d e f ad
+PUSH2 s5,s4 // a b c d e f ad b c
+CALL r_mul // a b c d e f ad bc
+CALL r_sub // a b c d e f ad-bc
+PUXC s2,s3 // a b c ad-bc e f e d
+CALL r_mul // a b c D e f ed
+XCHG3 s6,s0,s5 // (same as XCHG s2,s6; XCHG s1,s0; XCHG s0,s5)
+// e f c D a ed b
+PUSH s5 // e f c D a ed b f
+CALL r_mul // e f c D a ed bf
+CALL r_sub // e f c D a ed-bf
+XCHG s4 // e Dx c D a f
+CALL r_mul // e Dx c D af
+XCHG2 s4,s2 // D Dx af e c
+CALL r_mul // D Dx af ec
+CALL r_sub // D Dx Dy
+XCPU s1,s2 // D Dy Dx D
+CALL r_div // D Dy x
+XCHG s2 // x Dy D
+JMP r_div // x y
+```
 
 This code uses only 20 instructions, 9 stack-related and 11 control flowrelated (CALL and JMP), for a total of 48 bytes.
 
