@@ -224,7 +224,31 @@ The abstract representation of a hashmap in TVM is a Patricia tree, or a compact
 
 The serialization of a hashmap into a tree of cells (or, more generally, into a Slice) is defined by the following TL-B scheme:
 
-![](https://cdn.mathpix.com/cropped/2023\_06\_02\_174e9ec2591c06b3f394g-038.jpg?height=1116\&width=1351\&top\_left\_y=757\&top\_left\_x=362)
+```
+bit#_ _:(## 1) = Bit;
+
+hm_edge#_ {n:#} {X:Type} {1:#} {m:#} label: (HmLabel “1 n)
+{n = ("m) + 1} node: (HashmapNode m X) = Hashmap n X;
+
+hmn_leaf#_ {X:Type} value:X = HashmapNode 0 X;
+hmn_fork#_ {n:#} {X:Type} left:~(Hashmap n X)
+right:~ (Hashmap n X) = HashmapNode (n + 1) X;
+
+hml_short$0 {m:#} {n:#} len: (Unary “n)
+
+s:(n * Bit) = HmLabel "n m;
+hml_long$10 {m:#} n:(#<=m) s:(n * Bit) = HmLabel "n m;
+hml_same$11 {m:#} v:Bit n:(#<= m) = HmLabel "n m;
+
+unary_zero$0 = Unary “0;
+unary_succ$l {n:#} x:(Unary "n) = Unary “(n + 1);
+
+hme_empty$0 {n:#} {X:Type} = HashmapE n X;
+hme_root$l {n:#} {X:Type} root:~(Hashmap n X) = HashmapE n X;
+
+true#_ = True;
+_ {n:#} _:(Hashmap n True) = BitstringSet n;
+```
 
 ### 3.3.4. Brief explanation of TL-B schemes.
 
@@ -286,21 +310,43 @@ Consider a dictionary with three 16-bit keys 13, 17, and 239 (considered as big-
 
 In binary form:
 
-$$0000000000001101 \Rightarrow 0000000010101001$$ $$0000000000010001 \Rightarrow 0000000100100001$$ $$0000000011101111 \Rightarrow 1101111100100001$$
+$$0000000000001101 \Rightarrow 0000000010101001$$ \
+$$0000000000010001 \Rightarrow 0000000100100001$$\
+$$0000000011101111 \Rightarrow 1101111100100001$$
 
 The corresponding Patricia tree consists of a root $$A$$, two intermediate nodes $$B$$ and $$C$$, and three leaf nodes $$D, E$$, and $$F$$, corresponding to 13,17 , and 239 , respectively. The root $$A$$ has only one child, $$B$$; the label on the edge $$A B$$ is $$00000000=0^{8}$$. The node $$B$$ has two children: its left child is an intermediate node $$C$$ with the edge $$B C$$ labelled by (0)00, while its right child is the leaf $$F$$ with $$B F$$ labelled by (1)1101111. Finally, $$C$$ has two leaf children $$D$$ and $$E$$, with $$C D$$ labelled by (0)1101 and $$C E-$$ by (1)0001.
 
 The corresponding value of type HashmapE 16 (\\#\\# 16) may be written in human-readable form as:
 
-![](https://cdn.mathpix.com/cropped/2023\_06\_02\_174e9ec2591c06b3f394g-042.jpg?height=161\&width=1254\&top\_left\_y=2205\&top\_left\_x=379)
+```
+(hme_root$1
+root: ~ (hm_edge label: (hml_same$1l v:0 n:8) node: (hm_fork
+left: ~(hm_edge label: (hml_short$0 len:$110 s:3$00)
+node: (hm_fork
+left:~(hm_edge label: (hml_long$10 n:4 s:$1101)
+node: (hm_leaf value:169))
+right: (hm_edge label: (hml_long$10 n:4 s:$0001)
+node: (hm_leaf value:289))))
+right:~(hm_edge label: (hml_long$10 n:7 s:$1101111)
+node: (hm_leaf value:57121)))))
+```
 
-![](https://cdn.mathpix.com/cropped/2023\_06\_02\_174e9ec2591c06b3f394g-043.jpg?height=360\&width=1114\&top\_left\_y=449\&top\_left\_x=451)
-
-The serialization of this data structure into a tree of cells consists of six cells with the following binary data contained in them: $$\mathrm{A}:=1$$ A. $$0:=11001000$$ A.0.0:=0 11000 A.0.0.0:=10 10011010000000010101001 A.0.0.1:=1010000010000000100100001 A.0.1:=10 11111011111101111100100001
+The serialization of this data structure into a tree of cells consists of six cells with the following binary data contained in them: \
+$$\mathrm{A}:=1$$ \
+A. $$0:=11001000$$ \
+A.0.0:=0 11000 A.0.0.0:=10 10011010000000010101001 A.0.0.1:=1010000010000000100100001 A.0.1:=10 11111011111101111100100001
 
 Here $$A$$ is the root cell, $$A .0$$ is the cell at the first reference of $$A, A .1$$ is the cell at the second reference of $$A$$, and so on. This tree of cells can be represented more compactly using the hexadecimal notation described in $$\mathbf{1 . 0}$$ using indentation to reflect the tree-of-cells structure:
 
-![](https://cdn.mathpix.com/cropped/2023\_06\_02\_174e9ec2591c06b3f394g-043.jpg?height=301\&width=262\&top\_left\_y=1538\&top\_left\_x=365)
+```
+C_
+ C8
+  62_
+   A68054C_
+   A08090C_
+  BEFDF21
+
+```
 
 A total of 93 data bits and 5 references in 6 cells have been used to serialize this dictionary. Notice that a straightforward representation of three 16bit keys and their corresponding 16-bit values would already require 96 bits (albeit without any references), so this particular serialization turns out to be quite efficient.
 
@@ -369,9 +415,24 @@ TVM provides some support for dictionaries, or hashmaps, with variablelength key
 
 The serialization of a VarHashmap into a tree of cells (or, more generally, into a Slice) is defined by a TL-B scheme, similar to that described in [$$\mathbf{3.3.3}$$](cells-memory-and-persistent-storage.md#3.3.3.-serialization-of-hashmaps.)
 
-![](https://cdn.mathpix.com/cropped/2023\_06\_02\_174e9ec2591c06b3f394g-047.jpg?height=412\&width=1322\&top\_left\_y=1952\&top\_left\_x=369)
+```
+vhm_edge#_ {n:#} {X:Type} {1:#} {m:#} label: (HmLabel “1 n)
+{n = ("m) + 1} node: (VarHashmapNode m X)
+= VarHashmap n X;
+vhmn_leaf$00 {n:#} {X:Type} value:X = VarHashmapNode n X;
+vhmn_fork$01 {n:#} {X:Type} left:~(VarHashmap n X)
+right:~(VarHashmap n X) value: (Maybe X)
+= VarHashmapNode (n + 1) X;
+vhmn_cont$l {n:#} {X:Type} branch:bit child:~(VarHashmap n X)
+value:X = VarHashmapNode (n + 1) X;
 
-![](https://cdn.mathpix.com/cropped/2023\_06\_02\_174e9ec2591c06b3f394g-048.jpg?height=412\&width=1073\&top\_left\_y=450\&top\_left\_x=362)
+nothing$0 {X:Type} = Maybe X;
+just$l {X:Type} value:X = Maybe X;
+
+vhme_empty$0 {n:#} {X:Type} = VarHashmapE n X;
+vhme_root$l {n:#} {X:Type} root:~(VarHashmap n X)
+= VarHashmapE n X;
+```
 
 ### 3.4.2. Serialization of prefix codes.
 
@@ -379,4 +440,16 @@ One special case of a dictionary with variable-length keys is that of a prefix c
 
 The serialization of a prefix code is defined by the following TL-B scheme:
 
-![](https://cdn.mathpix.com/cropped/2023\_06\_02\_174e9ec2591c06b3f394g-048.jpg?height=570\&width=1370\&top\_left\_y=1163\&top\_left\_x=364)
+```
+phm_edge#_ {n:#} {X:Type} {1:#} {m:#} label: (HmLabel “1 n)
+{n = ("m) + 1} node: (PfxHashmapNode m X)
+= PfxHashmap n X;
+
+phmn_leaf$0 {n:#} {X:Type} value:X = PfxHashmapNode n X;
+phmn_fork$l {n:#} {X:Type} left:~(PfxHashmap n X)
+right: (PfxHashmap n X) = PfxHashmapNode (n + 1) X;
+
+phme_empty$0 {n:#} {X:Type} = PfxHashmapE n X;
+phme_root$l {n:#} {X:Type} root: (PfxHashmap n X)
+= PfxHashmapE n X;
+```

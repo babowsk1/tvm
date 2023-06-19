@@ -62,7 +62,7 @@ In some cases, it is more convenient to assume the completion is enabled by defa
 
 ### 1.1 TVM is a stack machine
 
-First of all, $$T V M$$ is a stack machine. This means that, instead of keeping values in some "variables" or "general-purpose registers", they are kept in a (LIFO) stack, at least from the "low-level" (TVM) perspective $$^{3}$$
+First of all, $$T V M$$ is a stack machine. This means that, instead of keeping values in some "variables" or "general-purpose registers", they are kept in a (LIFO) stack, at least from the "low-level" (TVM) perspective$$^{3}$$
 
 Most operations and user-defined functions take their arguments from the top of the stack, and replace them with their result. For example, the integer addition primitive (built-in operation) ADD does not take any arguments describing which registers or immediate values should be added together and where the result should be stored. Instead, the two top values are taken from the stack, they are added together, and their sum is pushed into the stack in their place.
 

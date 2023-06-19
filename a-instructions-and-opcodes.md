@@ -906,7 +906,26 @@ A.11.5. Global variable primitives. The "global variables" may be helpful in imp
 
 A.11.9. Message and address manipulation primitives. The message and address manipulation primitives listed below serialize and deserialize values according to the following TL-B scheme (cf. [$$\mathbf{3.3.4}$$](a-instructions-and-opcodes.md#3.3.4.-brief-explanation-of-tl-b-schemes.)):
 
-![](https://cdn.mathpix.com/cropped/2023\_06\_02\_174e9ec2591c06b3f394g-135.jpg?height=912\&width=1355\&top\_left\_y=833\&top\_left\_x=362)
+```
+addr_none$00 = MsgAddressExt;
+addr_extern$01 len: (## 8) external_address: (bits len)
+MsgAddressExt;
+anycast_info$_ depth: (#<= 30) { depth >= 1 }
+rewrite_pfx: (bits depth) = Anycast;
+addr_std$10 anycast: (Maybe Anycast)
+workchain_id:int8 address:bits256 = MsgAddressInt;
+addr_var$ll anycast: (Maybe Anycast) addr_len: (## 9)
+workchain_id:int32 address: (bits addr_len) = MsgAddressInt;
+_ _:MsgAddressInt = MsgAddress;
+_ _:MsgAddressExt = MsgAddress;
+
+int_msg_info$0 ihr_disabled:Bool bounce:Bool bounced:Bool
+src:MsgAddress dest:MsgAddressInt
+value:CurrencyCollection ihr_fee:Grams fwd_fee:Grams
+created_lt:uint64 created_at:uint32 = CommonMsgInfoRelaxed;
+ext_out_msg_info$1l src:MsgAddress dest:MsgAddressExt
+created_lt:uint64 created_at:uint32 = CommonMsgInfoRelaxed;
+```
 
 A deserialized MsgAddress is represented by a Tuple $$t$$ as follows:
 
