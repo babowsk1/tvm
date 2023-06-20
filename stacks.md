@@ -1,6 +1,6 @@
 # 2. Stacks
 
-This chapter contains a general discussion and comparison of register and stack machines, expanded further in Appendix $$\mathbf{C}$$, and describes the two main classes of stack manipulation primitives employed by TVM: the basic and the compound stack manipulation primitives. An informal explanation of their sufficiency for all stack reordering required for correctly invoking other primitives and user-defined functions is also provided. Finally, the problem of efficiently implementing TVM stack manipulation primitives is discussed in [2.3](stacks.md#efficiency-of-stack-manipulation-primitives)
+This chapter contains a general discussion and comparison of register and stack machines, expanded further in Appendix $$\mathbf{C}$$, and describes the two main classes of stack manipulation primitives employed by TVM: the basic and the compound stack manipulation primitives. An informal explanation of their sufficiency for all stack reordering required for correctly invoking other primitives and user-defined functions is also provided. Finally, the problem of efficiently implementing TVM stack manipulation primitives is discussed in [$$\mathbf{2.3}$$](stacks.md#efficiency-of-stack-manipulation-primitives)
 
 ## 2.1 Stack calling conventions
 
@@ -70,7 +70,7 @@ Some functions might want to return several values $$y_{1}, \ldots, y_{k}$$, wit
 
 For example, the "divide with remainder" primitive DIVMOD needs to return two values, the quotient $$q$$ and the remainder $$r$$. Therefore, DIVMOD pushes $$q$$ and $$r$$ into the stack, in that order, so that the quotient is available thereafter at s1 and the remainder at s0. The net effect of DIVMOD is to divide the original value of s1 by the original value of s0, and return the quotient in s1 and the remainder in s0. In this particular case the depth of the stack and the values of all other "stack registers" remain unchanged, because DIVMOD takes two arguments and returns two results. In general, the values of other "stack registers" that lie in the stack below the arguments passed and the values returned are shifted according to the change of the depth of the stack.
 
-In principle, some primitives and user-defined functions might return a variable number of result values. In this respect, the remarks above about variadic functions (cf. [2.1.6](stacks.md#2.1.6.-order-of-function-arguments.) apply: the total number of result values and their types should be determined by the values near the top of the stack. (For example, one might push the return values $$y_{1}, \ldots, y_{k}$$, and then push their total number $$k$$ as an integer. The caller would then determine the total number of returned values by inspecting s0.)
+In principle, some primitives and user-defined functions might return a variable number of result values. In this respect, the remarks above about variadic functions (cf. [$$\mathbf{2.1.6}$$](stacks.md#2.1.6.-order-of-function-arguments.) apply: the total number of result values and their types should be determined by the values near the top of the stack. (For example, one might push the return values $$y_{1}, \ldots, y_{k}$$, and then push their total number $$k$$ as an integer. The caller would then determine the total number of returned values by inspecting s0.)
 
 In this respect TVM, again, faithfully observes Forth calling conventions.
 
@@ -88,7 +88,7 @@ The stack notation is extensively used throughout Appendix $$\mathbf{A}$$, where
 
 ### 2.1.11. Explicitly defining the number of arguments to a function.
 
-Stack machines usually pass the current stack in its entirety to the invoked primitive or function. That primitive or function accesses only the several values near the top of the stack that represent its arguments, and pushes the return values in their place, by convention leaving all deeper values intact. Then the resulting stack, again in its entirety, is returned to the caller.Most TVM primitives behave in this way, and we expect most user-defined functions to be implemented under such conventions. However, TVM provides mechanisms to specify how many arguments must be passed to a called function (cf. [4.1.10](control-flow-continuations-and-exceptions.md#4.1.10.-determining-the-number-of-arguments-passed-to-and-or-return-values-accepted-from-a-subroutin)). When these mechanisms are employed, the specified number of values are moved from the caller's stack into the (usually initially empty) stack of the called function, while deeper values remain in the caller's stack and are inaccessible to the callee. The caller can also specify how many return values it expects from the called function.
+Stack machines usually pass the current stack in its entirety to the invoked primitive or function. That primitive or function accesses only the several values near the top of the stack that represent its arguments, and pushes the return values in their place, by convention leaving all deeper values intact. Then the resulting stack, again in its entirety, is returned to the caller.Most TVM primitives behave in this way, and we expect most user-defined functions to be implemented under such conventions. However, TVM provides mechanisms to specify how many arguments must be passed to a called function (cf. [$$\mathbf{4.1.10}$$](control-flow-continuations-and-exceptions.md#4.1.10.-determining-the-number-of-arguments-passed-to-and-or-return-values-accepted-from-a-subroutin)). When these mechanisms are employed, the specified number of values are moved from the caller's stack into the (usually initially empty) stack of the called function, while deeper values remain in the caller's stack and are inaccessible to the callee. The caller can also specify how many return values it expects from the called function.
 
 Such argument-checking mechanisms might be useful, for example, for a library function that calls user-provided functions passed as arguments to it.
 
@@ -110,15 +110,21 @@ Some other "unsystematic" stack manipulation operations might be also defined (e
 
 A compiler or a human TVM-code programmer might use the basic stack primitives as follows.
 
-Suppose that the function or primitive to be invoked is to be passed, say, three arguments $$x, y$$, and $$z$$, currently located in stack registers $$\mathbf{s}(i), \mathrm{s}(j)$$, and $$\mathbf{s}(k)$$. In this circumstance, the compiler (or programmer) might issue operation PUSH $$\mathrm{s}(i)$$ (if a copy of $$x$$ is needed after the call to this primitive) or XCHG $$\mathbf{s}(i)$$ (if it will not be needed afterwards) to put the first argument $$x$$ into the top of the stack. Then, the compiler (or programmer) could use either PUSH $$\mathrm{s}\left(j^{\prime}\right)$$ or XCHG $$\mathrm{s}\left(j^{\prime}\right)$$, where $$j^{\prime}=j$$ or $$j+1$$, to put $$y$$ into the new top of the stack. $${ }^{8}$$
+Suppose that the function or primitive to be invoked is to be passed, say, three arguments $$x, y$$, and $$z$$, currently located in stack registers $$\mathbf{s}(i), \mathrm{s}(j)$$, and $$\mathbf{s}(k)$$. In this circumstance, the compiler (or programmer) might issue operation PUSH $$\mathrm{s}(i)$$ (if a copy of $$x$$ is needed after the call to this primitive) or XCHG $$\mathbf{s}(i)$$ (if it will not be needed afterwards) to put the first argument $$x$$ into the top of the stack. Then, the compiler (or programmer) could use either PUSH $$\mathrm{s}\left(j^{\prime}\right)$$ or XCHG $$\mathrm{s}\left(j^{\prime}\right)$$, where $$j^{\prime}=j$$ or $$j+1$$, to put $$y$$ into the new top of the stack.$${ }^{8}$$
 
 Proceeding in this manner, we see that we can put the original values of $$x, y$$, and $$z$$-or their copies, if needed-into locations $$\mathrm{s} 2, \mathrm{~s} 1$$, and $$\mathrm{s} 0$$, using a sequence of push and exchange operations (cf. 2.2.4 and 2.2.5 for a more detailed explanation). In order to generate this sequence, the compiler will need to know only the three values $$i, j$$ and $$k$$, describing the old locations of variables or temporary values in question, and some flags describing whether each value will be needed thereafter or is needed only for this primitive or function call. The locations of other variables and temporary values will be affected in the process, but a compiler (or a human programmer) can easily track their new locations.
 
-Similarly, if the results returned from a function need to be discarded or moved to other stack registers, a suitable sequence of exchange and pop operations will do the job. In the typical case of one return value in s0, this is achieved either by an XCHG $$\mathrm{s}(i)$$ or a POP $$\mathrm{s}(i)$$ (in most cases, a DROP) operation $$9^{9}$$
+Similarly, if the results returned from a function need to be discarded or moved to other stack registers, a suitable sequence of exchange and pop operations will do the job. In the typical case of one return value in s0, this is achieved either by an XCHG $$\mathrm{s}(i)$$ or a POP $$\mathrm{s}(i)$$ (in most cases, a DROP) operation$$9^{9}$$
 
 Rearranging the result value or values before returning from a function is essentially the same problem as arranging arguments for a function call, and is achieved similarly.
 
+{% hint style="info" %}
 $${ }^{8}$$Of course, if the second option is used, this will destroy the original arrangement of $$x$$ in the top of the stack. In this case, one should either issue a SWAP before XCHG $$\mathbf{s}\left(j^{\prime}\right)$$, or replace the previous operation XCHG $$\mathbf{s}(i)$$ with XCHG $$\mathbf{s 1}, \mathbf{s}(i)$$, so that $$x$$ is exchanged with s1 from the beginning.
+{% endhint %}
+
+{% hint style="info" %}
+$${ }^{9}$$Notice that the most common XCHG $$s(i)$$ operation is not really required here if we do not insist on keeping the same temporary value or variable always in the same stack location, but rather keep track of its subsequent locations. We will move it to some other location while preparing the arguments to the next primitive or function call.
+{% endhint %}
 
 ### 2.2.3. Compound stack manipulation primitives.
 
@@ -133,13 +139,12 @@ In order to improve the density of the TVM code and simplify development of comp
 
 Of course, such operations make sense only if they admit a more compact encoding than the equivalent sequence of basic operations. For example, if all top-of-stack exchanges, XCHG s1,s(i) exchanges, and push and pop operations admit one-byte encodings, the only compound stack operations suggested above that might merit inclusion in the set of stack manipulation primitives are PUXC, XCHG3, and PUSH3.
 
-These compound stack operations essentially augment other primitives (instructions) in the code with the "true" locations of their operands, somewhat similarly to what happens with two-address or three-address register machine code. However, instead of encoding these locations inside the opcode of the arithmetic or another instruction, as is customary for register machines, we indicate these locations in a preceding compound stack manipulation operation. As already described in [2.1.7](stacks.md#2.1.7.-arguments-to-arithmetic-primitives-on-register-machines.), the advantage of such an approach is that user-defined functions (or rarely used specific primitives added in a future version of TVM) can benefit from it as well (cf. [C.3](code-density-of-stack-and-register-machines.md#c.3-sample-non-leaf-function) for a more detailed discussion with examples).
+These compound stack operations essentially augment other primitives (instructions) in the code with the "true" locations of their operands, somewhat similarly to what happens with two-address or three-address register machine code. However, instead of encoding these locations inside the opcode of the arithmetic or another instruction, as is customary for register machines, we indicate these locations in a preceding compound stack manipulation operation. As already described in [$$\mathbf{2.1.7}$$](stacks.md#2.1.7.-arguments-to-arithmetic-primitives-on-register-machines.), the advantage of such an approach is that user-defined functions (or rarely used specific primitives added in a future version of TVM) can benefit from it as well (cf. [$$\mathbf{C.3}$$](code-density-of-stack-and-register-machines.md#c.3-sample-non-leaf-function) for a more detailed discussion with examples).
 
-$${ }^{9}$$Notice that the most common XCHG $$s(i)$$ operation is not really required here if we do not insist on keeping the same temporary value or variable always in the same stack location, but rather keep track of its subsequent locations. We will move it to some other location while preparing the arguments to the next primitive or function call.
 
 ### 2.2.4. Mnemonics of compound stack operations.
 
-The mnemonics of compound stack operations, some examples of which have been provided in [2.2.3](stacks.md#2.2.3.-compound-stack-manipulation-primitives.) , are created as follows.
+The mnemonics of compound stack operations, some examples of which have been provided in [$$\mathbf{2.2.3}$$](stacks.md#2.2.3.-compound-stack-manipulation-primitives.) , are created as follows.
 
 The $$\gamma \geq 2$$ formal arguments $$\mathbf{s}\left(i_{1}\right), \ldots, \mathrm{s}\left(i_{\gamma}\right)$$ to such an operation $$O$$ represent the values in the original stack that will end up in $$s(\gamma-1), \ldots$$, s0 after the execution of this compound operation, at least if all $$i_{\nu}, 1 \leq$$ $$u \leq \gamma$$, are distinct and at least $$\gamma$$. The mnemonic itself of the operation $$O$$ is a sequence of $$\gamma$$ two-letter strings $$\mathrm{PU}$$ and $$\mathrm{XC}$$, with PU meaning that the corresponding argument is to be PUshed (i.e., a copy is to be created), and XC meaning that the value is to be eXChanged (i.e., no other copy of the original value is created). Sequences of several PU or XC strings may be abbreviated to one PU or XC followed by the number of copies. (For instance, we write PUXC2PU instead of PUXCXCPU.)
 
@@ -167,7 +172,9 @@ Stack manipulation primitives employed by a stack machine, such as TVM, have to 
 
 The efficiency of TVM's implementation of stack manipulation primitives results from the fact that a typical TVM implementation keeps in the stack not the value objects themselves, but only the references (pointers) to such objects. Therefore, a SWAP instruction only needs to interchange the references at s0 and s1, not the actual objects they refer to.
 
+{% hint style="info" %}
 $${ }^{10}$$An alternative, arguably better, translation of $$\mathrm{PU} O^{\prime} \mathrm{s}\left(i_{1}\right), \ldots, \mathbf{s}\left(i_{\gamma}\right)$$ consists of the translation of $$O^{\prime} \mathbf{s}\left(i_{2}\right), \ldots, \mathbf{s}\left(i_{\gamma}\right)$$, followed by PUSH $$\mathbf{s}\left(i_{1}+\alpha-1\right) ;$$ XCHG $$\mathbf{s}(\gamma-1)$$.
+{% endhint %}
 
 ### 2.3.2. Efficient implementation of DUP and PUSH instructions using copy-on-write.
 
