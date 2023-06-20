@@ -23,7 +23,7 @@ This section includes both the basic (cf. [$$\mathbf{2.2.1}$$](stacks.md#2.2.1.-
 
 Some stack manipulation instructions have two mnemonics: one Forthstyle (e.g., -ROT), the other conforming to the usual rules for identifiers (e.g., ROTREV). Whenever a stack manipulation primitive (e.g., PICK) accepts an integer parameter $$n$$ from the stack, it must be within the range $$0 \ldots 255$$; otherwise a range check exception happens before any further checks.
 
-## A.2.1. Basic stack manipulation primitives.
+### A.2.1. Basic stack manipulation primitives.
 
 * 00 - NOP, does nothing.
 * 01 - XCHG s1, also known as SWAP.
@@ -37,7 +37,9 @@ Some stack manipulation instructions have two mnemonics: one Forthstyle (e.g., -
 * $$3 i$$ - POP $$s(i), 0 \leq i \leq 15$$, pops the old top-of-stack value into the old $$\mathrm{s}(i)$$.
 * 30 - POP s0, also known as DROP, discards the top-of-stack value. - 31 - POP s1, also known as NIP.
 
-A.2.2. Compound stack manipulation primitives. Parameters $$i, j$$, and $$k$$ of the following primitives all are 4-bit integers in the range $$0 \ldots 15$$.
+### A.2.2. Compound stack manipulation primitives.&#x20;
+
+Parameters $$i, j$$, and $$k$$ of the following primitives all are 4-bit integers in the range $$0 \ldots 15$$.
 
 * $$4 i j k$$ - XCHG3 $$\mathrm{s}(i), \mathrm{s}(j), \mathrm{s}(k)$$, equivalent to XCHG $$\mathrm{s} 2, \mathrm{~s}(i) ;$$ XCHG s1, $$\mathrm{s}(j) ;$$ XCHG $$\mathrm{s} 0, \mathrm{~s}(k)$$, with $$0 \leq i, j, k \leq 15$$.
 * $$50 \mathrm{ij}$$ - XCHG2 $$\mathrm{s}(i), \mathrm{s}(j)$$, equivalent to XCHG $$\mathrm{s} 1, \mathrm{~s}(i)$$; XCHG $$\mathrm{s}(j)$$.
@@ -54,7 +56,7 @@ A.2.2. Compound stack manipulation primitives. Parameters $$i, j$$, and $$k$$ of
 * 547ijk- PUSH3 $$\mathbf{s}(i), \mathbf{s}(j), \mathbf{s}(k)$$, equivalent to PUSH $$\mathbf{s}(i)$$; PUSH2 $$\mathbf{s}(j+$$ 1), $$\mathrm{s}(k+1)$$.
 * 54C\_- unused.
 
-## A.2.3. Exotic stack manipulation primitives.
+### A.2.3. Exotic stack manipulation primitives.
 
 * 55ij-BLKSWAP $$i+1, j+1$$, permutes two blocks $$\mathbf{s}(j+i+1) \ldots \mathrm{s}(j+1)$$ and $$\mathrm{s}(j) \ldots \mathrm{s} 0$$, for $$0 \leq i, j \leq 15$$. Equivalent to REVERSE $$i+1, j+1$$; REVERSE $$j+1,0 ;$$ REVERSE $$i+j+2,0$$.
 * 5513 - ROT2 or 2ROT ( a bc def-cdefab), rotates the three topmost pairs of stack entries.
@@ -93,14 +95,14 @@ When a Tuple $$t$$ contains elements $$x_{1}, \ldots, x_{n}$$ (in that order), w
 
 Lisp-style lists are represented with the aid of pairs, i.e., tuples consisting of exactly two elements. An empty list is represented by a Null value, and a non-empty list is represented by pair $$(h, t)$$, where $$h$$ is the first element of the list, and $$t$$ is its tail.
 
-## A.3.1. Null primitives.
+### A.3.1. Null primitives.
 
 The following primitives work with (the only) value $$\perp$$ of type $$N u l l$$, useful for representing empty lists, empty branches of binary trees, and absence of values in Maybe $$X$$ types. An empty Tuple created by NIL could have been used for the same purpose; however, Null is more efficient and costs less gas.
 
 * 6D - NULL or PUSHNULL $$(-\perp)$$, pushes the only value of type $$N u l l$$.
 * 6E - ISNULL $$(x-?)$$, checks whether $$x$$ is a $$N u l l$$, and returns -1 or 0 accordingly.
 
-## A.3.2. Tuple primitives.
+### A.3.2. Tuple primitives.
 
 * 6F0 $$n$$ - TUPLE $$n\left(x_{1} \ldots x_{n}-t\right)$$, creates a new Tuple $$t=\left(x_{1}, \ldots, x_{n}\right)$$ containing $$n$$ values $$x_{1}, \ldots, x_{n}$$, where $$0 \leq n \leq 15$$
 * 6F00 - NIL $$(-t)$$, pushes the only Tuple $$t=()$$ of length zero.
@@ -154,7 +156,7 @@ The following primitives work with (the only) value $$\perp$$ of type $$N u l l$
 
 The following primitives push into the stack one literal (or unnamed constant) of some type and range, stored as a part (an immediate argument) of the instruction. Therefore, if the immediate argument is absent or too short, an "invalid or too short opcode" exception (code 6) is thrown.
 
-## A.4.1. Integer and boolean constants.
+### A.4.1. Integer and boolean constants.
 
 * $$7 i$$ - PUSHINT $$x$$ with $$-5 \leq x \leq 10$$, pushes integer $$x$$ into the stack; here $$i$$ equals four lower-order bits of $$x$$ (i.e., $$i=x \bmod 16$$ ).
 * 70 - ZERO, FALSE, or PUSHINT 0, pushes a zero.
@@ -172,7 +174,9 @@ The following primitives push into the stack one literal (or unnamed constant) o
 * $$85 x x$$ - PUSHNEGPOW2 $$x x+1$$, pushes $$-2^{x x+1}$$ for $$0 \leq x x \leq 255$$.
 * 86,87 - reserved for integer constants.
 
-A.4.2. Constant slices, continuations, cells, and references. Most of the instructions listed below push literal slices, continuations, cells, and cell references, stored as immediate arguments to the instruction. Therefore, if the immediate argument is absent or too short, an "invalid or too short opcode" exception (code 6) is thrown.
+### A.4.2. Constant slices, continuations, cells, and references.&#x20;
+
+Most of the instructions listed below push literal slices, continuations, cells, and cell references, stored as immediate arguments to the instruction. Therefore, if the immediate argument is absent or too short, an "invalid or too short opcode" exception (code 6) is thrown.
 
 * 88 - PUSHREF, pushes the first reference of cc.code into the stack as a Cell (and removes this reference from the current continuation).
 * 89 - PUSHREFSLICE, similar to PUSHREF, but converts the cell into a Slice.
@@ -189,7 +193,7 @@ A.4.2. Constant slices, continuations, cells, and references. Most of the instru
 
 ## A.5 Arithmetic primitives
 
-## A.5.1. Addition, subtraction, multiplication.
+### A.5.1. Addition, subtraction, multiplication.
 
 * $$\mathrm{AO}-\mathrm{ADD}(x y-x+y)$$, adds together two integers.
 * $$\mathrm{A} 1-\operatorname{SUB}(x y-x-y)$$.
@@ -201,7 +205,7 @@ A.4.2. Constant slices, continuations, cells, and references. Most of the instru
 * A7cc- MULCONST $$c c(x-x \cdot c c),-128 \leq c c \leq 127$$
 * A8 - MUL $$(x y-x y)$$.
 
-## A.5.2. Division.
+### A.5.2. Division.
 
 The general encoding of a DIV, DIVMOD, or MOD operation is A9mscdf, with an optional pre-multiplication and an optional replacement of the division or multiplication by a shift. Variable one- or two-bit fields $$m, s, c, d$$, and $$f$$ are as follows: - $$0 \leq m \leq 1$$ - Indicates whether there is pre-multiplication (MULDIV operation and its variants), possibly replaced by a left shift.
 
@@ -234,7 +238,7 @@ Examples:
 
 The most useful of these operations are DIV, DIVMOD, MOD, DIVR, DIVC, MODPOW2 $$t$$, and RSHIFTR $$t$$ (for integer arithmetic); and MULDIVMOD, MULDIV, MULDIVR, LSHIFTDIVR $$t$$, and MULRSHIFTR $$t$$ (for fixed-point arithmetic).
 
-## A.5.3. Shifts, logical operations.
+### A.5.3. Shifts, logical operations.
 
 * AAcc-LSHIFT $$c c+1\left(x-x \cdot 2^{c c+1}\right), 0 \leq c c \leq 255$$.
 * AAO0 - LSHIFT 1, equivalent to MULCONST 2 or to Forth's 2\*.
@@ -294,7 +298,7 @@ Quiet versions of integer comparison primitives are also available, encoded with
 * C5-CHKNAN $$(x-x)$$, throws an arithmetic overflow exception if $$x$$ is a $$\mathrm{NaN}$$.
 * C6 - reserved for integer comparison.
 
-## A.6.2. Other comparison.
+### A.6.2. Other comparison.
 
 Most of these "other comparison" primitives actually compare the data portions of Slices as bitstrings.
 
@@ -486,7 +490,7 @@ All these primitives first check whether there is enough space in the Builder, a
 
 ## A.8 Continuation and control flow primitives
 
-## A.8.1. Unconditional control flow primitives.
+### A.8.1. Unconditional control flow primitives.
 
 * D8 - EXECUTE or CALLX $$(c-)$$, calls or executes continuation $$c$$ (i.e., $$\left.\mathrm{cc} \leftarrow c \circ_{0} \mathrm{cc}\right)$$.
 * D9 - JMPX $$(c-)$$, jumps, or transfers control, to continuation $$c$$ (i.e., $$c c \leftarrow c \circ_{0} c 0$$, or rather $$\left.c c \leftarrow\left(c \circ_{0} c 0\right) \circ_{1} c 1\right)$$. The remainder of the previous current continuation $$\mathrm{cc}$$ is discarded.
@@ -508,7 +512,7 @@ All these primitives first check whether there is enough space in the Builder, a
 * DB3E - JMPREFDATA, equivalent to PUSHREFCONT; JMPXDATA.
 * DB3F - RETDATA, equivalent to PUSH c0; JMPXDATA. In this way, the remainder of the current continuation is converted into a Slice and returned to the caller.
 
-## A.8.2. Conditional control flow primitives.
+### A.8.2. Conditional control flow primitives.
 
 * DC - IFRET $$(f-)$$, performs a RET, but only if integer $$f$$ is non-zero. If $$f$$ is a $$N a N$$, throws an integer overflow exception. - DD - IFNOTRET $$(f-)$$, performs a RET, but only if integer $$f$$ is zero.
 * DE - IF $$(f c-)$$, performs EXECUTE for $$c$$ (i.e., executes $$c)$$, but only if integer $$f$$ is non-zero. Otherwise simply discards both values.
@@ -533,7 +537,9 @@ All these primitives first check whether there is enough space in the Builder, a
 * E3D\_ $$n$$ - IFBITJMPREF $$n(x-x)$$, performs a JMPREF if bit $$0 \leq n \leq 31$$ is set in integer $$x$$.
 * E3F\_ $$n$$ - IFNBITJMPREF $$n(x-x)$$, performs a JMPREF if bit $$0 \leq n \leq 31$$ is not set in integer $$x$$.
 
-A.8.3. Control flow primitives: loops. Most of the loop primitives listed below are implemented with the aid of extraordinary continuations, such as ec\_until (cf. 4.1.5), with the loop body and the original current continuation cc stored as the arguments to this extraordinary continuation. Typically a suitable extraordinary continuation is constructed, and then saved into the loop body continuation savelist as c0; after that, the modified loop body continuation is loaded into cc and executed in the usual fashion. All of these loop primitives have $$* \mathrm{BRK}$$ versions, adapted for breaking out of a loop; they additionally set $$c 1$$ to the original current continuation (or original c0 for $$*$$ ENDBRK versions), and save the old c1 into the savelist of the original current continuation (or of the original c0 for $$*$$ ENDBRK versions).
+### A.8.3. Control flow primitives: loops.&#x20;
+
+Most of the loop primitives listed below are implemented with the aid of extraordinary continuations, such as ec\_until (cf. 4.1.5), with the loop body and the original current continuation cc stored as the arguments to this extraordinary continuation. Typically a suitable extraordinary continuation is constructed, and then saved into the loop body continuation savelist as c0; after that, the modified loop body continuation is loaded into cc and executed in the usual fashion. All of these loop primitives have $$* \mathrm{BRK}$$ versions, adapted for breaking out of a loop; they additionally set $$c 1$$ to the original current continuation (or original c0 for $$*$$ ENDBRK versions), and save the old c1 into the savelist of the original current continuation (or of the original c0 for $$*$$ ENDBRK versions).
 
 * E4 - REPEAT $$(n c-)$$, executes continuation $$c n$$ times, if integer $$n$$ is non-negative. If $$n \geq 2^{31}$$ or $$n<-2^{31}$$, generates a range check exception. Notice that a RET inside the code of $$c$$ works as a continue, not as a break. One should use either alternative (experimental) loops or alternative RETALT (along with a SETEXITALT before the loop) to break out of a loop.
 * E5 - REPEATEND $$(n-)$$, similar to REPEAT, but it is applied to the current continuation cc.

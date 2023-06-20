@@ -1,4 +1,4 @@
-# Stacks
+# 2. Stacks
 
 This chapter contains a general discussion and comparison of register and stack machines, expanded further in Appendix $$\mathbf{C}$$, and describes the two main classes of stack manipulation primitives employed by TVM: the basic and the compound stack manipulation primitives. An informal explanation of their sufficiency for all stack reordering required for correctly invoking other primitives and user-defined functions is also provided. Finally, the problem of efficiently implementing TVM stack manipulation primitives is discussed in [2.3](stacks.md#efficiency-of-stack-manipulation-primitives)
 
@@ -86,7 +86,7 @@ Alternatively, one can describe DIV as a primitive that runs on a stack $$S^{\pr
 
 The stack notation is extensively used throughout Appendix $$\mathbf{A}$$, where all currently defined TVM primitives are listed.
 
-## 2.1.11. Explicitly defining the number of arguments to a function.
+### 2.1.11. Explicitly defining the number of arguments to a function.
 
 Stack machines usually pass the current stack in its entirety to the invoked primitive or function. That primitive or function accesses only the several values near the top of the stack that represent its arguments, and pushes the return values in their place, by convention leaving all deeper values intact. Then the resulting stack, again in its entirety, is returned to the caller.Most TVM primitives behave in this way, and we expect most user-defined functions to be implemented under such conventions. However, TVM provides mechanisms to specify how many arguments must be passed to a called function (cf. [4.1.10](control-flow-continuations-and-exceptions.md#4.1.10.-determining-the-number-of-arguments-passed-to-and-or-return-values-accepted-from-a-subroutin)). When these mechanisms are employed, the specified number of values are moved from the caller's stack into the (usually initially empty) stack of the called function, while deeper values remain in the caller's stack and are inaccessible to the callee. The caller can also specify how many return values it expects from the called function.
 
