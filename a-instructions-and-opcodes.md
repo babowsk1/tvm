@@ -566,14 +566,14 @@ Most of the loop primitives listed below are implemented with the aid of extraor
 * ED10 - RETURNVARARGS $$(p-)$$, similar to RETURNARGS, but with Integer $$0 \leq p \leq 255$$ taken from the stack. - ED11 - SETCONTVARARGS $$\left(x_{1} x_{2} \ldots x_{r} c r n-c^{\prime}\right)$$, similar to SETCONTARGS, but with $$0 \leq r \leq 255$$ and $$-1 \leq n \leq 255$$ taken from the stack.
 * ED12 - SETNUMVARARGS $$\left(c n-c^{\prime}\right)$$, where $$-1 \leq n \leq 255$$. If $$n=-1$$, this operation does nothing $$\left(c^{\prime}=c\right)$$. Otherwise its action is similar to SETNUMARGS $$n$$, but with $$n$$ taken from the stack.
 
-## A.8.5. Creating simple continuations and closures.
+### A.8.5. Creating simple continuations and closures.
 
 * ED1E - BLESS $$(s-c)$$, transforms a Slice $$s$$ into a simple ordinary continuation $$c$$, with $$c$$.code $$=s$$ and an empty stack and savelist.
 * ED1F - BLESSVARARGS $$\left(x_{1} \ldots x_{r} s r n-c\right)$$, equivalent to ROT; BLESS; ROTREV; SETCONTVARARGS.
 * EErn - BLESSARGS $$r, n\left(x_{1} \ldots x_{r} s-c\right)$$, where $$0 \leq r \leq 15,-1 \leq$$ $$n \leq 14$$, equivalent to BLESS; SETCONTARGS $$r, n$$. The value of $$n$$ is represented inside the instruction by the 4-bit integer $$n \bmod 16$$.
 * EEO $$n$$ - BLESSNUMARGS $$n$$ or BLESSARGS $$0, n(s-c)$$, also transforms a Slice $$s$$ into a Continuation $$c$$, but sets c.nargs to $$0 \leq n \leq 14$$.
 
-## A.8.6. Operations with continuation savelists and control registers.
+### A.8.6. Operations with continuation savelists and control registers.
 
 * ED4 $$i$$ - PUSH $$\mathrm{c}(i)$$ or PUSHCTR $$\mathrm{c}(i)(-x)$$, pushes the current value of control register $$\mathrm{c}(i)$$. If the control register is not supported in the current codepage, or if it does not have a value, an exception is triggered.
 * ED44 - PUSH c4 or PUSHR00T, pushes the "global data root" cell reference, thus enabling access to persistent smart-contract data.
@@ -603,7 +603,7 @@ Most of the loop primitives listed below are implemented with the aid of extraor
 * EDFB - SAMEALTSAVE $$(-)$$, sets $$c_{1}:=c_{0}$$, but first saves the old value of $$c_{1}$$ into the savelist of $$c_{0}$$. Equivalent to SAVE $$c 1$$; SAMEALT.
 * EErn - BLESSARGS $$r, n\left(x_{1} \ldots x_{r} s-c\right)$$, described in [$$\mathbf{A.8.4}$$](a-instructions-and-opcodes.md#a.8.4.-manipulating-the-stack-of-continuations.).
 
-## A.8.7. Dictionary subroutine calls and jumps.
+### A.8.7. Dictionary subroutine calls and jumps.
 
 * F0n - CALL $$n$$ or CALLDICT $$n(-n)$$, calls the continuation in c3, pushing integer $$0 \leq n \leq 255$$ into its stack as an argument. Approximately equivalent to PUSHINT $$n$$; PUSH c3; EXECUTE.
 * F12\_ $$n-$$ CALL $$n$$ for $$0 \leq n<2^{14}(-n)$$, an encoding of CALL $$n$$ for larger values of $$n$$. - F16\_ $$n$$ - JMP $$n$$ or JMPDICT $$n(-n)$$, jumps to the continuation in c3, pushing integer $$0 \leq n<2^{14}$$ as its argument. Approximately equivalent to PUSHINT $$n$$; PUSH c3; JMPX.
@@ -611,7 +611,7 @@ Most of the loop primitives listed below are implemented with the aid of extraor
 
 ## A.9 Exception generating and handling primitives
 
-## A.9.1. Throwing exceptions.
+### A.9.1. Throwing exceptions.
 
 * F22\_nn-THROW $$n n(-0 n n)$$, throws exception $$0 \leq n n \leq 63$$ with parameter zero. In other words, it transfers control to the continuation in c2, pushing 0 and $$n n$$ into its stack, and discarding the old stack altogether.
 * F26\_nn - THROWIF $$n n(f-)$$, throws exception $$0 \leq n n \leq 63$$ with parameter zero only if integer $$f \neq 0$$.
@@ -628,7 +628,7 @@ Most of the loop primitives listed below are implemented with the aid of extraor
 * F2F4 - THROWANYIFNOT ( $$n f-)$$, throws exception $$0 \leq n<2^{16}$$ with parameter zero only if $$f=0$$.
 * F2F5 - THROWARGANYIFNOT $$(x n f-)$$, throws exception $$0 \leq n<2^{16}$$ with parameter $$x$$ only if $$f=0$$.
 
-## A.9.2. Catching and handling exceptions.
+### A.9.2. Catching and handling exceptions.
 
 * F2FF - TRY $$\left(c c^{\prime}-\right)$$, sets c2 to $$c^{\prime}$$, first saving the old value of c2 both into the savelist of $$c^{\prime}$$ and into the savelist of the current continuation, which is stored into $$c . c 0$$ and $$c^{\prime} . c 0$$. Then runs $$c$$ similarly to EXECUTE. If $$c$$ does not throw any exceptions, the original value of c2 is automatically restored on return from $$c$$. If an exception occurs, the execution is transferred to $$c^{\prime}$$, but the original value of c2 is restored in the process, so that $$c^{\prime}$$ can re-throw the exception by THROWANY if it cannot handle it by itself.
 * F3pr - TRYARGS $$p, r\left(c c^{\prime}-\right)$$, similar to TRY, but with CALLARGS $$p, r$$ internally used instead of EXECUTE. In this way, all but the top $$0 \leq p \leq 15$$ stack elements will be saved into current continuation's stack, and then restored upon return from either $$c$$ or $$c^{\prime}$$, with the top $$0 \leq r \leq 15$$ values of the resulting stack of $$c$$ or $$c^{\prime}$$ copied as return values.
@@ -646,12 +646,12 @@ Most of the dictionary primitives listed below accept and return dictionaries in
 
 Opcodes starting with F4 and F5 are reserved for dictionary operations.
 
-## A.10.1. Dictionary creation.
+### A.10.1. Dictionary creation.
 
 * 6D - NEWDICT $$(-D)$$, returns a new empty dictionary. It is an alternative mnemonics for PUSHNULL, cf. [$$\mathbf{A.3.1}$$](a-instructions-and-opcodes.md#a.3.1-null-primitives.).
 * 6E - DICTEMPTY $$(D-?)$$, checks whether dictionary $$D$$ is empty, and returns -1 or 0 accordingly. It is an alternative mnemonics for ISNULL, cf. [$$\mathbf{A.3.1}$$](a-instructions-and-opcodes.md#a.3.1-null-primitives.).
 
-## A.10.2. Dictionary serialization and deserialization.
+### A.10.2. Dictionary serialization and deserialization.
 
 * CE - STDICTS $$\left(s b-b^{\prime}\right)$$, stores a Slice-represented dictionary $$s$$ into Builder $$b$$. It is actually a synonym for STSLICE.
 * F400 - STDICT or STOPTREF $$\left(D b-b^{\prime}\right)$$, stores dictionary $$D$$ into Builder $$b$$, returing the resulting Builder $$b^{\prime}$$. In other words, if $$D$$ is a cell, performs STONE and STREF; if $$D$$ is $$N u l l$$, performs NIP and STZERO; otherwise throws a type checking exception.
@@ -662,7 +662,7 @@ Opcodes starting with F4 and F5 are reserved for dictionary operations.
 * F406 - LDDICTQ $$\left(s-D s^{\prime}-1\right.$$ or $$\left.s 0\right)$$, a quiet version of LDDICT.
 * F407 - PLDDICTQ $$(s-D-1$$ or 0$$)$$, a quiet version of PLDDICT.
 
-## A.10.3. GET dictionary operations.
+### A.10.3. GET dictionary operations.
 
 * F40A - DICTGET ( $$k D n-x-1$$ or 0$$)$$, looks up key $$k$$ (represented by a Slice, the first $$0 \leq n \leq 1023$$ data bits of which are used as a key) in dictionary $$D$$ of type Hashmap $$E(n, X)$$ with $$n$$-bit keys. On success, returns the value found as a Slice $$x$$.
 * F4OB - DICTGETREF ( $$k D n-c-1$$ or 0$$)$$, similar to DICTGET, but with a LDREF; ENDS applied to $$x$$ on success. This operation is useful for dictionaries of type $$\operatorname{Hashmap} E\left(n,{ }^{\wedge} Y\right)$$.
@@ -671,7 +671,7 @@ Opcodes starting with F4 and F5 are reserved for dictionary operations.
 * F40E - DICTUGET ( $$i$$ D $$n-x-1$$ or 0$$)$$, similar to DICTIGET, but with unsigned (big-endian) $$n$$-bit Integer $$i$$ used as a key.
 * F4OF - DICTUGETREF ( $$i D n-c-1$$ or 0$$)$$, similar to DICTIGETREF, but with an unsigned $$n$$-bit Integer key $$i$$.
 
-## A.10.4. Set/RePlace/ADD dictionary operations.
+### A.10.4. Set/RePlace/ADD dictionary operations.
 
 The mnemonics of the following dictionary primitives are constructed in a systematic fashion according to the regular expression DICT\[, I, U] (SET, REPLACE, ADD) \[GET]\[REF] depending on the type of the key used (a Slice or a signed or unsigned Integer), the dictionary operation to be performed, and the way the values are accepted and returned (as Cells or as Slices). Therefore, we provide a detailed description only for some primitives, assuming that this information is sufficient for the reader to understand the precise action of the remaining primitives.
 
@@ -710,7 +710,7 @@ The mnemonics of the following dictionary primitives are constructed in a system
 * F43E - DICTUADDGET $$\left(x i D n-D^{\prime}-1\right.$$ or $$\left.D y 0\right)$$.
 * F43F - DICTUADDGETREF ( $$c i D n-D^{\prime}-1$$ or $$\left.D c^{\prime} 0\right)$$.
 
-## A.10.5. Builder-accepting variants of SET dictionary operations.
+### A.10.5. Builder-accepting variants of SET dictionary operations.
 
 The following primitives accept the new value as a Builder $$b$$ instead of a Slice $$x$$, which often is more convenient if the value needs to be serialized from several components computed in the stack. (This is reflected by appending a B to the mnemonics of the corresponding SET primitives that work with Slices.) The net effect is roughly equivalent to converting $$b$$ into a Slice by ENDC; CTOS and executing the corresponding primitive listed in [$$\mathbf{A.10.4}$$](a-instructions-and-opcodes.md#a.10.4.-set-replace-add-dictionary-operations.)
 
@@ -732,7 +732,7 @@ The following primitives accept the new value as a Builder $$b$$ instead of a Sl
 * F456 - DICTIADDGETB ( $$b i D n-D^{\prime}-1$$ or $$\left.D y 0\right)$$.
 * F457 - DICTUADDGETB ( $$b i D n-D^{\prime}-1$$ or $$\left.D y 0\right)$$.
 
-## A.10.6. DeLETE dictionary operations.
+### A.10.6. DeLETE dictionary operations.
 
 * F459 - DICTDEL $$\left(k D n-D^{\prime}-1\right.$$ or $$\left.D 0\right)$$, deletes $$n$$-bit key, represented by a Slice $$k$$, from dictionary $$D$$. If the key is present, returns the modified dictionary $$D^{\prime}$$ and the success flag -1 . Otherwise, returns the original dictionary $$D$$ and 0 .
 * F45A - DICTIDEL $$\left(i D n-D^{\prime}\right.$$ ?), a version of DICTDEL with the key represented by a signed $$n$$-bit Integer $$i$$. If $$i$$ does not fit into $$n$$ bits, simply returns $$D 0$$ ("key not found, dictionary unmodified").
@@ -743,7 +743,7 @@ The following primitives accept the new value as a Builder $$b$$ instead of a Sl
 * F466 - DICTUDELGET ( $$i D n-D^{\prime} x-1$$ or $$D 0$$ ), a variant of primitive DICTDELGET with unsigned $$n$$-bit integer $$i$$ as a key.
 * F467 - DICTUDELGETREF ( $$i D n-D^{\prime} c-1$$ or $$D$$ 0), a variant of primitive DICTUDELGET returning a Cell instead of a Slice.
 
-## A.10.7. "Maybe reference" dictionary operations.
+### A.10.7. "Maybe reference" dictionary operations.
 
 The following operations assume that a dictionary is used to store values $$c^{\text {? }}$$ of type $$C_{e l l}$$ ? ("Maybe Cell"), which can be used in particular to store dictionaries as values in other dictionaries. The representation is as follows: if $$c^{\text {? }}$$ is a Cell, it is stored as a value with no data bits and exactly one reference to this $$C$$ ell. If $$c^{?}$$ is $$N u l l$$, then the corresponding key must be absent from the dictionary altogether.
 
@@ -753,7 +753,7 @@ The following operations assume that a dictionary is used to store values $$c^{\
 * F46D - DICTSETGETOPTREF $$\left(c^{?} k D n-D^{\prime} \tilde{c}^{?}\right)$$, a variant of both DICTGETOPTREF and DICTSETGETREF that sets the value corresponding to key $$k$$ in dictionary $$D$$ to $$c^{?}$$ (if $$c^{?}$$ is $$N u l l$$, then the key is deleted instead), and returns the old value $$\tilde{c}^{?}$$ (if the key $$k$$ was absent before, returns $$N u l l$$ instead). - F46E - DICTISETGETOPTREF $$\left(c^{?} i D n-D^{\prime} \tilde{c}^{?}\right)$$, similar to primitive DICTSETGETOPTREF, but using signed $$n$$-bit Integer $$i$$ as a key. If $$i$$ does not fit into $$n$$ bits, throws a range checking exception.
 * F46F - DICTUSETGETOPTREF $$\left(c^{?} i D n-D^{\prime} \tilde{c}^{?}\right)$$, similar to primitive DICTSETGETOPTREF, but using unsigned $$n$$-bit Integer $$i$$ as a key.
 
-## A.10.8. Prefix code dictionary operations.
+### A.10.8. Prefix code dictionary operations.
 
 These are some basic operations for constructing prefix code dictionaries (cf. [$$\mathbf{3.4.2}$$](cells-memory-and-persistent-storage.md#3.4.2.-serialization-of-prefix-codes.)). The primary application for prefix code dictionaries is deserializing TL-B serialized data structures, or, more generally, parsing prefix codes. Therefore, most prefix code dictionaries will be constant and created at compile time, not by the following primitives.
 
@@ -766,7 +766,7 @@ Some GET operations for prefix code dictionaries may be found in [$$\mathbf{A.10
 
 These primitives are completely similar to their non-prefix code counterparts DICTSET etc (cf. [$$\mathbf{A.10.4}$$](a-instructions-and-opcodes.md#a.10.4.-set-replace-add-dictionary-operations.)), with the obvious difference that even a SET may fail in a prefix code dictionary, so a success flag must be returned by PFXDICTSET as well.
 
-## A.10.9. Variants of GetNext and GetPreV operations.
+### A.10.9. Variants of GetNext and GetPreV operations.
 
 * F474 - DICTGETNEXT ( $$k D n-x^{\prime} k^{\prime}-1$$ or 0 ), computes the minimal key $$k^{\prime}$$ in dictionary $$D$$ that is lexicographically greater than $$k$$, and returns $$k^{\prime}$$ (represented by a Slice) along with associated value $$x^{\prime}$$ (also represented by a Slice).
 * F475 - DICTGETNEXTEQ ( $$k D n-x^{\prime} k^{\prime}-1$$ or 0$$)$$, similar to DICTGETNEXT, but computes the minimal key $$k^{\prime}$$ that is lexicographically greater than or equal to $$k$$.
@@ -780,7 +780,7 @@ These primitives are completely similar to their non-prefix code counterparts DI
 * F47E - DICTUGETPREV $$\left(i D n-x^{\prime} i^{\prime}-1\right.$$ or 0$$)$$.
 * F47F - DICTUGETPREVEQ $$\left(i D n-x^{\prime} i^{\prime}-1\right.$$ or 0$$)$$.
 
-## A.10.10. GetMin, GetMax, RemoveMin, RemoveMax operations.
+### A.10.10. GetMin, GetMax, RemoveMin, RemoveMax operations.
 
 * F482 - DICTMIN ( $$D n-x k-1$$ or 0$$)$$, computes the minimal key $$k$$ (represented by a Slice with $$n$$ data bits) in dictionary $$D$$, and returns $$k$$ along with the associated value $$x$$.
 * F483 - DICTMINREF ( $$D n-c k-1$$ or 0$$)$$, similar to DICTMIN, but returns the only reference in the value as a Cell c.
@@ -805,7 +805,7 @@ These primitives are completely similar to their non-prefix code counterparts DI
 * F49E - DICTUREMMAX $$\left(D n-D^{\prime} x i-1\right.$$ or $$\left.D 0\right)$$.
 * F49F - DICTUREMMAXREF $$\left(D n-D^{\prime} c i-1\right.$$ or $$\left.D 0\right)$$.
 
-## A.10.11. Special GET dictionary and prefix code dictionary operations, and constant dictionaries.
+### A.10.11. Special GET dictionary and prefix code dictionary operations, and constant dictionaries.
 
 * F4A0 - DICTIGETJMP $$(i D n-)$$, similar to DICTIGET (cf. [$$\mathbf{A.10.12}$$](a-instructions-and-opcodes.md#a.10.12.-subdict-dictionary-operations.)), but with $$x$$ BLESSed into a continuation with a subsequent JMPX to it on success. On failure, does nothing. This is useful for implementing switch/case constructions.- F4A1 - DICTUGETJMP $$(i D n-)$$, similar to DICTIGETJMP, but performs DICTUGET instead of DICTIGET.
 * F4A2 - DICTIGETEXEC $$(i D n-)$$, similar to DICTIGETJMP, but with EXECUTE instead of JMPX.
@@ -821,7 +821,7 @@ These primitives are completely similar to their non-prefix code counterparts DI
 * F4BE - DICTIGETEXECZ $$(i D n-i$$ or nothing), a variant of DICTIGETEXEC that returns index $$i$$ on failure.
 * F4BF - DICTUGETEXECZ ( $$i D n-i$$ or nothing), a variant of DICTUGETEXEC that returns index $$i$$ on failure.
 
-## A.10.12. SuBDiCT dictionary operations.
+### A.10.12. SuBDiCT dictionary operations.
 
 * F4B1 - SUBDICTGET $$\left(k l D n-D^{\prime}\right)$$, constructs a subdictionary consisting of all keys beginning with prefix $$k$$ (represented by a Slice, the first $$0 \leq l \leq n \leq 1023$$ data bits of which are used as a key) of length $$l$$ in dictionary $$D$$ of type $$\operatorname{Hashmap} E(n, X)$$ with $$n$$-bit keys. On success, returns the new subdictionary of the same type $$\operatorname{HashmapE}(n, X)$$ as a Slice $$D^{\prime}$$.
 * F4B2 - SUBDICTIGET $$\left(x l D n-D^{\prime}\right)$$, variant of SUBDICTGET with the prefix represented by a signed big-endian $$l$$-bit Integer $$x$$, where necessarily $$l \leq 257$$.
@@ -839,7 +839,7 @@ A.11.1. External actions and access to blockchain configuration data. Some of th
 
 Most of the primitives listed below use 16-bit opcodes.
 
-## A.11.2. Gas-related primitives.
+### A.11.2. Gas-related primitives.
 
 Of the following primitives, only the first two are "pure" in the sense that they do not use c5 or c7.
 
@@ -851,7 +851,7 @@ Of the following primitives, only the first two are "pure" in the sense that the
 * F806-F80E - Reserved for gas-related primitives.
 * F80F - COMMIT ( - ), commits the current state of registers c4 ("persistent data") and c5 ("actions") so that the current execution is considered "successful" with the saved values even if an exception is thrown later.
 
-## A.11.3. Pseudo-random number generator primitives.
+### A.11.3. Pseudo-random number generator primitives.
 
 The pseudorandom number generator uses the random seed (parameter $$\# 6$$, cf. A.11.4), an unsigned 256-bit Integer, and (sometimes) other data kept in c7. The initial value of the random seed before a smart contract is executed in TVM Blockchain is a hash of the smart contract address and the global block random seed. If there are several runs of the same smart contract inside a block, then all of these runs will have the same random seed. This can be fixed, for example, by running LTIME; ADDRAND before using the pseudorandom number generator for the first time.
 
@@ -861,7 +861,7 @@ The pseudorandom number generator uses the random seed (parameter $$\# 6$$, cf. 
 * F815 - ADDRAND $$(x-)$$, mixes unsigned 256-bit Integer $$x$$ into the random seed $$r$$ by setting the random seed to SHA256 of the concatenation of two 32-byte strings: the first with the big-endian representation of the old seed $$r$$, and the second with the big-endian representation of $$x$$.
 * F810-F81F - Reserved for pseudo-random number generator primitives.
 
-## A.11.4. Configuration primitives.
+### A.11.4. Configuration primitives.
 
 The following primitives read configuration data provided in the Tuple stored in the first component of the Tuple at c7. Whenever TVM is invoked for executing TVM Blockchain smart contracts, this Tuple is initialized by a SmartContractInfo structure; configuration primitives assume that it has remained intact.
 
@@ -883,7 +883,7 @@ A.11.5. Global variable primitives. The "global variables" may be helpful in imp
 * F860 - SETGLOBVAR $$(x k-)$$, assigns $$x$$ to the $$k$$-th global variable for $$0 \leq k<255$$. Equivalent to PUSH c7; ROTREV; SETINDEXVARQ; POP c7.
 * F87\_ $$k$$ - SETGLOB $$k(x-)$$, assigns $$x$$ to the $$k$$-th global variable for $$1 \leq k \leq 31$$. Equivalent to PUSH $$c 7$$; SWAP; SETINDEXQ $$k$$; POP $$c 7$$
 
-## A.11.6. Hashing and cryptography primitives.
+### A.11.6. Hashing and cryptography primitives.
 
 * F900 - HASHCU $$(c-x)$$, computes the representation hash (cf. 3.1.5) of a Cell $$c$$ and returns it as a 256-bit unsigned integer $$x$$. Useful for signing and checking signatures of arbitrary entities represented by a tree of cells.
 * F901 - HASHSU $$(s-x)$$, computes the hash of a Slice $$s$$ and returns it as a 256-bit unsigned integer $$x$$. The result is the same as if an ordinary cell containing only data and references from $$s$$ had been created and its hash computed by HASHCU.
@@ -892,14 +892,14 @@ A.11.5. Global variable primitives. The "global variables" may be helpful in imp
 * F911 - CHKSIGNS $$(d s k-?)$$, checks whether $$s$$ is a valid Ed25519signature of the data portion of Slice $$d$$ using public key $$k$$, similarly to CHKSIGNU. If the bit length of Slice $$d$$ is not divisible by eight, throws a cell underflow exception. The verification of Ed25519 signatures is the standard one, with SHA256 used to reduce $$d$$ to the 256 -bit number that is actually signed.
 * F912-F93F - Reserved for hashing and cryptography primitives.
 
-## A.11.7. Miscellaneous primitives.
+### A.11.7. Miscellaneous primitives.
 
 * F940 - CDATASIZEQ ( $$c n-x y z-1$$ or 0 ), recursively computes the count of distinct cells $$x$$, data bits $$y$$, and cell references $$z$$ in the dag rooted at Cell c, effectively returning the total storage used by this dag taking into account the identification of equal cells. The values of $$x, y$$, and $$z$$ are computed by a depth-first traversal of this dag, with a hash table of visited cell hashes used to prevent visits of already-visited cells. The total count of visited cells $$x$$ cannot exceed non-negative Integer $$n$$; otherwise the computation is aborted before visiting the $$(n+1)$$-st cell and a zero is returned to indicate failure. If $$c$$ is $$N u l l$$, $$\operatorname{returns} x=y=z=0$$.
 * F941 - CDATASIZE $$(c n-x y z)$$, a non-quiet version of CDATASIZEQ that throws a cell overflow exception (8) on failure.
 * F942 - SDATASIZEQ ( $$s n-x y z-1$$ or 0$$)$$, similar to CDATASIZEQ, but accepting a Slice $$s$$ instead of a Cell. The returned value of $$x$$ does not take into account the cell that contains the slice $$s$$ itself; however, the data bits and the cell references of $$s$$ are accounted for in $$y$$ and $$z$$.
 * F943 - SDATASIZE $$(s n-x y z)$$, a non-quiet version of SDATASIZEQ that throws a cell overflow exception (8) on failure. - F944-F97F - Reserved for miscellaneous TVM-specific primitives that do not fall into any other specific category.
 
-## A.11.8. Currency manipulation primitives.
+### A.11.8. Currency manipulation primitives.
 
 * FAO0 - LDGRAMS or LDVARUINT16 $$\left(s-x s^{\prime}\right)$$, loads (deserializes) a Gram or VarUInteger 16 amount from CellSlice s, and returns the amount as Integer $$x$$ along with the remainder $$s^{\prime}$$ of $$s$$. The expected serialization of $$x$$ consists of a 4-bit unsigned big-endian integer $$l$$, followed by an $$8 l$$-bit unsigned big-endian representation of $$x$$. The net effect is approximately equivalent to LDU 4; SWAP; LSHIFT 3; LDUX.
 * FA01 - LDVARINT16 $$\left(s-x s^{\prime}\right)$$, similar to LDVARUINT16, but loads a signed Integer $$x$$. Approximately equivalent to LDU 4; SWAP; LSHIFT 3; LDIX.
@@ -910,7 +910,7 @@ A.11.5. Global variable primitives. The "global variables" may be helpful in imp
 * FA06 - STVARUINT32 $$\left(b x-b^{\prime}\right)$$, serializes an Integer $$0 \leq x<2^{248}$$ as a VarUInteger 32. - FA07 - STVARINT32 $$\left(b x-b^{\prime}\right)$$, serializes an Integer $$-2^{247} \leq x<2^{247}$$ as a VarInteger 32.
 * FA08-FA1F - Reserved for currency manipulation primitives.
 
-#### A.11.9. Message and address manipulation primitives.&#x20;
+### A.11.9. Message and address manipulation primitives.&#x20;
 
 The message and address manipulation primitives listed below serialize and deserialize values according to the following TL-B scheme (cf. [$$\mathbf{3.3.4}$$](a-instructions-and-opcodes.md#3.3.4.-brief-explanation-of-tl-b-schemes.)):
 
@@ -954,7 +954,7 @@ The following primitives, which use the above conventions, are defined:
 * FA47 - REWRITEVARADDRQ $$\left(s-x s^{\prime}-1\right.$$ or 0$$)$$, a quiet version of primitive REWRITEVARADDR.
 * FA48-FA5F - Reserved for message and address manipulation primitives.
 
-## A.11.10. Outbound message and output action primitives.
+### A.11.10. Outbound message and output action primitives.
 
 * FBOO - SENDRAWMSG $$(c x-)$$, sends a raw message contained in Cell $$c$$, which should contain a correctly serialized object Message $$X$$, with the only exception that the source address is allowed to have dummy value addr\_none (to be automatically replaced with the current smartcontract address), and ihr\_fee, fwd\_fee, created\_lt and created\_at fields can have arbitrary values (to be rewritten with correct values during the action phase of the current transaction). Integer parameter $$x$$ contains the flags. Currently $$x=0$$ is used for ordinary messages; $$x=128$$ is used for messages that are to carry all the remaining balance of the current smart contract (instead of the value originally indicated in the message); $$x=64$$ is used for messages that carry all the remaining value of the inbound message in addition to the value initially indicated in the new message (if bit 0 is not set, the gas fees are deducted from this amount); $$x^{\prime}=x+1$$ means that the sender wants to pay transfer fees separately; $$x^{\prime}=x+2$$ means that any errors arising while processing this message during the action phase should be ignored. Finally, $$x^{\prime}=x+32$$ means that the current account must be destroyed if its resulting balance is zero. This flag is usually employed together with +128 .
 * FB02 - RAWRESERVE $$(x y-)$$, creates an output action which would reserve exactly $$x$$ nanograms (if $$y=0$$ ), at most $$x$$ nanograms (if $$y=2$$ ), or all but $$x$$ nanograms (if $$y=1$$ or $$y=3$$ ), from the remaining balance of the account. It is roughly equivalent to creating an outbound message carrying $$x$$ nanograms (or $$b-x$$ nanograms, where $$b$$ is the remaining balance) to oneself, so that the subsequent output actions would not be able to spend more money than the remainder. Bit +2 in $$y$$ means that the external action does not fail if the specified amount cannot be reserved; instead, all remaining balance is reserved. Bit +8 in $$y$$ means $$x \leftarrow-x$$ before performing any further actions. Bit +4 in $$y$$ means that $$x$$ is increased by the original balance of the current account (before the compute phase), including all extra currencies, before performing any other checks and actions. Currently $$x$$ must be a non-negative integer, and $$y$$ must be in the range $$0 \ldots 15$$.
@@ -967,7 +967,7 @@ The following primitives, which use the above conventions, are defined:
 
 Opcodes beginning with $$\mathrm{FE}$$ are reserved for the debug primitives. These primitives have known fixed operation length, and behave as (multibyte) NOP operations. In particular, they never change the stack contents, and never throw exceptions, unless there are not enough bits to completely decode the opcode. However, when invoked in a TVM instance with debug mode enabled, these primitives can produce specific output into the text debug log of the TVM instance, never affecting the TVM state (so that from the perspective of TVM the behavior of debug primitives in debug mode is exactly the same). For instance, a debug primitive might dump all or some of the values near the top of the stack, display the current state of TVM and so on.
 
-## A.12.1. Debug primitives as multibyte NOPs.
+### A.12.1. Debug primitives as multibyte NOPs.
 
 * FEnn - DEBUG $$n n$$, for $$0 \leq n n<240$$, is a two-byte NOP.
 * FEFnssss - DEBUGSTR ssss, for $$0 \leq n<16$$, is an $$(n+3)$$-byte NOP, with the $$(n+1)$$-byte "contents string" ssss skipped as well.
@@ -991,7 +991,7 @@ A.12.2. Debug primitives as operations without side-effect. Next we describe the
 * FEF000 - LOGFLUSH, flushes all pending debug output from the buffer into the debug log.
 * FEFn01ssss - PRINTSTR ssss, string ssss is $$n$$ bytes long.
 
-## A.13 Codepage primitives
+### A.13 Codepage primitives
 
 The following primitives, which begin with byte FF, typically are used at the very beginning of a smart contract's code or a library subroutine to select another TVM codepage. Notice that we expect all codepages to contain these primitives with the same codes, otherwise switching back to another codepage might be impossible (cf. [$$\mathbf{5.1.8}$$](codepages-and-instruction-encoding.md#5.1.8.-setting-the-codepage-in-the-code-itself.)).
 
