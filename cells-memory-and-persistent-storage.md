@@ -90,7 +90,7 @@ $${ }^{12}$$From a theoretical perspective, we might say that a cell $$c$$ has a
 {% endhint %}
 
 {% hint style="info" %}
-$${ }^{13}\mathrm{~A}$$ pruned branch cell $$c^{\prime}$$ of level $$l$$ is bound by a Merkle (proof or update) cell $$c$$ if there are exactly $$l$$ Merkle cells on the path from $$c$$ to its descendant $$c^{\prime}$$, including $$c$$.
+$${ }^{13}$$$$\mathrm{A}$$ pruned branch cell $$c^{\prime}$$ of level $$l$$ is bound by a Merkle (proof or update) cell $$c$$ if there are exactly $$l$$ Merkle cells on the path from $$c$$ to its descendant $$c^{\prime}$$, including $$c$$.
 {% endhint %}
 
 ### 3.1.8. All values of algebraic data types are trees of cells.
@@ -204,7 +204,7 @@ TVM does not offer any ways to modify existing values (cf. [$$\mathbf{2.3.4}$$](
 
 ### 3.2.14. Modifying the persistent storage of a smart contract.
 
-If the TVM code wants to modify its persistent storage, represented by the tree of cells rooted at $$c 4$$, it simply needs to rewrite control register c4 by the root of the tree of cells containing the new value of its persistent storage. (If only part of the persistent storage needs to be modified, cf. [\$$\mathbf{3.2.13.}](cells-memory-and-persistent-storage.md#3.2.13.-modifying-a-serialized-value-in-a-cell.))
+If the TVM code wants to modify its persistent storage, represented by the tree of cells rooted at $$c 4$$, it simply needs to rewrite control register c4 by the root of the tree of cells containing the new value of its persistent storage. (If only part of the persistent storage needs to be modified, cf. [$$\mathbf{3.2.13.}](cells-memory-and-persistent-storage.md#3.2.13.-modifying-a-serialized-value-in-a-cell.))
 
 ## 3.3 Hashmaps, or dictionaries
 

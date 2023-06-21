@@ -65,7 +65,7 @@ One could also imagine that the default value of $$n^{\prime \prime}$$ equals th
 
 ### 4.1.8. Restoring control registers from the new continuation $$c$$.
 
-After the new stack is computed, the values of control registers present in c.save are restored accordingly, and the current codepage $$\mathrm{cp}$$ is also set to c.cp. Only then does TVM set cc equal to the new $$c$$ and begin its execution. $${ }^{22}$$
+After the new stack is computed, the values of control registers present in c.save are restored accordingly, and the current codepage $$\mathrm{cp}$$ is also set to c.cp. Only then does TVM set cc equal to the new $$c$$ and begin its execution.$${ }^{22}$$
 
 ### 4.1.9. Subroutine calls: CALLX or EXECUTE primitives.
 
@@ -196,7 +196,11 @@ For example, imagine a continuation that represents the output stream to a print
 
 ## 4.5 Exception handling
 
-TVM's exception handling is quite simple and consists in a transfer of control to the continuation kept in control register c2. 4.5.1. Two arguments of the exception handler: exception parameter and exception number. Every exception is characterized by two arguments: the exception number (an Integer) and the exception parameter (any value, most often a zero Integer). Exception numbers 0-31 are reserved for TVM, while all other exception numbers are available for user-defined exceptions.
+TVM's exception handling is quite simple and consists in a transfer of control to the continuation kept in control register c2. 
+
+### 4.5.1. Two arguments of the exception handler: exception parameter and exception number. 
+
+Every exception is characterized by two arguments: the exception number (an Integer) and the exception parameter (any value, most often a zero Integer). Exception numbers 0-31 are reserved for TVM, while all other exception numbers are available for user-defined exceptions.
 
 ### 4.5.2. Primitives for throwing an exception.
 
