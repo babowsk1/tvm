@@ -118,14 +118,15 @@ The values kept in control registers are of the same types as those kept on the 
 
 ### 1.3.2. List of control registers.
 
-The original version of TVM defines and uses the following control registers: - c0 - Contains the next continuation or return continuation (similar to the subroutine return address in conventional designs). This value must be a Continuation.
+The original version of TVM defines and uses the following control registers: 
 
+* c0 - Contains the next continuation or return continuation (similar to the subroutine return address in conventional designs). This value must be a Continuation.
 * c1 - Contains the alternative (return) continuation; this value must be a Continuation. It is used in some (experimental) control flow primitives, allowing TVM to define and call "subroutines with two exit points".
 * c2 - Contains the exception handler. This value is a Continuation, invoked whenever an exception is triggered.
 * c3 - Contains the current dictionary, essentially a hashmap containing the code of all functions used in the program. For reasons explained later in [$$\mathbf{4.6}$$](control-flow-continuations-and-exceptions.md), this value is also a Continuation, not a Cell as one might expect.
 * c4 - Contains the root of persistent data, or simply the data. This value is a Cell. When the code of a smart contract is invoked, c4 points to the root cell of its persistent data kept in the blockchain state. If the smart contract needs to modify this data, it changes c4 before returning.
 * c5 - Contains the output actions. It is also a Cell initialized by a reference to an empty cell, but its final value is considered one of the smart contract outputs. For instance, the SENDMSG primitive, specific for the TVM Blockchain, simply inserts the message into a list stored in the output actions.
-* c7 - Contains the root of temporary data. It is a Tuple, initialized by a reference to an empty Tuple before invoking the smart contract and discarded after its termination $$\bigsqcup^{4}$$
+* c7 - Contains the root of temporary data. It is a Tuple, initialized by a reference to an empty Tuple before invoking the smart contract and discarded after its termination $$^{4}$$
 
 More control registers may be defined in the future for specific TVM Blockchain or high-level programming language purposes, if necessary.
 
@@ -138,17 +139,17 @@ $${ }^{4}$$In the TVM Blockchain context, c7 is initialized with a singleton Tup
 The total state of TVM consists of the following components:
 
 * Stack (cf. [$$\mathbf{1.1}$$](./#1.1-tvm-is-a-stack-machine)) - Contains zero or more values (cf. [$$\mathbf{1.1.1}$$](./#1.1.1-tvm-values.)), each belonging to one of value types listed in [$$\mathbf{1.1.3}$$](./#1.1.3.-preliminary-list-of-value-types.)
-* Control registers c0-c15 - Contain some specific values as described in [1.3.2.](./#1.3.2.-list-of-control-registers.) (Only seven control registers are used in the current version.)
+* Control registers c0-c15 - Contain some specific values as described in [$$\mathbf{1.3.2}$$](./#1.3.2.-list-of-control-registers.) (Only seven control registers are used in the current version.)
 * Current continuation cc - Contains the current continuation (i.e., the code that would be normally executed after the current primitive is completed). This component is similar to the instruction pointer register (ip) in other architectures.
-* Current codepage cp-A special signed 16-bit integer value that selects the way the next TVM opcode will be decoded. For example, future versions of TVM might use different codepages to add new opcodes while preserving backward compatibility.
+* Current codepage cp - A special signed 16-bit integer value that selects the way the next TVM opcode will be decoded. For example, future versions of TVM might use different codepages to add new opcodes while preserving backward compatibility.
 * Gas limits gas - Contains four signed 64-bit integers: the current gas limit $$g_{l}$$, the maximal gas limit $$g_{m}$$, the remaining gas $$g_{r}$$, and the gas credit $$g_{c}$$. Always $$0 \leq g_{l} \leq g_{m}, g_{c} \geq 0$$, and $$g_{r} \leq g_{l}+g_{c} ; g_{c}$$ is usually initialized by zero, $$g_{r}$$ is initialized by $$g_{l}+g_{c}$$ and gradually decreases as the TVM runs. When $$g_{r}$$ becomes negative or if the final value of $$g_{r}$$ is less than $$g_{c}$$, an out of gas exception is triggered.
 
 Notice that there is no "return stack" containing the return addresses of all previously called but unfinished functions. Instead, only control register c0 is used. The reason for this will be explained later in [$$\mathbf{4.1.9}$$](control-flow-continuations-and-exceptions.md#4.1.9.-subroutine-calls-callx-or-execute-primitives.).
 
-Also notice that there are no general-purpose registers, because TVM is a stack machine (cf. [$$\mathbf{1.1}$$](./#1.1-tvm-is-a-stack-machine)). So the above list, which can be summarized as "stack, control, continuation, codepage, and gas" (SCCCG), similarly to the classical SECD machine state ("stack, environment, control, dump"), is indeed the total state of TVM 5
+Also notice that there are no general-purpose registers, because TVM is a stack machine (cf. [$$\mathbf{1.1}$$](./#1.1-tvm-is-a-stack-machine)). So the above list, which can be summarized as "stack, control, continuation, codepage, and gas" (SCCCG), similarly to the classical SECD machine state ("stack, environment, control, dump"), is indeed the total state of TVM$${ }^{5}$$.
 
 {% hint style="info" %}
-$${ }^{5}$$Strictly speaking, there is also the current library context, which consists of a dictionary with 256-bit keys and cell values, used to load library reference cells of [3.1.7.](cells-memory-and-persistent-storage.md#3.1.7.-types-of-exotic-cells.)
+$${ }^{5}$$Strictly speaking, there is also the current library context, which consists of a dictionary with 256-bit keys and cell values, used to load library reference cells of [$$\mathbf{3.1.7.}$$](cells-memory-and-persistent-storage.md#3.1.7.-types-of-exotic-cells.)
 {% endhint %}
 
 ## 1.5 Integer arithmetic
