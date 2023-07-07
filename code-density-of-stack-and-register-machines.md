@@ -229,7 +229,7 @@ RET
 
 It is interesting to note that this version of stack machine code contains only 9 stack manipulation primitives for 11 arithmetic operations. It is not clear, however, whether an optimizing compiler would be able to reorganize the code in such a manner by itself.
 
-## C.2 Comparison of machine code for sample leaf func- tion
+## C.2 Comparison of machine code for sample leaf function
 
 [Table 1](code-density-of-stack-and-register-machines.md#table-1) summarizes the properties of machine code corresponding to the same source file described in [$$\mathbf{C.1.1}$$](code-density-of-stack-and-register-machines.md#c11-sample-source-file-for-a-leaf-function), generated for a hypothetical three-address register machine (cf. [$$\mathbf{C.1.2}$$](code-density-of-stack-and-register-machines.md#c12-three-address-register-machine)), with both "optimistic" and "realistic" instruction encodings; a two-address machine (cf. [$$\mathbf{C.1.3}$$](code-density-of-stack-and-register-machines.md#c13-two-address-register-machine)); a one-address machine (cf. C.1.4); and a stack machine, similar to TVM, using either only the basic stack manipulation primitives (cf. [$$\mathbf{C.1.5}$$](code-density-of-stack-and-register-machines.md#c15-stack-machine-with-basic-stack-primitives)) or both the basic and the composite stack primitives [$$\mathbf{C.1.7}$$](code-density-of-stack-and-register-machines.md#c17-stack-machine-with-compound-stack-primitives-and-manually-optimized-code).
 
