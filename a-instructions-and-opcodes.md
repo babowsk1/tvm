@@ -4,7 +4,7 @@ This appendix lists all instructions available in the (experimental) codepage ze
 
 We list the instructions in lexicographical opcode order. However, the opcode space is distributed in such way as to make all instructions in each category (e.g., arithmetic primitives) have neighboring opcodes. So we first list a number of stack manipulation primitives, then constant primitives, arithmetic primitives, comparison primitives, cell primitives, continuation primitives, dictionary primitives, and finally application-specific primitives.
 
-We use hexadecimal notation (cf. $$\mathbf{1 . 0}$$ ) for bitstrings. Stack registers $$\mathbf{s}(i)$$ usually have $$0 \leq i \leq 15$$, and $$i$$ is encoded in a 4-bit field (or, on a few rare occasions, in an 8-bit field). Other immediate parameters are usually 4-bit, 8-bit, or variable length.
+We use hexadecimal notation (cf. $${1 . 0}$$ ) for bitstrings. Stack registers $${s}(i)$$ usually have $$0 \leq i \leq 15$$, and $$i$$ is encoded in a 4-bit field (or, on a few rare occasions, in an 8-bit field). Other immediate parameters are usually 4-bit, 8-bit, or variable length.
 
 The stack notation described in 2.1.10 is extensively used throughout this appendix.
 
@@ -19,7 +19,7 @@ The gas price for most primitives equals the basic gas price, computed as $$P_{b
 
 ## A.2 Stack manipulation primitives
 
-This section includes both the basic (cf. [$$\mathbf{2.2.1}$$](stacks.md#2.2.1.-basic-stack-manipulation-primitives.) and the compound (cf. [$$\mathbf{2.2.3}$$](stacks.md#2.2.3.-compound-stack-manipulation-primitives.)) stack manipulation primitives, as well as some "unsystematic" ones. Some compound stack manipulation primitives, such as XCPU or XCHG2, turn out to have the same length as an equivalent sequence of simpler operations. We have included these primitives regardless, so that they can easily be allocated shorter opcodes in a future revision of TVM-or removed for good.
+This section includes both the basic (cf. [$${2.2.1}$$](stacks.md#2.2.1.-basic-stack-manipulation-primitives.) and the compound (cf. [$${2.2.3}$$](stacks.md#2.2.3.-compound-stack-manipulation-primitives.)) stack manipulation primitives, as well as some "unsystematic" ones. Some compound stack manipulation primitives, such as XCPU or XCHG2, turn out to have the same length as an equivalent sequence of simpler operations. We have included these primitives regardless, so that they can easily be allocated shorter opcodes in a future revision of TVM-or removed for good.
 
 Some stack manipulation instructions have two mnemonics: one Forthstyle (e.g., -ROT), the other conforming to the usual rules for identifiers (e.g., ROTREV). Whenever a stack manipulation primitive (e.g., PICK) accepts an integer parameter $$n$$ from the stack, it must be within the range $$0 \ldots 255$$; otherwise a range check exception happens before any further checks.
 
@@ -27,59 +27,59 @@ Some stack manipulation instructions have two mnemonics: one Forthstyle (e.g., -
 
 * 00 - NOP, does nothing.
 * 01 - XCHG s1, also known as SWAP.
-* $$0 i-\mathrm{XCHG} \quad {s}(i)$$ or XCHG $$\mathrm XCHG\quad \mathrm{s} 0, \mathrm{~s}(i)$$, interchanges the top of the stack with $$\mathrm{s}(i), 1 \leq i \leq 15$$
-* $$10 i j-\mathrm{XCHG}\quad \mathbf{s}(i), \mathrm{s}(j), 1 \leq i<j \leq 15$$, interchanges $$\mathbf{s}(i)$$ with $$\mathbf{s}(j)$$.
-* $$11 i i-\mathrm{XCHG}\quad \mathrm{s} 0, \mathrm{~s}(i i)$$, with $$0 \leq i i \leq 255$$.
-* $$1 i-\mathrm{XCHG}\quad \mathrm{s} 1, \mathrm{~s}(i), 2 \leq i \leq 15$$.
-* $$2 i$$ - PUSH $$\mathbf{s}(i), 0 \leq i \leq 15$$, pushes a copy of the old $$\mathbf{s}(i)$$ into the stack.
+* $$0 i-{XCHG}~{s}(i)$$ or XCHG $$ XCHG\quad {s} 0, {~s}(i)$$, interchanges the top of the stack with $${s}(i), 1 \leq i \leq 15$$
+* $$10 i j-{XCHG}\quad {s}(i), {s}(j), 1 \leq i<j \leq 15$$, interchanges $${s}(i)$$ with $${s}(j)$$.
+* $$11 i i-{XCHG}\quad {s} 0, {~s}(i i)$$, with $$0 \leq i i \leq 255$$.
+* $$1 i-{XCHG}\quad {s} 1, {~s}(i), 2 \leq i \leq 15$$.
+* $$2 i$$ - PUSH $${s}(i), 0 \leq i \leq 15$$, pushes a copy of the old $${s}(i)$$ into the stack.
 * 20 - PUSH s0, also known as DUP.
 * 21 - PUSH s1, also known as OVER.
-* $$3 i$$ - POP $$s(i), 0 \leq i \leq 15$$, pops the old top-of-stack value into the old $$\mathrm{s}(i)$$.
+* $$3 i$$ - POP $$s(i), 0 \leq i \leq 15$$, pops the old top-of-stack value into the old $${s}(i)$$.
 * 30 - POP s0, also known as DROP, discards the top-of-stack value. - 31 - POP s1, also known as NIP.
 
 ### A.2.2. Compound stack manipulation primitives.
 
 Parameters $$i, j$$, and $$k$$ of the following primitives all are 4-bit integers in the range $$0 \ldots 15$$.
 
-* $$4 i j k$$ - XCHG3 $$\mathrm{s}(i), \mathrm{s}(j), \mathrm{s}(k)$$, equivalent to XCHG $$\mathrm{s} 2, \mathrm{~s}(i) ;$$ XCHG s1, $$\mathrm{s}(j) ;$$ XCHG $$\mathrm{s} 0, \mathrm{~s}(k)$$, with $$0 \leq i, j, k \leq 15$$.
-* $$50 \mathrm{ij}$$ - XCHG2 $$\mathrm{s}(i), \mathrm{s}(j)$$, equivalent to XCHG $$\mathrm{s} 1, \mathrm{~s}(i)$$; XCHG $$\mathrm{s}(j)$$.
-* $$51 i j-X C P U \mathbf{s}(i), \mathbf{s}(j)$$, equivalent to XCHG $$\mathbf{s}(i) ; \operatorname{PUSH} \mathbf{s}(j)$$.
-* $$52 i j$$ - PUXC $$\mathrm{s}(i), \mathrm{s}(j-1)$$, equivalent to PUSH $$\mathrm{s}(i)$$; SWAP; XCHG $$\mathrm{s}(j)$$.
-* 53ij- PUSH2 $$\mathrm{s}(i), \mathrm{s}(j)$$, equivalent to PUSH $$\mathrm{s}(i)$$; PUSH $$\mathrm{s}(j+1)$$.
-* $$540 i j k-\mathrm{XCHG3} \mathrm{s}(i), \mathrm{s}(j), \mathrm{s}(k)$$ (long form).
-* 541ijk-XC2PU $$\mathrm{s}(i), \mathrm{s}(j), \mathrm{s}(k)$$, equivalent to XCHG2 $$\mathrm{s}(i), \mathrm{s}(j)$$; PUSH $$\mathrm{s}(k)$$.
-* 542ijk-XCPUXC $$\mathbf{s}(i), \mathrm{s}(j), \mathrm{s}(k-1)$$, equivalent to XCHG $$\mathrm{s} 1, \mathrm{~s}(i)$$; PUXC $$\mathrm{s}(j), \mathrm{s}(k-1)$$
-* 543ijk-XCPU2 $$\mathbf{s}(i), \mathrm{s}(j), \mathbf{s}(k)$$, equivalent to XCHG $$\mathbf{s}(i)$$; PUSH2 $$\mathbf{s}(j)$$, $$\mathrm{s}(k)$$.
-* 544ijk- PUXC2 $$\mathrm{s}(i), \mathrm{s}(j-1), \mathrm{s}(k-1)$$, equivalent to PUSH $$\mathrm{s}(i)$$; XCHG $$\mathrm{s} 2 ;$$ XCHG2 $$\mathrm{s}(j), \mathrm{s}(k)$$.
-* 545ijk-PUXCPU $$\mathbf{s}(i), \mathrm{s}(j-1), \mathrm{s}(k-1)$$, equivalent to PUXC $$\mathbf{s}(i), \mathrm{s}(j-$$ 1); PUSH $$\mathrm{s}(k)$$.
-* 546ijk-PU2XC $$\mathrm{s}(i), \mathrm{s}(j-1), \mathrm{s}(k-2)$$, equivalent to PUSH $$\mathrm{s}(i)$$; SWAP; PUXC $$\mathrm{s}(j), \mathrm{s}(k-1)$$.
-* 547ijk- PUSH3 $$\mathbf{s}(i), \mathbf{s}(j), \mathbf{s}(k)$$, equivalent to PUSH $$\mathbf{s}(i)$$; PUSH2 $$\mathbf{s}(j+$$ 1), $$\mathrm{s}(k+1)$$.
+* $$4 i j k$$ - XCHG3 $${s}(i), {s}(j), {s}(k)$$, equivalent to XCHG $${s} 2, {~s}(i) ;$$ XCHG s1, $${s}(j) ;$$ XCHG $${s} 0, {~s}(k)$$, with $$0 \leq i, j, k \leq 15$$.
+* $$50 {ij}$$ - XCHG2 $${s}(i), {s}(j)$$, equivalent to XCHG $${s} 1, {~s}(i)$$; XCHG $${s}(j)$$.
+* $$51 i j-X C P U {s}(i), {s}(j)$$, equivalent to XCHG $${s}(i) ; \operatorname{PUSH} {s}(j)$$.
+* $$52 i j$$ - PUXC $${s}(i), {s}(j-1)$$, equivalent to PUSH $${s}(i)$$; SWAP; XCHG $${s}(j)$$.
+* 53ij- PUSH2 $${s}(i), {s}(j)$$, equivalent to PUSH $${s}(i)$$; PUSH $${s}(j+1)$$.
+* $$540 i j k-{XCHG3} {s}(i), {s}(j), {s}(k)$$ (long form).
+* 541ijk- $$XC2PU~{s}(i), {s}(j), {s}(k)$$, equivalent to XCHG2 $${s}(i), {s}(j)$$; PUSH $${s}(k)$$.
+* 542ijk- $$XCPUXC~{s}(i), {s}(j), {s}(k-1)$$, equivalent to XCHG $${s} 1, {~s}(i)$$; PUXC $${s}(j), {s}(k-1)$$
+* 543ijk- $$XCPU2~{s}(i), {s}(j), {s}(k)$$, equivalent to XCHG $${s}(i)$$; PUSH2 $${s}(j)$$, $${s}(k)$$.
+* 544ijk- $$PUXC2~{s}(i), {s}(j-1), {s}(k-1)$$, equivalent to PUSH $${s}(i)$$; XCHG $${s} 2 ;$$ XCHG2 $${s}(j), {s}(k)$$.
+* 545ijk- $$PUXCPU~{s}(i), {s}(j-1), {s}(k-1)$$, equivalent to PUXC $${s}(i), {s}(j-$$ 1); PUSH $${s}(k)$$.
+* 546ijk- $$PU2XC~{s}(i), {s}(j-1), {s}(k-2)$$, equivalent to PUSH $${s}(i)$$; SWAP; PUXC $${s}(j), {s}(k-1)$$.
+* 547ijk- $$PUSH3~{s}(i), {s}(j), {s}(k)$$, equivalent to PUSH $${s}(i)$$; PUSH2 $${s}(j+$$ 1), $${s}(k+1)$$.
 * 54C\_- unused.
 
 ### A.2.3. Exotic stack manipulation primitives.
 
-* 55ij-BLKSWAP $$i+1, j+1$$, permutes two blocks $$\mathbf{s}(j+i+1) \ldots \mathrm{s}(j+1)$$ and $$\mathrm{s}(j) \ldots \mathrm{s} 0$$, for $$0 \leq i, j \leq 15$$. Equivalent to REVERSE $$i+1, j+1$$; REVERSE $$j+1,0 ;$$ REVERSE $$i+j+2,0$$.
+* 55ij-BLKSWAP $$i+1, j+1$$, permutes two blocks $${s}(j+i+1) \ldots {s}(j+1)$$ and $${s}(j) \ldots {s} 0$$, for $$0 \leq i, j \leq 15$$. Equivalent to REVERSE $$i+1, j+1$$; REVERSE $$j+1,0 ;$$ REVERSE $$i+j+2,0$$.
 * 5513 - ROT2 or 2ROT ( a bc def-cdefab), rotates the three topmost pairs of stack entries.
 * 550i - ROLL $$i+1$$, rotates the top $$i+1$$ stack entries. Equivalent to BLKSWAP $$1, i+1$$.
 * 55i0 - ROLLREV $$i+1$$ or -ROLL $$i+1$$, rotates the top $$i+1$$ stack entries in the other direction. Equivalent to BLKSWAP $$i+1,1$$.
-* 56ii - PUSH $$\mathrm{s}(i i)$$ for $$0 \leq i i \leq 255$$.
-* $$57 i i-\mathrm{POP} \mathrm{s}(i i)$$ for $$0 \leq i i \leq 255$$.
+* 56ii - PUSH $${s}(i i)$$ for $$0 \leq i i \leq 255$$.
+* $$57 i i-{POP} {s}(i i)$$ for $$0 \leq i i \leq 255$$.
 * 58-ROT $$(a b c-b c a)$$, equivalent to BLKSWAP 1, 2 or to XCHG2 s2, s1.
-* $$59-\mathrm{ROTREV}$$ or -ROT $$(a b c-c a b)$$, equivalent to BLKSWAP 2,1 or to XCHG2 s2, s2.
+* $$59-{ROTREV}$$ or -ROT $$(a b c-c a b)$$, equivalent to BLKSWAP 2,1 or to XCHG2 s2, s2.
 * 5A - SWAP2 or 2SWAP ( $$a b c d-c d a b)$$, equivalent to BLKSWAP 2,2 or to XCHG2 s3, s2.
 * 5B - DROP2 or 2DROP $$(a b-)$$, equivalent to DROP; DROP.
 * 5C-DUP2 or 2DUP $$(a b-a b a b)$$, equivalent to PUSH2 s1, s0.
 * 5D - OVER2 or 2OVER $$(a b c d-a b c d a b)$$, equivalent to PUSH2 s3, s2.
-* 5Eij - REVERSE $$i+2, j$$, reverses the order of $$\mathbf{s}(j+i+1) \ldots \mathrm{s}(j)$$ for $$0 \leq i, j \leq 15$$; equivalent to a sequence of $$\lfloor i / 2\rfloor+1$$ XCHGs.
+* 5Eij - REVERSE $$i+2, j$$, reverses the order of $${s}(j+i+1) \ldots {s}(j)$$ for $$0 \leq i, j \leq 15$$; equivalent to a sequence of $$\lfloor i / 2\rfloor+1$$ XCHGs.
 * 5FO $$i$$ - BLKDROP $$i$$, equivalent to DROP performed $$i$$ times.
-* 5Fij-BLKPUSH $$i, j$$, equivalent to PUSH $$\mathrm{s}(j)$$ performed $$i$$ times, $$1 \leq$$ $$i \leq 15,0 \leq j \leq 15$$
-* 60 - PICK or PUSHX, pops integer $$i$$ from the stack, then performs PUSH $$\mathrm{s}(i)$$.
+* 5Fij-BLKPUSH $$i, j$$, equivalent to PUSH $${s}(j)$$ performed $$i$$ times, $$1 \leq$$ $$i \leq 15,0 \leq j \leq 15$$
+* 60 - PICK or PUSHX, pops integer $$i$$ from the stack, then performs PUSH $${s}(i)$$.
 * 61 - ROLLX, pops integer $$i$$ from the stack, then performs BLKSWAP $$1, i$$. - 62 - -ROLLX or ROLLREVX, pops integer $$i$$ from the stack, then performs BLKSWAP $$i, 1$$.
 * 63 - BLKSWX, pops integers $$i, j$$ from the stack, then performs BLKSWAP $$i, j$$.
 * 64 - REVX, pops integers $$i, j$$ from the stack, then performs REVERSE $$i, j$$.
 * 65 - DROPX, pops integer $$i$$ from the stack, then performs BLKDROP $$i$$.
 * 66 - TUCK $$(a b-b a b)$$, equivalent to SWAP; OVER or to XCPU s1, s1.
-* 67 - XCHGX, pops integer $$i$$ from the stack, then performs XCHG $$\mathrm{s}(i)$$.
+* 67 - XCHGX, pops integer $$i$$ from the stack, then performs XCHG $${s}(i)$$.
 * 68 - DEPTH, pushes the current depth of the stack.
 * 69 - CHKDEPTH, pops integer $$i$$ from the stack, then checks whether there are at least $$i$$ elements, generating a stack underflow exception otherwise.
 * 6A - ONLYTOPX, pops integer $$i$$ from the stack, then removes all but the top $$i$$ elements.
@@ -163,7 +163,7 @@ The following primitives push into the stack one literal (or unnamed constant) o
 * 71 - ONE or PUSHINT 1.
 * 72 - TWO or PUSHINT 2.
 * 7A - TEN or PUSHINT 10.
-* $$7 \mathrm{~F}$$ - TRUE or PUSHINT -1.
+* $$7 {~F}$$ - TRUE or PUSHINT -1.
 * $$80 x x-$$ PUSHINT $$x x$$ with $$-128 \leq x x \leq 127$$.
 * $$81 x x x x-$$ PUSHINT $$x x x x$$ with $$-2^{15} \leq x x x x<2^{15}$$ a signed 16-bit big-endian integer.
 * 81FC18 - PUSHINT - 1000.
@@ -183,8 +183,8 @@ Most of the instructions listed below push literal slices, continuations, cells,
 * 8A - PUSHREFCONT, similar to PUSHREFSLICE, but makes a simple ordinary Continuation out of the cell.
 * 8Bxsss - PUSHSLICE sss, pushes the (prefix) subslice of cc . code consisting of its first $$8 x+4$$ bits and no references (i.e., essentially a bitstring), where $$0 \leq x \leq 15$$. A completion tag is assumed, meaning that all trailing zeroes and the last binary one (if present) are removed from this bitstring. If the original bitstring consists only of zeroes, an empty slice will be pushed.
 * 8B08 - PUSHSLICE x8\_, pushes an empty slice (bitstring '”).
-* 8B04 - PUSHSLICE $$\mathrm{x}_{-}$$, pushes bitstring ' 0 '.
-* 8BOC - PUSHSLICE $$\mathrm{xC}_{-}$$, pushes bitstring ' 1 '.
+* 8B04 - PUSHSLICE $${x}_{-}$$, pushes bitstring ' 0 '.
+* 8BOC - PUSHSLICE $${xC}_{-}$$, pushes bitstring ' 1 '.
 * 8Crxxssss - PUSHSLICE ssss, pushes the (prefix) subslice of cc.code consisting of its first $$1 \leq r+1 \leq 4$$ references and up to first $$8 x x+1$$ bits of data, with $$0 \leq x x \leq 31$$. A completion tag is also assumed. - 8C01 is equivalent to PUSHREFSLICE.
 * 8Drxxsssss - PUSHSLICE sssss, pushes the subslice of cc. code consisting of $$0 \leq r \leq 4$$ references and up to $$8 x x+6$$ bits of data, with $$0 \leq x x \leq 127$$. A completion tag is assumed.
 * 8DE\_ \_ unused (reserved).
@@ -195,8 +195,8 @@ Most of the instructions listed below push literal slices, continuations, cells,
 
 ### A.5.1. Addition, subtraction, multiplication.
 
-* $$\mathrm{AO}-\mathrm{ADD}(x y-x+y)$$, adds together two integers.
-* $$\mathrm{A} 1-\operatorname{SUB}(x y-x-y)$$.
+* $${AO}-{ADD}(x y-x+y)$$, adds together two integers.
+* $${A} 1-\operatorname{SUB}(x y-x-y)$$.
 * A2 - $$\operatorname{SUBR}(x y-y-x)$$, equivalent to SWAP; SUB.
 * A3 - NEGATE $$(x--x)$$, equivalent to MULCONST -1 or to ZERO; SUBR. Notice that it triggers an integer overflow exception if $$x=-2^{256}$$.
 * A4 - INC $$(x-x+1)$$, equivalent to ADDCONST 1.
@@ -212,7 +212,7 @@ The general encoding of a DIV, DIVMOD, or MOD operation is A9mscdf, with an opti
 * $$0 \leq s \leq 2$$ - Indicates whether either the multiplication or the division have been replaced by shifts: $$s=0$$-no replacement, $$s=1$$-division replaced by a right shift, $$s=2$$-multiplication replaced by a left shift (possible only for $$m=1$$ ).
 * $$0 \leq c \leq 1$$ - Indicates whether there is a constant one-byte argument $$t t$$ for the shift operator (if $$s \neq 0$$ ). For $$s=0, c=0$$. If $$c=1$$, then $$0 \leq t t \leq 255$$, and the shift is performed by $$t t+1$$ bits. If $$s \neq 0$$ and $$c=0$$, then the shift amount is provided to the instruction as a top-of-stack Integer in range $$0 \ldots 256$$.
 * $$1 \leq d \leq 3$$ - Indicates which results of division are required: 1-only the quotient, 2 -only the remainder, 3-both.
-* $$0 \leq f \leq 2$$ - Rounding mode: 0-floor, 1-nearest integer, 2-ceiling (cf. [$$\mathbf{1.5.6}$$](./))
+* $$0 \leq f \leq 2$$ - Rounding mode: 0-floor, 1-nearest integer, 2-ceiling (cf. [$${1.5.6}$$](./))
 
 Examples:
 
@@ -242,11 +242,11 @@ The most useful of these operations are DIV, DIVMOD, MOD, DIVR, DIVC, MODPOW2 $$
 
 * AAcc-LSHIFT $$c c+1\left(x-x \cdot 2^{c c+1}\right), 0 \leq c c \leq 255$$.
 * AAO0 - LSHIFT 1, equivalent to MULCONST 2 or to Forth's 2\*.
-* $$\mathrm{ABcc}-\mathrm{RSHIFT} c c+1\left(x-\left\lfloor x \cdot 2^{-c c-1}\right\rfloor\right), 0 \leq c c \leq 255$$.
+* $${ABcc}-{RSHIFT} c c+1\left(x-\left\lfloor x \cdot 2^{-c c-1}\right\rfloor\right), 0 \leq c c \leq 255$$.
 * AC - LSHIFT $$\left(x y-x \cdot 2^{y}\right), 0 \leq y \leq 1023$$.
-* $$\mathrm{AD}-\mathrm{RSHIFT}\left(x y-\left\lfloor x \cdot 2^{-y}\right\rfloor\right), 0 \leq y \leq 1023$$.
+* $${AD}-{RSHIFT}\left(x y-\left\lfloor x \cdot 2^{-y}\right\rfloor\right), 0 \leq y \leq 1023$$.
 * AE - POW2 $$\left(y-2^{y}\right), 0 \leq y \leq 1023$$, equivalent to ONE; SWAP; LSHIFT.
-* $$\mathrm{AF}$$ - reserved.
+* $${AF}$$ - reserved.
 * BO - AND $$(x y-x \& y)$$, bitwise "and" of two signed integers $$x$$ and $$y$$, sign-extended to infinity.
 * B1 - OR $$(x y-x \vee y)$$, bitwise "or" of two integers.
 * B2 - XOR $$(x y-x \oplus y)$$, bitwise "xor" of two integers.
@@ -262,13 +262,13 @@ The most useful of these operations are DIV, DIVMOD, MOD, DIVR, DIVC, MODPOW2 $$
 * B608 - MIN $$(x y-x$$ or $$y$$ ), computes the minimum of two integers $$x$$ and $$y$$.
 * B609 - MAX $$(x y-x$$ or $$y)$$, computes the maximum of two integers $$x$$ and $$y$$.
 * B60A - MINMAX or INTSORT2 $$(x y-x y$$ or $$y x)$$, sorts two integers. Quiet version of this operation returns two NaNs if any of the arguments are NaNs.
-* $$\mathrm{B} 60 \mathrm{~B}-\operatorname{ABS}(x-|x|)$$, computes the absolute value of an integer $$x$$. A.5.4. Quiet arithmetic primitives. We opted to make all arithmetic operations "non-quiet" (signaling) by default, and create their quiet counterparts by means of a prefix. Such an encoding is definitely sub-optimal. It is not yet clear whether it should be done in this way, or in the opposite way by making all arithmetic operations quiet by default, or whether quiet and non-quiet operations should be given opcodes of equal length; this can only be settled by practice.
+* $${B} 60 {~B}-\operatorname{ABS}(x-|x|)$$, computes the absolute value of an integer $$x$$. A.5.4. Quiet arithmetic primitives. We opted to make all arithmetic operations "non-quiet" (signaling) by default, and create their quiet counterparts by means of a prefix. Such an encoding is definitely sub-optimal. It is not yet clear whether it should be done in this way, or in the opposite way by making all arithmetic operations quiet by default, or whether quiet and non-quiet operations should be given opcodes of equal length; this can only be settled by practice.
 * B7xx - QUIET prefix, transforming any arithmetic operation into its "quiet" variant, indicated by prefixing a $$Q$$ to its mnemonic. Such operations return NaNs instead of throwing integer overflow exceptions if the results do not fit in Integers, or if one of their arguments is a NaN. Notice that this does not extend to shift amounts and other parameters that must be within a small range (e.g., 0-1023). Also notice that this does not disable type-checking exceptions if a value of a type other than Integer is supplied.
-* B7AO - QADD $$(x y-x+y)$$, always works if $$x$$ and $$y$$ are Integers, but returns a $$\mathrm{NaN}$$ if the addition cannot be performed.
+* B7AO - QADD $$(x y-x+y)$$, always works if $$x$$ and $$y$$ are Integers, but returns a $${NaN}$$ if the addition cannot be performed.
 * B7A904 - QDIV $$(x y-\lfloor x / y\rfloor)$$, returns a NaN if $$y=0$$, or if $$y=-1$$ and $$x=-2^{256}$$, or if either of $$x$$ or $$y$$ is a NaN.
-* B7BO - QAND $$(x y-x \& y)$$, bitwise "and" (similar to AND), but returns a NaN if either $$x$$ or $$y$$ is a NaN instead of throwing an integer overflow exception. However, if one of the arguments is zero, and the other is a $$\mathrm{NaN}$$, the result is zero.
-* B7B1 - QOR $$(x y-x \vee y)$$, bitwise "or". If $$x=-1$$ or $$y=-1$$, the result is always -1 , even if the other argument is a $$\mathrm{NaN}$$.
-* B7B507 - QUFITS $$8\left(x-x^{\prime}\right)$$, checks whether $$x$$ is an unsigned byte (i.e., whether $$0 \leq x<2^{8}$$ ), and replaces $$x$$ with a $$\mathrm{NaN}$$ if this is not the case; leaves $$x$$ intact otherwise (i.e., if $$x$$ is an unsigned byte).
+* B7BO - QAND $$(x y-x \& y)$$, bitwise "and" (similar to AND), but returns a NaN if either $$x$$ or $$y$$ is a NaN instead of throwing an integer overflow exception. However, if one of the arguments is zero, and the other is a $${NaN}$$, the result is zero.
+* B7B1 - QOR $$(x y-x \vee y)$$, bitwise "or". If $$x=-1$$ or $$y=-1$$, the result is always -1 , even if the other argument is a $${NaN}$$.
+* B7B507 - QUFITS $$8\left(x-x^{\prime}\right)$$, checks whether $$x$$ is an unsigned byte (i.e., whether $$0 \leq x<2^{8}$$ ), and replaces $$x$$ with a $${NaN}$$ if this is not the case; leaves $$x$$ intact otherwise (i.e., if $$x$$ is an unsigned byte).
 
 ## A.6 Comparison primitives
 
@@ -276,26 +276,26 @@ The most useful of these operations are DIV, DIVMOD, MOD, DIVR, DIVC, MODPOW2 $$
 
 All integer comparison primitives return integer -1 ("true") or 0 ("false") to indicate the result of the comparison. We do not define their "boolean circuit" counterparts, which would transfer control to $$c 0$$ or $$c 1$$ depending on the result of the comparison. If needed, such instructions can be simulated with the aid of RETBOOL.
 
-Quiet versions of integer comparison primitives are also available, encoded with the aid of the QUIET prefix (B7). If any of the integers being compared are NaNs, the result of a quiet comparison will also be a $$\mathrm{NaN}$$ ("undefined"), instead of a -1 ("yes") or 0 ("no"), thus effectively supporting ternary logic.
+Quiet versions of integer comparison primitives are also available, encoded with the aid of the QUIET prefix (B7). If any of the integers being compared are NaNs, the result of a quiet comparison will also be a $${NaN}$$ ("undefined"), instead of a -1 ("yes") or 0 ("no"), thus effectively supporting ternary logic.
 
 * B8 - SGN $$(x-\operatorname{sgn}(x))$$, computes the sign of an integer $$x:-1$$ if $$x<0$$, 0 if $$x=0,1$$ if $$x>0$$.
 * B9 - LESS $$(x y-x<y)$$, returns -1 if $$x<y, 0$$ otherwise.
 * BA - EQUAL $$(x y-x=y)$$, returns -1 if $$x=y, 0$$ otherwise.
-* $$\mathrm{BB}-\mathrm{LEQ}(x y-x \leq y)$$.
-* $$\mathrm{BC}-\operatorname{GREATER}(x y-x>y)$$.
-* $$\mathrm{BD}-\mathrm{NEQ}(x y-x \neq y)$$, equivalent to EQUAL; NOT.
-* $$\mathrm{BE}-\mathrm{GEQ}(x y-x \geq y)$$, equivalent to LESS; NOT.
-* $$\mathrm{BF}-\operatorname{CMP}(x y-\operatorname{sgn}(x-y))$$, computes the sign of $$x-y:-1$$ if $$x<y$$, 0 if $$x=y, 1$$ if $$x>y$$. No integer overflow can occur here unless $$x$$ or $$y$$ is a $$\mathrm{NaN}$$.
+* $${BB}-{LEQ}(x y-x \leq y)$$.
+* $${BC}-\operatorname{GREATER}(x y-x>y)$$.
+* $${BD}-{NEQ}(x y-x \neq y)$$, equivalent to EQUAL; NOT.
+* $${BE}-{GEQ}(x y-x \geq y)$$, equivalent to LESS; NOT.
+* $${BF}-\operatorname{CMP}(x y-\operatorname{sgn}(x-y))$$, computes the sign of $$x-y:-1$$ if $$x<y$$, 0 if $$x=y, 1$$ if $$x>y$$. No integer overflow can occur here unless $$x$$ or $$y$$ is a $${NaN}$$.
 * COyy-EQINT $$y y(x-x=y y)$$ for $$-2^{7} \leq y y<2^{7}$$.
 * COOO - ISZERO, checks whether an integer is zero. Corresponds to Forth's $$0=$$.
 * C1yy-LESSINT $$y y(x-x<y y)$$ for $$-2^{7} \leq y y<2^{7}$$.
 * C100 - ISNEG, checks whether an integer is negative. Corresponds to Forth's $$0<$$.
 * C101 - ISNPOS, checks whether an integer is non-positive.
 * C2yy-GTINT $$y y(x-x>y y)$$ for $$-2^{7} \leq y y<2^{7}$$.
-* C200 - ISPOS, checks whether an integer is positive. Corresponds to Forth's 0>. - $$\mathrm{C} 2 \mathrm{FF}$$ - ISNNEG, checks whether an integer is non-negative.
+* C200 - ISPOS, checks whether an integer is positive. Corresponds to Forth's 0>. - $${C} 2 {FF}$$ - ISNNEG, checks whether an integer is non-negative.
 * C3yy-NEQINT $$y y(x-x \neq y y)$$ for $$-2^{7} \leq y y<2^{7}$$.
-* C4 - ISNAN $$(x-x=\mathrm{NaN})$$, checks whether $$x$$ is a NaN.
-* C5-CHKNAN $$(x-x)$$, throws an arithmetic overflow exception if $$x$$ is a $$\mathrm{NaN}$$.
+* C4 - ISNAN $$(x-x={NaN})$$, checks whether $$x$$ is a NaN.
+* C5-CHKNAN $$(x-x)$$, throws an arithmetic overflow exception if $$x$$ is a $${NaN}$$.
 * C6 - reserved for integer comparison.
 
 ### A.6.2. Other comparison.
@@ -333,7 +333,7 @@ All these primitives first check whether there is enough space in the Builder, a
 * C8 - NEWC $$(-b)$$, creates a new empty Builder.
 * C9 - ENDC $$(b-c)$$, converts a Builder into an ordinary Cell.
 * CAcc - STI $$c c+1\left(x b-b^{\prime}\right)$$, stores a signed $$c c+$$ 1-bit integer $$x$$ into Builder $$b$$ for $$0 \leq c c \leq 255$$, throws a range check exception if $$x$$ does not fit into $$c c+1$$ bits.
-* $$\mathrm{CBcc}$$ - STU $$c c+1\left(x b-b^{\prime}\right)$$, stores an unsigned $$c c+$$ 1-bit integer $$x$$ into Builder $$b$$. In all other respects it is similar to STI.
+* $${CBcc}$$ - STU $$c c+1\left(x b-b^{\prime}\right)$$, stores an unsigned $$c c+$$ 1-bit integer $$x$$ into Builder $$b$$. In all other respects it is similar to STI.
 * CC - STREF $$\left(c b-b^{\prime}\right)$$, stores a reference to Cell c into Builder $$b$$.
 * CD - STBREFR or ENDCST $$\left(b b^{\prime \prime}-b\right)$$, equivalent to ENDC; SWAP; STREF.
 * CE - STSLICE $$\left(s b-b^{\prime}\right)$$, stores Slice $$s$$ into Builder $$b$$.
@@ -397,7 +397,7 @@ All these primitives first check whether there is enough space in the Builder, a
 * CF83 - STSLICECONST ' 1 ' or STONE $$\left(b-b^{\prime}\right)$$, stores one binary one.
 * CFA2 - equivalent to STREFCONST.
 * CFA3 - almost equivalent to STSLICECONST '1'; STREFCONST.
-* $$\mathrm{CFC} 2$$ - equivalent to STREF2CONST.
+* $${CFC} 2$$ - equivalent to STREF2CONST.
 * CFE2 - STREF3CONST.
 
 ### A.7.2. Cell deserialization primitives.
@@ -492,12 +492,12 @@ All these primitives first check whether there is enough space in the Builder, a
 
 ### A.8.1. Unconditional control flow primitives.
 
-* D8 - EXECUTE or CALLX $$(c-)$$, calls or executes continuation $$c$$ (i.e., $$\left.\mathrm{cc} \leftarrow c \circ_{0} \mathrm{cc}\right)$$.
-* D9 - JMPX $$(c-)$$, jumps, or transfers control, to continuation $$c$$ (i.e., $$c c \leftarrow c \circ_{0} c 0$$, or rather $$\left.c c \leftarrow\left(c \circ_{0} c 0\right) \circ_{1} c 1\right)$$. The remainder of the previous current continuation $$\mathrm{cc}$$ is discarded.
+* D8 - EXECUTE or CALLX $$(c-)$$, calls or executes continuation $$c$$ (i.e., $$\left.{cc} \leftarrow c \circ_{0} {cc}\right)$$.
+* D9 - JMPX $$(c-)$$, jumps, or transfers control, to continuation $$c$$ (i.e., $$c c \leftarrow c \circ_{0} c 0$$, or rather $$\left.c c \leftarrow\left(c \circ_{0} c 0\right) \circ_{1} c 1\right)$$. The remainder of the previous current continuation $${cc}$$ is discarded.
 * DApr - CALLXARGS $$p, r(c-)$$, calls continuation $$c$$ with $$p$$ parameters and expecting $$r$$ return values, $$0 \leq p \leq 15,0 \leq r \leq 15$$.
 * DBO $$p$$ - CALLXARGS $$p,-1(c-)$$, calls continuation $$c$$ with $$0 \leq p \leq 15$$ parameters, expecting an arbitrary number of return values.
 * DB1 $$p$$ - JMPXARGS $$p(c-)$$, jumps to continuation $$c$$, passing only the top $$0 \leq p \leq 15$$ values from the current stack to it (the remainder of the current stack is discarded).
-* DB2 $$r$$ - RETARGS $$r$$, returns to $$\mathrm{c} 0$$, with $$0 \leq r \leq 15$$ return values taken from the current stack.
+* DB2 $$r$$ - RETARGS $$r$$, returns to $${c} 0$$, with $$0 \leq r \leq 15$$ return values taken from the current stack.
 * DB30 - RET or RETTRUE, returns to the continuation at c0 (i.e., performs cc $$\leftarrow c 0)$$. The remainder of the current continuation $$c c$$ is discarded. Approximately equivalent to PUSH c0; JMPX. - DB31 - RETALT or RETFALSE, returns to the continuation at c1 (i.e., $$c c \leftarrow c 1)$$. Approximately equivalent to PUSH $$c 1$$; JMPX.
 * DB32 - BRANCH or RETBOOL $$(f-)$$, performs RETTRUE if integer $$f \neq 0$$, or RETFALSE if $$f=0$$.
 * DB34 - CALLCC $$(c-)$$, call with current continuation, transfers control to $$c$$, pushing the old value of cc into $$c$$ 's stack (instead of discarding it or writing it into new c0).
@@ -539,7 +539,7 @@ All these primitives first check whether there is enough space in the Builder, a
 
 ### A.8.3. Control flow primitives: loops.
 
-Most of the loop primitives listed below are implemented with the aid of extraordinary continuations, such as ec\_until (cf. 4.1.5), with the loop body and the original current continuation cc stored as the arguments to this extraordinary continuation. Typically a suitable extraordinary continuation is constructed, and then saved into the loop body continuation savelist as c0; after that, the modified loop body continuation is loaded into cc and executed in the usual fashion. All of these loop primitives have $$* \mathrm{BRK}$$ versions, adapted for breaking out of a loop; they additionally set $$c 1$$ to the original current continuation (or original c0 for $$*$$ ENDBRK versions), and save the old c1 into the savelist of the original current continuation (or of the original c0 for $$*$$ ENDBRK versions).
+Most of the loop primitives listed below are implemented with the aid of extraordinary continuations, such as ec\_until (cf. 4.1.5), with the loop body and the original current continuation cc stored as the arguments to this extraordinary continuation. Typically a suitable extraordinary continuation is constructed, and then saved into the loop body continuation savelist as c0; after that, the modified loop body continuation is loaded into cc and executed in the usual fashion. All of these loop primitives have $$* {BRK}$$ versions, adapted for breaking out of a loop; they additionally set $$c 1$$ to the original current continuation (or original c0 for $$*$$ ENDBRK versions), and save the old c1 into the savelist of the original current continuation (or of the original c0 for $$*$$ ENDBRK versions).
 
 * E4 - REPEAT $$(n c-)$$, executes continuation $$c n$$ times, if integer $$n$$ is non-negative. If $$n \geq 2^{31}$$ or $$n<-2^{31}$$, generates a range check exception. Notice that a RET inside the code of $$c$$ works as a continue, not as a break. One should use either alternative (experimental) loops or alternative RETALT (along with a SETEXITALT before the loop) to break out of a loop.
 * E5 - REPEATEND $$(n-)$$, similar to REPEAT, but it is applied to the current continuation cc.
@@ -575,19 +575,19 @@ Most of the loop primitives listed below are implemented with the aid of extraor
 
 ### A.8.6. Operations with continuation savelists and control registers.
 
-* ED4 $$i$$ - PUSH $$\mathrm{c}(i)$$ or PUSHCTR $$\mathrm{c}(i)(-x)$$, pushes the current value of control register $$\mathrm{c}(i)$$. If the control register is not supported in the current codepage, or if it does not have a value, an exception is triggered.
+* ED4 $$i$$ - PUSH $${c}(i)$$ or PUSHCTR $${c}(i)(-x)$$, pushes the current value of control register $${c}(i)$$. If the control register is not supported in the current codepage, or if it does not have a value, an exception is triggered.
 * ED44 - PUSH c4 or PUSHR00T, pushes the "global data root" cell reference, thus enabling access to persistent smart-contract data.
-* ED5 $$i$$ - POP $$\mathrm{c}(i)$$ or POPCTR $$\mathrm{c}(i)(x-)$$, pops a value $$x$$ from the stack and stores it into control register $$c(i)$$, if supported in the current codepage. Notice that if a control register accepts only values of a specific type, a type-checking exception may occur.
+* ED5 $$i$$ - POP $${c}(i)$$ or POPCTR $${c}(i)(x-)$$, pops a value $$x$$ from the stack and stores it into control register $$c(i)$$, if supported in the current codepage. Notice that if a control register accepts only values of a specific type, a type-checking exception may occur.
 * ED54 - POP c4 or POPROOT, sets the "global data root" cell reference, thus allowing modification of persistent smart-contract data.
-* ED6 $$i$$ - SETCONT $$\mathrm{c}(i)$$ or SETCONTCTR $$\mathrm{c}(i)\left(x c-c^{\prime}\right)$$, stores $$x$$ into the savelist of continuation $$c$$ as $$c(i)$$, and returns the resulting continuation $$c^{\prime}$$. Almost all operations with continuations may be expressed in terms of SETCONTCTR, POPCTR, and PUSHCTR.
-* ED7i - SETRETCTR c $$(i)(x-)$$, equivalent to PUSH c0; SETCONTCTR $$\mathrm{c}(i) ;$$ POP c0.
-* ED8i - SETALTCTR c $$(i)(x-)$$, equivalent to PUSH c1; SETCONTCTR $$\mathrm{c}(i) ;$$ POP c0.
-* ED9 $$i$$ - POPSAVE $$\mathrm{c}(i)$$ or POPCTRSAVE $$\mathrm{c}(i)(x-)$$, similar to POP $$\mathrm{c}(i)$$, but also saves the old value of $$c(i)$$ into continuation co. Equivalent (up to exceptions) to SAVECTR $$\mathrm{c}(i)$$; POP $$\mathrm{c}(i)$$.
+* ED6 $$i$$ - SETCONT $${c}(i)$$ or SETCONTCTR $${c}(i)\left(x c-c^{\prime}\right)$$, stores $$x$$ into the savelist of continuation $$c$$ as $$c(i)$$, and returns the resulting continuation $$c^{\prime}$$. Almost all operations with continuations may be expressed in terms of SETCONTCTR, POPCTR, and PUSHCTR.
+* ED7i - SETRETCTR c $$(i)(x-)$$, equivalent to PUSH c0; SETCONTCTR $${c}(i) ;$$ POP c0.
+* ED8i - SETALTCTR c $$(i)(x-)$$, equivalent to PUSH c1; SETCONTCTR $${c}(i) ;$$ POP c0.
+* ED9 $$i$$ - POPSAVE $${c}(i)$$ or POPCTRSAVE $${c}(i)(x-)$$, similar to POP $${c}(i)$$, but also saves the old value of $$c(i)$$ into continuation co. Equivalent (up to exceptions) to SAVECTR $${c}(i)$$; POP $${c}(i)$$.
 * EDA $$i$$ - SAVE $$c(i)$$ or SAVECTR $$c(i)(-)$$, saves the current value of $$c(i)$$ into the savelist of continuation c0. If an entry for $$c(i)$$ is already present in the savelist of c0, nothing is done. Equivalent to PUSH $$c(i)$$; SETRETCTR $$c(i)$$.
-* EDBi - SAVEALT $$\mathrm{c}(i)$$ or SAVEALTCTR $$\mathrm{c}(i)(-)$$, similar to SAVE $$\mathrm{c}(i)$$, but saves the current value of $$c(i)$$ into the savelist of $$c 1$$, not $$c 0$$.
-* EDC $$i$$ - SAVEBOTH $$c(i)$$ or SAVEBOTHCTR $$c(i)(-)$$, equivalent to DUP; SAVE $$\mathrm{c}(i)$$; SAVEALT $$\mathrm{c}(i)$$.
-* EDEO - PUSHCTRX $$(i-x)$$, similar to PUSHCTR $$\mathrm{c}(i)$$, but with $$i, 0 \leq i \leq$$ 255 , taken from the stack. Notice that this primitive is one of the few "exotic" primitives, which are not polymorphic like stack manipulation primitives, and at the same time do not have well-defined types of parameters and return values, because the type of $$x$$ depends on $$i$$.
-* EDE1 - POPCTRX $$(x i-)$$, similar to POPCTR $$\mathrm{c}(i)$$, but with $$0 \leq i \leq 255$$ from the stack.
+* EDBi - SAVEALT $${c}(i)$$ or SAVEALTCTR $${c}(i)(-)$$, similar to SAVE $${c}(i)$$, but saves the current value of $$c(i)$$ into the savelist of $$c 1$$, not $$c 0$$.
+* EDC $$i$$ - SAVEBOTH $$c(i)$$ or SAVEBOTHCTR $$c(i)(-)$$, equivalent to DUP; SAVE $${c}(i)$$; SAVEALT $${c}(i)$$.
+* EDEO - PUSHCTRX $$(i-x)$$, similar to PUSHCTR $${c}(i)$$, but with $$i, 0 \leq i \leq$$ 255 , taken from the stack. Notice that this primitive is one of the few "exotic" primitives, which are not polymorphic like stack manipulation primitives, and at the same time do not have well-defined types of parameters and return values, because the type of $$x$$ depends on $$i$$.
+* EDE1 - POPCTRX $$(x i-)$$, similar to POPCTR $${c}(i)$$, but with $$0 \leq i \leq 255$$ from the stack.
 * EDE2 - SETCONTCTRX $$\left(x c i-c^{\prime}\right)$$, similar to SETCONTCTR $$c(i)$$, but with $$0 \leq i \leq 255$$ from the stack.
 * EDFO - COMPOS or BOOLAND $$\left(c c^{\prime}-c^{\prime \prime}\right)$$, computes the composition $$c \circ_{0} c^{\prime}$$, which has the meaning of "perform $$c$$, and, if successful, perform $$c^{\prime}$$ " (if $$c$$ is a boolean circuit) or simply "perform $$c$$, then $$c$$ ". Equivalent to SWAP; SETCONT cO.
 * EDF1 - COMPOSALT or BOOLOR $$\left(c c^{\prime}-c^{\prime \prime}\right)$$, computes the alternative composition $$c \circ_{1} c^{\prime}$$, which has the meaning of "perform $$c$$, and, if not successful, perform $$c^{\prime \prime \prime}$$ (if $$c$$ is a boolean circuit). Equivalent to SWAP; SETCONT c1.
@@ -598,10 +598,10 @@ Most of the loop primitives listed below are implemented with the aid of extraor
 * EDF6 - THENRET $$\left(c-c^{\prime}\right)$$, computes $$c^{\prime}:=c \circ_{0}$$ c0
 * EDF7 - THENRETALT $$\left(c-c^{\prime}\right)$$, computes $$c^{\prime}:=c \circ_{0} c 1$$
 * EDF8 - INVERT ( - ), interchanges c0 and c1.
-* EDF9 - BOOLEVAL $$(c-?)$$, performs cc $$\leftarrow\left(c \circ_{0}\left((\mathrm{PUSH}-1) \circ_{0} \mathrm{cc}\right)\right) \circ_{1}$$ $$\left((\right.$$ PUSH 0$$\left.) \circ_{0} \mathrm{Cc}\right)$$. If $$c$$ represents a boolean circuit, the net effect is to evaluate it and push either -1 or 0 into the stack before continuing.
+* EDF9 - BOOLEVAL $$(c-?)$$, performs cc $$\leftarrow\left(c \circ_{0}\left(({PUSH}-1) \circ_{0} {cc}\right)\right) \circ_{1}$$ $$\left((\right.$$ PUSH 0$$\left.) \circ_{0} {Cc}\right)$$. If $$c$$ represents a boolean circuit, the net effect is to evaluate it and push either -1 or 0 into the stack before continuing.
 * EDFA - SAMEALT $$(-)$$, sets $$c_{1}:=c_{0}$$. Equivalent to PUSH c0;POP c1.
 * EDFB - SAMEALTSAVE $$(-)$$, sets $$c_{1}:=c_{0}$$, but first saves the old value of $$c_{1}$$ into the savelist of $$c_{0}$$. Equivalent to SAVE $$c 1$$; SAMEALT.
-* EErn - BLESSARGS $$r, n\left(x_{1} \ldots x_{r} s-c\right)$$, described in [$$\mathbf{A.8.4}$$](a-instructions-and-opcodes.md#a.8.4.-manipulating-the-stack-of-continuations.).
+* EErn - BLESSARGS $$r, n\left(x_{1} \ldots x_{r} s-c\right)$$, described in [$${A.8.4}$$](a-instructions-and-opcodes.md#a.8.4.-manipulating-the-stack-of-continuations.).
 
 ### A.8.7. Dictionary subroutine calls and jumps.
 
@@ -635,7 +635,7 @@ Most of the loop primitives listed below are implemented with the aid of extraor
 
 ## A.10 Dictionary manipulation primitives
 
-TVM's dictionary support is discussed at length in [$$\mathbf{3.3}$$](\[\$$/mathbf%7B3.3%7D\$$]\(cells-memory-and-persistent-storage.md#3.3-hashmaps-or-dictionaries\)) The basic operations with dictionaries are listed in [$$\mathbf{3.3.10}$$](cells-memory-and-persistent-storage.md#3.3.10.-basic-dictionary-operations.), while the taxonomy of dictionary manipulation primitives is provided in [$$\mathbf{3.3.11}$$](cells-memory-and-persistent-storage.md#3.3.11.-taxonomy-of-dictionary-primitives.) Here we use the concepts and notation introduced in those sections.
+TVM's dictionary support is discussed at length in [$${3.3}$$](\[\$$/mathbf%7B3.3%7D\$$]\(cells-memory-and-persistent-storage.md#3.3-hashmaps-or-dictionaries\)) The basic operations with dictionaries are listed in [$${3.3.10}$$](cells-memory-and-persistent-storage.md#3.3.10.-basic-dictionary-operations.), while the taxonomy of dictionary manipulation primitives is provided in [$${3.3.11}$$](cells-memory-and-persistent-storage.md#3.3.11.-taxonomy-of-dictionary-primitives.) Here we use the concepts and notation introduced in those sections.
 
 Dictionaries admit two different representations as TVM stack values:
 
@@ -648,8 +648,8 @@ Opcodes starting with F4 and F5 are reserved for dictionary operations.
 
 ### A.10.1. Dictionary creation.
 
-* 6D - NEWDICT $$(-D)$$, returns a new empty dictionary. It is an alternative mnemonics for PUSHNULL, cf. [$$\mathbf{A.3.1}$$](a-instructions-and-opcodes.md#a.3.1-null-primitives.).
-* 6E - DICTEMPTY $$(D-?)$$, checks whether dictionary $$D$$ is empty, and returns -1 or 0 accordingly. It is an alternative mnemonics for ISNULL, cf. [$$\mathbf{A.3.1}$$](a-instructions-and-opcodes.md#a.3.1-null-primitives.).
+* 6D - NEWDICT $$(-D)$$, returns a new empty dictionary. It is an alternative mnemonics for PUSHNULL, cf. [$${A.3.1}$$](a-instructions-and-opcodes.md#a.3.1-null-primitives.).
+* 6E - DICTEMPTY $$(D-?)$$, checks whether dictionary $$D$$ is empty, and returns -1 or 0 accordingly. It is an alternative mnemonics for ISNULL, cf. [$${A.3.1}$$](a-instructions-and-opcodes.md#a.3.1-null-primitives.).
 
 ### A.10.2. Dictionary serialization and deserialization.
 
@@ -685,7 +685,7 @@ The mnemonics of the following dictionary primitives are constructed in a system
 * F41B - DICTSETGETREF ( $$c k D n-D^{\prime} c^{\prime}-1$$ or $$\left.D^{\prime} 0\right)$$, combines DICTSETREF with DICTGETREF similarly to DICTSETGET.
 * F41C - DICTISETGET $$\left(x i D n-D^{\prime} y-1\right.$$ or $$\left.D^{\prime} 0\right)$$, similar to DICTSETGET, but with the key represented by a big-endian signed $$n$$-bit Integer $$i$$. - F41D - DICTISETGETREF ( c i D n- $$D^{\prime} c^{\prime}-1$$ or $$D^{\prime} 0$$ ), a version of DICTSETGETREF with signed Integer $$i$$ as a key.
 * F41E - DICTUSETGET $$\left(x i D n-D^{\prime} y-1\right.$$ or $$\left.D^{\prime} 0\right)$$, similar to DICTISETGET, but with $$i$$ an unsigned $$n$$-bit integer.
-* $$\mathrm{F} 41 \mathrm{~F}$$ - DICTUSETGETREF $$\left(c i D n-D^{\prime} c^{\prime}-1\right.$$ or $$\left.D^{\prime} 0\right)$$.
+* $${F} 41 {~F}$$ - DICTUSETGETREF $$\left(c i D n-D^{\prime} c^{\prime}-1\right.$$ or $$\left.D^{\prime} 0\right)$$.
 * F422 - DICTREPLACE $$\left(x k D n-D^{\prime}-1\right.$$ or $$\left.D 0\right)$$, a RePlaCE operation, which is similar to DICTSET, but sets the value of key $$k$$ in dictionary $$D$$ to $$x$$ only if the key $$k$$ was already present in $$D$$.
 * F423 - DICTREPLACEREF ( $$c k D n-D^{\prime}-1$$ or $$\left.D 0\right)$$, a REPlaCE counterpart of DICTSETREF.
 * F424 - DICTIREPLACE $$\left(x i D n-D^{\prime}-1\right.$$ or $$\left.D 0\right)$$, a version of DICTREPLACE with signed $$n$$-bit Integer $$i$$ used as a key.
@@ -694,12 +694,12 @@ The mnemonics of the following dictionary primitives are constructed in a system
 * F427 - DICTUREPLACEREF ( c $$i D n-D^{\prime}-1$$ or $$D 0$$ ).
 * F42A - DICTREPLACEGET $$\left(x k D n-D^{\prime} y-1\right.$$ or $$\left.D 0\right)$$, a REPlaCE counterpart of DICTSETGET: on success, also returns the old value associated with the key in question.
 * F42B - DICTREPLACEGETREF $$\left(c k D n-D^{\prime} c^{\prime}-1\right.$$ or $$\left.D 0\right)$$.
-* $$\mathrm{F} 42 \mathrm{C}$$ - DICTIREPLACEGET $$\left(x i D n-D^{\prime} y-1\right.$$ or $$\left.D 0\right)$$.
+* $${F} 42 {C}$$ - DICTIREPLACEGET $$\left(x i D n-D^{\prime} y-1\right.$$ or $$\left.D 0\right)$$.
 * F42D - DICTIREPLACEGETREF ( $$c i D n-D^{\prime} c^{\prime}-1$$ or $$\left.D 0\right)$$.
-* $$\mathrm{F} 42 \mathrm{E}$$ - DICTUREPLACEGET $$\left(x i D n-D^{\prime} y-1\right.$$ or $$\left.D 0\right)$$.
-* $$\mathrm{F} 42 \mathrm{~F}$$ - DICTUREPLACEGETREF ( $$c i D n-D^{\prime} c^{\prime}-1$$ or $$\left.D 0\right)$$.
+* $${F} 42 {E}$$ - DICTUREPLACEGET $$\left(x i D n-D^{\prime} y-1\right.$$ or $$\left.D 0\right)$$.
+* $${F} 42 {~F}$$ - DICTUREPLACEGETREF ( $$c i D n-D^{\prime} c^{\prime}-1$$ or $$\left.D 0\right)$$.
 * F432 - DICTADD $$\left(x k D n-D^{\prime}-1\right.$$ or $$\left.D 0\right)$$, an ADD counterpart of DICTSET: sets the value associated with key $$k$$ in dictionary $$D$$ to $$x$$, but only if it is not already present in $$D$$.
-* $$\mathrm{F} 433$$ - DICTADDREF $$\left(c k D n-D^{\prime}-1\right.$$ or $$\left.D 0\right)$$. - F434 - DICTIADD $$\left(x i D n-D^{\prime}-1\right.$$ or $$\left.D 0\right)$$.
+* $${F} 433$$ - DICTADDREF $$\left(c k D n-D^{\prime}-1\right.$$ or $$\left.D 0\right)$$. - F434 - DICTIADD $$\left(x i D n-D^{\prime}-1\right.$$ or $$\left.D 0\right)$$.
 * F435 - DICTIADDREF $$\left(c i D n-D^{\prime}-1\right.$$ or $$\left.D 0\right)$$.
 * F436 - DICTUADD $$\left(x i D n-D^{\prime}-1\right.$$ or $$\left.D 0\right)$$.
 * F437 - DICTUADDREF $$\left(c i D n-D^{\prime}-1\right.$$ or $$\left.D 0\right)$$.
@@ -712,14 +712,14 @@ The mnemonics of the following dictionary primitives are constructed in a system
 
 ### A.10.5. Builder-accepting variants of SET dictionary operations.
 
-The following primitives accept the new value as a Builder $$b$$ instead of a Slice $$x$$, which often is more convenient if the value needs to be serialized from several components computed in the stack. (This is reflected by appending a B to the mnemonics of the corresponding SET primitives that work with Slices.) The net effect is roughly equivalent to converting $$b$$ into a Slice by ENDC; CTOS and executing the corresponding primitive listed in [$$\mathbf{A.10.4}$$](a-instructions-and-opcodes.md#a.10.4.-set-replace-add-dictionary-operations.)
+The following primitives accept the new value as a Builder $$b$$ instead of a Slice $$x$$, which often is more convenient if the value needs to be serialized from several components computed in the stack. (This is reflected by appending a B to the mnemonics of the corresponding SET primitives that work with Slices.) The net effect is roughly equivalent to converting $$b$$ into a Slice by ENDC; CTOS and executing the corresponding primitive listed in [$${A.10.4}$$](a-instructions-and-opcodes.md#a.10.4.-set-replace-add-dictionary-operations.)
 
 * F441 - DICTSETB $$\left(b k D n-D^{\prime}\right)$$.
 * F442 - DICTISETB $$\left(b i D n-D^{\prime}\right)$$.
 * F443 - DICTUSETB $$\left(b i D n-D^{\prime}\right)$$.
 * F445 - DICTSETGETB $$\left(b k D n-D^{\prime} y-1\right.$$ or $$\left.D^{\prime} 0\right)$$.
 * F446 - DICTISETGETB $$\left(b i D n-D^{\prime} y-1\right.$$ or $$\left.D^{\prime} 0\right)$$.
-* F447 - DICTUSETGETB $$\left(b i D n-D^{\prime} y-1\right.$$ or $$D^{\prime} 0$$ ). - $$\mathrm{F} 449$$ - DICTREPLACEB $$\left(b k D n-D^{\prime}-1\right.$$ or $$\left.D 0\right)$$.
+* F447 - DICTUSETGETB $$\left(b i D n-D^{\prime} y-1\right.$$ or $$D^{\prime} 0$$ ). - $${F} 449$$ - DICTREPLACEB $$\left(b k D n-D^{\prime}-1\right.$$ or $$\left.D 0\right)$$.
 * F44A - DICTIREPLACEB ( $$b i D n-D^{\prime}-1$$ or $$\left.D 0\right)$$.
 * F44B - DICTUREPLACEB ( $$b i D n-D^{\prime}-1$$ or $$D 0$$ ).
 * F44D - DICTREPLACEGETB $$\left(b k D n-D^{\prime} y-1\right.$$ or $$\left.D 0\right)$$.
@@ -727,7 +727,7 @@ The following primitives accept the new value as a Builder $$b$$ instead of a Sl
 * F44F - DICTUREPLACEGETB (bi $$i n-D^{\prime} y-1$$ or $$\left.D 0\right)$$.
 * F451 - DICTADDB $$\left(b k D n-D^{\prime}-1\right.$$ or $$\left.D 0\right)$$.
 * F452 - DICTIADDB $$\left(b i D n-D^{\prime}-1\right.$$ or $$\left.D 0\right)$$.
-* $$\mathrm{F} 453$$ - DICTUADDB $$\left(b i D n-D^{\prime}-1\right.$$ or $$\left.D 0\right)$$.
+* $${F} 453$$ - DICTUADDB $$\left(b i D n-D^{\prime}-1\right.$$ or $$\left.D 0\right)$$.
 * F455 - DICTADDGETB $$\left(b k D n-D^{\prime}-1\right.$$ or $$\left.D y 0\right)$$.
 * F456 - DICTIADDGETB ( $$b i D n-D^{\prime}-1$$ or $$\left.D y 0\right)$$.
 * F457 - DICTUADDGETB ( $$b i D n-D^{\prime}-1$$ or $$\left.D y 0\right)$$.
@@ -755,16 +755,16 @@ The following operations assume that a dictionary is used to store values $$c^{\
 
 ### A.10.8. Prefix code dictionary operations.
 
-These are some basic operations for constructing prefix code dictionaries (cf. [$$\mathbf{3.4.2}$$](cells-memory-and-persistent-storage.md#3.4.2.-serialization-of-prefix-codes.)). The primary application for prefix code dictionaries is deserializing TL-B serialized data structures, or, more generally, parsing prefix codes. Therefore, most prefix code dictionaries will be constant and created at compile time, not by the following primitives.
+These are some basic operations for constructing prefix code dictionaries (cf. [$${3.4.2}$$](cells-memory-and-persistent-storage.md#3.4.2.-serialization-of-prefix-codes.)). The primary application for prefix code dictionaries is deserializing TL-B serialized data structures, or, more generally, parsing prefix codes. Therefore, most prefix code dictionaries will be constant and created at compile time, not by the following primitives.
 
-Some GET operations for prefix code dictionaries may be found in [$$\mathbf{A.10.11}$$](a-instructions-and-opcodes.md#a.10.11.-special-get-dictionary-and-prefix-code-dictionary-operations-and-constant-dictionaries.) Other prefix code dictionary operations include:
+Some GET operations for prefix code dictionaries may be found in [$${A.10.11}$$](a-instructions-and-opcodes.md#a.10.11.-special-get-dictionary-and-prefix-code-dictionary-operations-and-constant-dictionaries.) Other prefix code dictionary operations include:
 
 * F470 - PFXDICTSET $$\left(x k D n-D^{\prime}-1\right.$$ or $$\left.D 0\right)$$.
 * F471 - PFXDICTREPLACE $$\left(x k D n-D^{\prime}-1\right.$$ or $$\left.D 0\right)$$.
 * F472 - PFXDICTADD $$\left(x k D n-D^{\prime}-1\right.$$ or $$\left.D 0\right)$$.
 * F473 - PFXDICTDEL $$\left(k D n-D^{\prime}-1\right.$$ or $$\left.D 0\right)$$.
 
-These primitives are completely similar to their non-prefix code counterparts DICTSET etc (cf. [$$\mathbf{A.10.4}$$](a-instructions-and-opcodes.md#a.10.4.-set-replace-add-dictionary-operations.)), with the obvious difference that even a SET may fail in a prefix code dictionary, so a success flag must be returned by PFXDICTSET as well.
+These primitives are completely similar to their non-prefix code counterparts DICTSET etc (cf. [$${A.10.4}$$](a-instructions-and-opcodes.md#a.10.4.-set-replace-add-dictionary-operations.)), with the obvious difference that even a SET may fail in a prefix code dictionary, so a success flag must be returned by PFXDICTSET as well.
 
 ### A.10.9. Variants of GetNext and GetPreV operations.
 
@@ -807,11 +807,11 @@ These primitives are completely similar to their non-prefix code counterparts DI
 
 ### A.10.11. Special GET dictionary and prefix code dictionary operations, and constant dictionaries.
 
-* F4A0 - DICTIGETJMP $$(i D n-)$$, similar to DICTIGET (cf. [$$\mathbf{A.10.12}$$](a-instructions-and-opcodes.md#a.10.12.-subdict-dictionary-operations.)), but with $$x$$ BLESSed into a continuation with a subsequent JMPX to it on success. On failure, does nothing. This is useful for implementing switch/case constructions.- F4A1 - DICTUGETJMP $$(i D n-)$$, similar to DICTIGETJMP, but performs DICTUGET instead of DICTIGET.
+* F4A0 - DICTIGETJMP $$(i D n-)$$, similar to DICTIGET (cf. [$${A.10.12}$$](a-instructions-and-opcodes.md#a.10.12.-subdict-dictionary-operations.)), but with $$x$$ BLESSed into a continuation with a subsequent JMPX to it on success. On failure, does nothing. This is useful for implementing switch/case constructions.- F4A1 - DICTUGETJMP $$(i D n-)$$, similar to DICTIGETJMP, but performs DICTUGET instead of DICTIGET.
 * F4A2 - DICTIGETEXEC $$(i D n-)$$, similar to DICTIGETJMP, but with EXECUTE instead of JMPX.
 * F4A3 - DICTUGETEXEC $$(i D n-)$$, similar to DICTUGETJMP, but with EXECUTE instead of JMPX.
-* F4A6\_ $$n-$$ DICTPUSHCONST $$n(-D n)$$, pushes a non-empty constant ![](https://cdn.mathpix.com/cropped/2023\_06\_02\_174e9ec2591c06b3f394g-126.jpg?height=57\&width=1260\&top\_left\_y=1934\&top\_left\_x=476) stored as a part of the instruction. The dictionary itself is created from the first of remaining references of the current continuation. In this way, the complete DICTPUSHCONST instruction can be obtained by first serializing $$\mathrm{xF}_{4} \mathrm{A8}_{-}$$, then the non-empty dictionary itself (one 1 bit and a cell reference), and then the unsigned 10-bit integer $$n$$ (as if by a STU 10 instruction). An empty dictionary can be pushed by a NEWDICT primitive (cf. [$$\mathbf{A.10.1}$$](a-instructions-and-opcodes.md#a.10.1.-dictionary-creation.)) instead.
-* F4A8 - PFXDICTGETQ ( $$s D n-s^{\prime} x s^{\prime \prime}-1$$ or $$s$$ ), looks up the unique prefix of Slice $$s$$ present in the prefix code dictionary (cf. [$$\mathbf{3.4.2}$$](cells-memory-and-persistent-storage.md#3.4.2.-serialization-of-prefix-codes.)) represented by $$C e l l^{?} D$$ and $$0 \leq n \leq 1023$$. If found, the prefix of $$s$$ is returned as $$s^{\prime}$$, and the corresponding value (also a Slice) as $$x$$. The remainder of $$s$$ is returned as a Slice $$s^{\prime \prime}$$. If no prefix of $$s$$ is a key in prefix code dictionary $$D$$, returns the unchanged $$s$$ and a zero flag to indicate failure.
+* F4A6\_ $$n-$$ DICTPUSHCONST $$n(-D n)$$, pushes a non-empty constant ![](https://cdn.mathpix.com/cropped/2023\_06\_02\_174e9ec2591c06b3f394g-126.jpg?height=57\&width=1260\&top\_left\_y=1934\&top\_left\_x=476) stored as a part of the instruction. The dictionary itself is created from the first of remaining references of the current continuation. In this way, the complete DICTPUSHCONST instruction can be obtained by first serializing $${xF}_{4} {A8}_{-}$$, then the non-empty dictionary itself (one 1 bit and a cell reference), and then the unsigned 10-bit integer $$n$$ (as if by a STU 10 instruction). An empty dictionary can be pushed by a NEWDICT primitive (cf. [$${A.10.1}$$](a-instructions-and-opcodes.md#a.10.1.-dictionary-creation.)) instead.
+* F4A8 - PFXDICTGETQ ( $$s D n-s^{\prime} x s^{\prime \prime}-1$$ or $$s$$ ), looks up the unique prefix of Slice $$s$$ present in the prefix code dictionary (cf. [$${3.4.2}$$](cells-memory-and-persistent-storage.md#3.4.2.-serialization-of-prefix-codes.)) represented by $$C e l l^{?} D$$ and $$0 \leq n \leq 1023$$. If found, the prefix of $$s$$ is returned as $$s^{\prime}$$, and the corresponding value (also a Slice) as $$x$$. The remainder of $$s$$ is returned as a Slice $$s^{\prime \prime}$$. If no prefix of $$s$$ is a key in prefix code dictionary $$D$$, returns the unchanged $$s$$ and a zero flag to indicate failure.
 * F4A9 - PFXDICTGET ( $$\left.s D n-s^{\prime} x s^{\prime \prime}\right)$$, similar to PFXDICTGET, but throws a cell deserialization failure exception on failure.
 * F4AA - PFXDICTGETJMP ( $$s D n-s^{\prime} s^{\prime \prime}$$ or $$\left.s\right)$$, similar to PFXDICTGETQ, but on success BLESSes the value $$x$$ into a Continuation and transfers control to it as if by a JMPX. On failure, returns $$s$$ unchanged and continues execution.
 * F4AB - PFXDICTGETEXEC $$\left(s D n-s^{\prime} s^{\prime \prime}\right)$$, similar to PFXDICTGETJMP, but EXECutes the continuation found instead of jumping to it. On failure, throws a cell deserialization exception.
@@ -835,7 +835,7 @@ These primitives are completely similar to their non-prefix code counterparts DI
 
 Opcode range F8... FB is reserved for the application-specific primitives. When TVM is used to execute TVM smart contracts, these applicationspecific primitives are in fact TVM Blockchain-specific.
 
-A.11.1. External actions and access to blockchain configuration data. Some of the primitives listed below pretend to produce some externally visible actions, such as sending a message to another smart contract. In fact, the execution of a smart contract in TVM never has any effect apart from a modification of the TVM state. All external actions are collected into a linked list stored in special register c5 ("output actions"). Additionally, some primitives use the data kept in the first component of the Tuple stored in c7 ("root of temporary data", cf. $$\mathbf{1 . 3 . 2}$$ ). Smart contracts are free to modify any other data kept in the cell $$c 7$$, provided the first reference remains intact (otherwise some application-specific primitives would be likely to throw exceptions when invoked).
+A.11.1. External actions and access to blockchain configuration data. Some of the primitives listed below pretend to produce some externally visible actions, such as sending a message to another smart contract. In fact, the execution of a smart contract in TVM never has any effect apart from a modification of the TVM state. All external actions are collected into a linked list stored in special register c5 ("output actions"). Additionally, some primitives use the data kept in the first component of the Tuple stored in c7 ("root of temporary data", cf. $${1 . 3 . 2}$$ ). Smart contracts are free to modify any other data kept in the cell $$c 7$$, provided the first reference remains intact (otherwise some application-specific primitives would be likely to throw exceptions when invoked).
 
 Most of the primitives listed below use 16-bit opcodes.
 
@@ -843,7 +843,7 @@ Most of the primitives listed below use 16-bit opcodes.
 
 Of the following primitives, only the first two are "pure" in the sense that they do not use c5 or c7.
 
-* F800 - ACCEPT, sets current gas limit $$g_{l}$$ to its maximal allowed value $$g_{m}$$, and resets the gas credit $$g_{c}$$ to zero (cf. $$\mathbf{1 . 4}$$ ), decreasing the value of $$g_{r}$$ by $$g_{c}$$ in the process. In other words, the current smart contract agrees to buy some gas to finish the current transaction. This action is required to process external messages, which bring no value (hence no gas) with themselves.
+* F800 - ACCEPT, sets current gas limit $$g_{l}$$ to its maximal allowed value $$g_{m}$$, and resets the gas credit $$g_{c}$$ to zero (cf. $${1 . 4}$$ ), decreasing the value of $$g_{r}$$ by $$g_{c}$$ in the process. In other words, the current smart contract agrees to buy some gas to finish the current transaction. This action is required to process external messages, which bring no value (hence no gas) with themselves.
 * F801 - SETGASLIMIT $$(g-)$$, sets current gas limit $$g_{l}$$ to the minimum of $$g$$ and $$g_{m}$$, and resets the gas credit $$g_{c}$$ to zero. If the gas consumed so far (including the present instruction) exceeds the resulting value of $$g_{l}$$, an (unhandled) out of gas exception is thrown before setting new gas limits. Notice that SETGASLIMIT with an argument $$g \geq 2^{63}-1$$ is equivalent to ACCEPT.
 * F802 - BUYGAS $$(x-)$$, computes the amount of gas that can be bought for $$x$$ nanograms, and sets $$g_{l}$$ accordingly in the same way as SETGASLIMIT.
 * F804 - GRAMTOGAS $$(x-g)$$, computes the amount of gas that can be bought for $$x$$ nanograms. If $$x$$ is negative, returns 0 . If $$g$$ exceeds $$2^{63}-1$$, it is replaced with this value.
@@ -912,7 +912,7 @@ A.11.5. Global variable primitives. The "global variables" may be helpful in imp
 
 ### A.11.9. Message and address manipulation primitives.
 
-The message and address manipulation primitives listed below serialize and deserialize values according to the following TL-B scheme (cf. [$$\mathbf{3.3.4}$$](a-instructions-and-opcodes.md#3.3.4.-brief-explanation-of-tl-b-schemes.)):
+The message and address manipulation primitives listed below serialize and deserialize values according to the following TL-B scheme (cf. [$${3.3.4}$$](a-instructions-and-opcodes.md#3.3.4.-brief-explanation-of-tl-b-schemes.)):
 
 ```
 addr_none$00 = MsgAddressExt;
@@ -965,7 +965,7 @@ The following primitives, which use the above conventions, are defined:
 
 ## A.12 Debug primitives
 
-Opcodes beginning with $$\mathrm{FE}$$ are reserved for the debug primitives. These primitives have known fixed operation length, and behave as (multibyte) NOP operations. In particular, they never change the stack contents, and never throw exceptions, unless there are not enough bits to completely decode the opcode. However, when invoked in a TVM instance with debug mode enabled, these primitives can produce specific output into the text debug log of the TVM instance, never affecting the TVM state (so that from the perspective of TVM the behavior of debug primitives in debug mode is exactly the same). For instance, a debug primitive might dump all or some of the values near the top of the stack, display the current state of TVM and so on.
+Opcodes beginning with $${FE}$$ are reserved for the debug primitives. These primitives have known fixed operation length, and behave as (multibyte) NOP operations. In particular, they never change the stack contents, and never throw exceptions, unless there are not enough bits to completely decode the opcode. However, when invoked in a TVM instance with debug mode enabled, these primitives can produce specific output into the text debug log of the TVM instance, never affecting the TVM state (so that from the perspective of TVM the behavior of debug primitives in debug mode is exactly the same). For instance, a debug primitive might dump all or some of the values near the top of the stack, display the current state of TVM and so on.
 
 ### A.12.1. Debug primitives as multibyte NOPs.
 
@@ -983,8 +983,8 @@ A.12.2. Debug primitives as operations without side-effect. Next we describe the
 * FE14 - STRDUMP, dumps the Slice at s0 as an UTF-8 string.
 * FE15 - STRPRINT, similar to STRDUMP, but outputs the string into a text buffer (without carriage return).
 * FE1E - DEBUGOFF, disables all debug output until it is re-enabled by a DEBUGON. More precisely, this primitive increases an internal counter, which disables all debug operations (except DEBUGOFF and DEBUGON) when strictly positive. - FE1F - DEBUGON, enables debug output (in a debug version of TVM).
-* FE2 $$n-$$ DUMP $$\mathrm{s}(n), 0 \leq n<15$$, dumps $$\mathrm{s}(n)$$.
-* FE3n-PRINT $$\mathrm{s}(n), 0 \leq n<15$$, concatenates the text representation of $$s(n)$$ (without any leading or trailing spaces or carriage returns) to a text buffer which will be output before the output of any other debug operation.
+* FE2 $$n-$$ DUMP $${s}(n), 0 \leq n<15$$, dumps $${s}(n)$$.
+* FE3n-PRINT $${s}(n), 0 \leq n<15$$, concatenates the text representation of $$s(n)$$ (without any leading or trailing spaces or carriage returns) to a text buffer which will be output before the output of any other debug operation.
 * FECO-FEEF - Use these opcodes for custom/experimental debug operations.
 * FEFnssss - DUMPTOSFMT ssss, dumps s0 formatted according to the $$(n+1)$$-byte string ssss. This string might contain (a prefix of) the name of a TL-B type supported by the debugger. If the string begins with a zero byte, simply outputs it (without the first byte) into the debug log. If the string begins with a byte equal to one, concatenates it to a buffer, which will be output before the output of any other debug operation (effectively outputs a string without a carriage return).
 * FEFn00ssss - LOGSTR ssss, string ssss is $$n$$ bytes long.
@@ -993,9 +993,9 @@ A.12.2. Debug primitives as operations without side-effect. Next we describe the
 
 ### A.13 Codepage primitives
 
-The following primitives, which begin with byte FF, typically are used at the very beginning of a smart contract's code or a library subroutine to select another TVM codepage. Notice that we expect all codepages to contain these primitives with the same codes, otherwise switching back to another codepage might be impossible (cf. [$$\mathbf{5.1.8}$$](codepages-and-instruction-encoding.md#5.1.8.-setting-the-codepage-in-the-code-itself.)).
+The following primitives, which begin with byte FF, typically are used at the very beginning of a smart contract's code or a library subroutine to select another TVM codepage. Notice that we expect all codepages to contain these primitives with the same codes, otherwise switching back to another codepage might be impossible (cf. [$${5.1.8}$$](codepages-and-instruction-encoding.md#5.1.8.-setting-the-codepage-in-the-code-itself.)).
 
 * FFnn - SETCP $$n n$$, selects TVM codepage $$0 \leq n n<240$$. If the codepage is not supported, throws an invalid opcode exception.
 * FFOO - SETCPO, selects TVM (test) codepage zero as described in this document.
-* $$\mathrm{FFF} z$$ - SETCP $$z-16$$, selects TVM codepage $$z-16$$ for $$1 \leq z \leq 15$$. Negative codepages $$-13 \ldots-1$$ are reserved for restricted versions of TVM needed to validate runs of TVM in other codepages as explained in [$$\mathbf{B.2.6}$$](b-formal-properties-and-specifications-of-tvm.md#b.2.6.-codepage-1-.). Negative codepage -14 is reserved for experimental codepages, not necessarily compatible between different TVM implementations, and should be disabled in the production versions of TVM.
+* $${FFF} z$$ - SETCP $$z-16$$, selects TVM codepage $$z-16$$ for $$1 \leq z \leq 15$$. Negative codepages $$-13 \ldots-1$$ are reserved for restricted versions of TVM needed to validate runs of TVM in other codepages as explained in [$${B.2.6}$$](b-formal-properties-and-specifications-of-tvm.md#b.2.6.-codepage-1-.). Negative codepage -14 is reserved for experimental codepages, not necessarily compatible between different TVM implementations, and should be disabled in the production versions of TVM.
 * FFFO - SETCPX $$(c-)$$, selects codepage $$c$$ with $$-2^{15} \leq c<2^{15}$$ passed in the top of the stack.
