@@ -14,8 +14,8 @@ The gas price for most primitives equals the basic gas price, computed as $$P_{b
 
 * $$C_{r}$$ - The total price of "reading" cells (i.e., transforming cell references into cell slices). Currently equal to 100 or 25 gas units per cell depending on whether it is the first time a cell with this hash is being "read" during the current run of the VM or not.
 * $$L$$ - The total price of loading cells. Depends on the loading action required.
-* $$B_{w}$$ - The total price of creating new Builders. Currently equal to 0 gas units per builder.
-* $$C_{w}$$ - The total price of creating new Cells from Builders. Currently equal to 500 gas units per cell. By default, the gas price of an instruction equals $$P:=P_{b}+C_{r}+L+B_{w}+C_{w}$$.
+* $$B_{w}$$ - The total price of creating new _Builders_. Currently equal to 0 gas units per builder.
+* $$C_{w}$$ - The total price of creating new _Cells_ from _Builders_. Currently equal to 500 gas units per cell. By default, the gas price of an instruction equals $$P:=P_{b}+C_{r}+L+B_{w}+C_{w}$$.
 
 ## A.2 Stack manipulation primitives
 
@@ -27,17 +27,17 @@ Some stack manipulation instructions have two mnemonics: one Forthstyle (e.g., -
 
 * 00 - NOP, does nothing.
 * 01 - XCHG s1, also known as SWAP.
-* $$0 i-\mathrm{XCHG} \mathrm{s}(i)$$ or XCHG $$\mathrm{s} 0, \mathrm{~s}(i)$$, interchanges the top of the stack with $$\mathrm{s}(i), 1 \leq i \leq 15$$
-* $$10 i j-\mathrm{XCHG} \mathbf{s}(i), \mathrm{s}(j), 1 \leq i<j \leq 15$$, interchanges $$\mathbf{s}(i)$$ with $$\mathbf{s}(j)$$.
-* $$11 i i-\mathrm{XCHG} \mathrm{s} 0, \mathrm{~s}(i i)$$, with $$0 \leq i i \leq 255$$.
-* $$1 i-\mathrm{XCHG} \mathrm{s} 1, \mathrm{~s}(i), 2 \leq i \leq 15$$.
+* $$0 i-\mathrm{XCHG} \quad {s}(i)$$ or XCHG $$\mathrm XCHG\quad \mathrm{s} 0, \mathrm{~s}(i)$$, interchanges the top of the stack with $$\mathrm{s}(i), 1 \leq i \leq 15$$
+* $$10 i j-\mathrm{XCHG}\quad \mathbf{s}(i), \mathrm{s}(j), 1 \leq i<j \leq 15$$, interchanges $$\mathbf{s}(i)$$ with $$\mathbf{s}(j)$$.
+* $$11 i i-\mathrm{XCHG}\quad \mathrm{s} 0, \mathrm{~s}(i i)$$, with $$0 \leq i i \leq 255$$.
+* $$1 i-\mathrm{XCHG}\quad \mathrm{s} 1, \mathrm{~s}(i), 2 \leq i \leq 15$$.
 * $$2 i$$ - PUSH $$\mathbf{s}(i), 0 \leq i \leq 15$$, pushes a copy of the old $$\mathbf{s}(i)$$ into the stack.
 * 20 - PUSH s0, also known as DUP.
 * 21 - PUSH s1, also known as OVER.
 * $$3 i$$ - POP $$s(i), 0 \leq i \leq 15$$, pops the old top-of-stack value into the old $$\mathrm{s}(i)$$.
 * 30 - POP s0, also known as DROP, discards the top-of-stack value. - 31 - POP s1, also known as NIP.
 
-### A.2.2. Compound stack manipulation primitives.&#x20;
+### A.2.2. Compound stack manipulation primitives.
 
 Parameters $$i, j$$, and $$k$$ of the following primitives all are 4-bit integers in the range $$0 \ldots 15$$.
 
@@ -174,7 +174,7 @@ The following primitives push into the stack one literal (or unnamed constant) o
 * $$85 x x$$ - PUSHNEGPOW2 $$x x+1$$, pushes $$-2^{x x+1}$$ for $$0 \leq x x \leq 255$$.
 * 86,87 - reserved for integer constants.
 
-### A.4.2. Constant slices, continuations, cells, and references.&#x20;
+### A.4.2. Constant slices, continuations, cells, and references.
 
 Most of the instructions listed below push literal slices, continuations, cells, and cell references, stored as immediate arguments to the instruction. Therefore, if the immediate argument is absent or too short, an "invalid or too short opcode" exception (code 6) is thrown.
 
@@ -272,7 +272,7 @@ The most useful of these operations are DIV, DIVMOD, MOD, DIVR, DIVC, MODPOW2 $$
 
 ## A.6 Comparison primitives
 
-### A.6.1. Integer comparison.&#x20;
+### A.6.1. Integer comparison.
 
 All integer comparison primitives return integer -1 ("true") or 0 ("false") to indicate the result of the comparison. We do not define their "boolean circuit" counterparts, which would transfer control to $$c 0$$ or $$c 1$$ depending on the result of the comparison. If needed, such instructions can be simulated with the aid of RETBOOL.
 
@@ -537,7 +537,7 @@ All these primitives first check whether there is enough space in the Builder, a
 * E3D\_ $$n$$ - IFBITJMPREF $$n(x-x)$$, performs a JMPREF if bit $$0 \leq n \leq 31$$ is set in integer $$x$$.
 * E3F\_ $$n$$ - IFNBITJMPREF $$n(x-x)$$, performs a JMPREF if bit $$0 \leq n \leq 31$$ is not set in integer $$x$$.
 
-### A.8.3. Control flow primitives: loops.&#x20;
+### A.8.3. Control flow primitives: loops.
 
 Most of the loop primitives listed below are implemented with the aid of extraordinary continuations, such as ec\_until (cf. 4.1.5), with the loop body and the original current continuation cc stored as the arguments to this extraordinary continuation. Typically a suitable extraordinary continuation is constructed, and then saved into the loop body continuation savelist as c0; after that, the modified loop body continuation is loaded into cc and executed in the usual fashion. All of these loop primitives have $$* \mathrm{BRK}$$ versions, adapted for breaking out of a loop; they additionally set $$c 1$$ to the original current continuation (or original c0 for $$*$$ ENDBRK versions), and save the old c1 into the savelist of the original current continuation (or of the original c0 for $$*$$ ENDBRK versions).
 
@@ -910,7 +910,7 @@ A.11.5. Global variable primitives. The "global variables" may be helpful in imp
 * FA06 - STVARUINT32 $$\left(b x-b^{\prime}\right)$$, serializes an Integer $$0 \leq x<2^{248}$$ as a VarUInteger 32. - FA07 - STVARINT32 $$\left(b x-b^{\prime}\right)$$, serializes an Integer $$-2^{247} \leq x<2^{247}$$ as a VarInteger 32.
 * FA08-FA1F - Reserved for currency manipulation primitives.
 
-### A.11.9. Message and address manipulation primitives.&#x20;
+### A.11.9. Message and address manipulation primitives.
 
 The message and address manipulation primitives listed below serialize and deserialize values according to the following TL-B scheme (cf. [$$\mathbf{3.3.4}$$](a-instructions-and-opcodes.md#3.3.4.-brief-explanation-of-tl-b-schemes.)):
 
