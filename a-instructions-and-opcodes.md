@@ -26,16 +26,16 @@ Some stack manipulation instructions have two mnemonics: one Forthstyle (e.g., -
 ### A.2.1. Basic stack manipulation primitives.
 
 * $$00~-~NOP,~\text{does~nothing.}$$
-* $$01~-~XCHG s1$$, also known as SWAP.
-* $$0 i-{XCHG}~{s}(i)$$ or XCHG $$ XCHG~ {s} 0, {~s}(i)$$, interchanges the top of the stack with $${s}(i), 1 \leq i \leq 15$$
-* $$10 i j-{XCHG}~{s}(i), {s}(j), 1 \leq i<j \leq 15$$, interchanges $${s}(i)$$ with $${s}(j)$$.
-* $$11 i i-{XCHG}~{s} 0, {~s}(i i)$$, with $$0 \leq i i \leq 255$$.
-* $$1 i-{XCHG}~ {s} 1, {~s}(i), 2 \leq i \leq 15$$.
-* $$2 i$$ - PUSH $${s}(i), 0 \leq i \leq 15$$, pushes a copy of the old $${s}(i)$$ into the stack.
-* 20 - PUSH s0, also known as DUP.
-* 21 - PUSH s1, also known as OVER.
-* $$3 i$$ - POP $$s(i), 0 \leq i \leq 15$$, pops the old top-of-stack value into the old $${s}(i)$$.
-* 30 - POP s0, also known as DROP, discards the top-of-stack value. - 31 - POP s1, also known as NIP.
+* $$01~-~XCHG~{s}(1),~\text{also~known~as~SWAP.}$$
+* $$0i~-~XCHG~{s}(i)~\text{or}~XCHG~{s}(0),{s}(i),~\text{interchanges~the~top~of~the~stack~with}~{s}(i),~1 ≤ i ≤ 15.$$
+* $$10ij~-~XCHG~{s}(i),{s}(j),~1 ≤ i < j ≤ 15,~\text{interchanges}~{s}(i)~\text{with}~{s}(j).$$
+* $$11ii~-~XCHG~{s}(0),{s}(ii),~\text{with}~0 ≤ ii ≤ 255.$$
+* $$1i~-~XCHG~{s}(1),{s}(i),~2 ≤ i ≤ 15.$$
+* $$2i~-~PUSH~{s}(i),~0 ≤ i ≤ 15,~\text{pushes~a~copy~of~the~old}~{s}(i)~\text{into~the~stack.}$$
+* $$20~-~PUSH~{s}(0),~\text{also~known~as~DUP.}$$
+* $$21~-~PUSH~{s}(1),~\text{also~known~as~OVER.}$$
+* $$3i~-~POP~{s}(i),~0 ≤ i ≤ 15,~\text{pops~the~old~top-of-stack~value~into~the~old}~{s}(i).$$
+* $$30~-~POP~{s}(0),~\text{also~known~as~DROP,~discards~the~top-of-stack~value.}$$
 
 ### A.2.2. Compound stack manipulation primitives.
 
