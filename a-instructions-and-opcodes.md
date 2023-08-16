@@ -36,6 +36,7 @@ Some stack manipulation instructions have two mnemonics: one Forthstyle (e.g., -
 * $$21~-~PUSH~{s}(1),~\text{also~known~as~OVER.}$$
 * $$3i~-~POP~{s}(i),~0 ≤ i ≤ 15,~\text{pops~the~old~top-of-stack~value~into~the~old}~{s}(i).$$
 * $$30~-~POP~{s}(0),~\text{also~known~as~DROP,~discards~the~top-of-stack~value.}$$
+* $$31~-~\text{POP}~{s}(1),~\text{also~known~as~NIP.}$$
 
 ### A.2.2. Compound stack manipulation primitives.
 
@@ -61,34 +62,32 @@ Parameters $$i, j$$, and $$k$$ of the following primitives all are 4-bit integer
 
 ### A.2.3. Exotic stack manipulation primitives.
 
-* 55ij-BLKSWAP $$i+1, j+1$$, permutes two blocks $${s}(j+i+1) \ldots {s}(j+1)$$ and $${s}(j) \ldots {s} 0$$, for $$0 \leq i, j \leq 15$$. Equivalent to REVERSE $$i+1, j+1$$; REVERSE $$j+1,0 ;$$ REVERSE $$i+j+2,0$$.
-* 5513 - ROT2 or 2ROT ( a bc def-cdefab), rotates the three topmost pairs of stack entries.
-* 550i - ROLL $$i+1$$, rotates the top $$i+1$$ stack entries. Equivalent to BLKSWAP $$1, i+1$$.
-* 55i0 - ROLLREV $$i+1$$ or -ROLL $$i+1$$, rotates the top $$i+1$$ stack entries in the other direction. Equivalent to BLKSWAP $$i+1,1$$.
-* 56ii - PUSH $${s}(i i)$$ for $$0 \leq i i \leq 255$$.
-* $$57 i i-{POP} {s}(i i)$$ for $$0 \leq i i \leq 255$$.
-* 58-ROT $$(a b c-b c a)$$, equivalent to BLKSWAP 1, 2 or to XCHG2 s2, s1.
-* $$59-{ROTREV}$$ or -ROT $$(a b c-c a b)$$, equivalent to BLKSWAP 2,1 or to XCHG2 s2, s2.
-* 5A - SWAP2 or 2SWAP ( $$a b c d-c d a b)$$, equivalent to BLKSWAP 2,2 or to XCHG2 s3, s2.
-* 5B - DROP2 or 2DROP $$(a b-)$$, equivalent to DROP; DROP.
-* 5C-DUP2 or 2DUP $$(a b-a b a b)$$, equivalent to PUSH2 s1, s0.
-* 5D - OVER2 or 2OVER $$(a b c d-a b c d a b)$$, equivalent to PUSH2 s3, s2.
-* 5Eij - REVERSE $$i+2, j$$, reverses the order of $${s}(j+i+1) \ldots {s}(j)$$ for $$0 \leq i, j \leq 15$$; equivalent to a sequence of $$\lfloor i / 2\rfloor+1$$ XCHGs.
-* 5FO $$i$$ - BLKDROP $$i$$, equivalent to DROP performed $$i$$ times.
-* 5Fij-BLKPUSH $$i, j$$, equivalent to PUSH $${s}(j)$$ performed $$i$$ times, $$1 \leq$$ $$i \leq 15,0 \leq j \leq 15$$
-* 60 - PICK or PUSHX, pops integer $$i$$ from the stack, then performs PUSH $${s}(i)$$.
-* 61 - ROLLX, pops integer $$i$$ from the stack, then performs BLKSWAP $$1, i$$. - 62 - -ROLLX or ROLLREVX, pops integer $$i$$ from the stack, then performs BLKSWAP $$i, 1$$.
-* 63 - BLKSWX, pops integers $$i, j$$ from the stack, then performs BLKSWAP $$i, j$$.
-* 64 - REVX, pops integers $$i, j$$ from the stack, then performs REVERSE $$i, j$$.
-* 65 - DROPX, pops integer $$i$$ from the stack, then performs BLKDROP $$i$$.
-* 66 - TUCK $$(a b-b a b)$$, equivalent to SWAP; OVER or to XCPU s1, s1.
-* 67 - XCHGX, pops integer $$i$$ from the stack, then performs XCHG $${s}(i)$$.
-* 68 - DEPTH, pushes the current depth of the stack.
-* 69 - CHKDEPTH, pops integer $$i$$ from the stack, then checks whether there are at least $$i$$ elements, generating a stack underflow exception otherwise.
-* 6A - ONLYTOPX, pops integer $$i$$ from the stack, then removes all but the top $$i$$ elements.
-* 6B - ONLYX, pops integer $$i$$ from the stack, then leaves only the bottom $$i$$ elements. Approximately equivalent to DEPTH; SWAP; SUB; DROPX.
-* 6C00-6COF - reserved for stack operations.
-* 6Cij-BLKDROP2 $$i, j$$, drops $$i$$ stack elements under the top $$j$$ elements, where $$1 \leq i \leq 15$$ and $$0 \leq j \leq 15$$. Equivalent to REVERSE $$i+j, 0$$; BLKDROP $$i$$; REVERSE $$j, 0$$.
+* $$55ij~-~\text{BLKSWAP}~i+1,j+1,~\text{permutes two blocks}~{s}(j+i+1)~\ldots~{s}(j+1)$$
+* $$\text{and}~{s}(j)~\ldots~{s}0,~\text{for}~0 ≤ i, j ≤ 15.$$
+* $$\text{Equivalent~to}~\text{REVERSE}~i+1,j+1;~\text{REVERSE}~j+1,0;~\text{REVERSE}~i+j+2,0.$$
+* $$5513~-~\text{ROT2~or~2ROT}~(a~b~c~d~e~f~–~c~d~e~f~a~b),~\text{rotates~the~three}$$
+* $$\text{topmost~pairs~of~stack~entries.}$$
+* $$550i~-~\text{ROLL}~i+1,~\text{rotates~the~top}~i+1~\text{stack~entries.}~\text{Equivalent~to}$$
+* $$\text{BLKSWAP}~1,i+1.$$
+* $$55i0~-~\text{ROLLREV}~i+1~\text{or}~-ROLL~i+1,~\text{rotates~the~top}~i+1$$
+* $$\text{stack~entries~in~the~other~direction.}~\text{Equivalent~to}~\text{BLKSWAP}~i+1,1.$$
+* $$56ii~-~\text{PUSH}~{s}(ii)~\text{for}~0 ≤ ii ≤ 255.$$
+* $$57ii~-~\text{POP}~{s}(ii)~\text{for}~0 ≤ ii ≤ 255.$$
+* $$58~-~\text{ROT}~(a~b~c~–~b~c~a),~\text{equivalent~to}~\text{BLKSWAP}~1,2~\text{or~to}~\text{XCHG2}~{s}(2),{s}(1).$$$
+* $$59~-~\text{ROTREV~or}~-ROT~(a~b~c~–~c~a~b),~\text{equivalent~to}~\text{BLKSWAP}~2,1~\text{or~to}$$
+* $$\text{XCHG2}~{s}(2),{s}(2).$$
+* $$5A~-~\text{SWAP2~or~2SWAP}~(a~b~c~d~–~c~d~a~b),~\text{equivalent~to}~\text{BLKSWAP}~2,2~\text{or}$$
+* $$\text{to}~\text{XCHG2}~{s}(3),{s}(2).$$
+* $$5B~-~\text{DROP2~or~2DROP}~(a~b~–~),~\text{equivalent~to}~\text{DROP;}~\text{DROP.}$$
+* $$5C~-~\text{DUP2~or~2DUP}~(a~b~–~a~b~a~b),~\text{equivalent~to}~\text{PUSH2}~{s}(1),{s}(0).$$
+* $$5D~-~\text{OVER2~or~2OVER}~(a~b~c~d~–~a~b~c~d~a~b),~\text{equivalent~to}~\text{PUSH2}~{s}(3),{s}(2).$$
+* $$5Eij~-~\text{REVERSE}~i+2,j,~\text{reverses~the~order~of}~{s}(j+i+1)~\ldots~{s}(j)~\text{for}$$
+* $$0 ≤ i, j ≤ 15;~\text{equivalent~to~a~sequence~of}~\frac{b}{2}~\text{XCHGs.}$$
+* $$5F0i~-~\text{BLKDROP}~i,~\text{equivalent~to}~\text{DROP}~\text{performed}~i~\text{times.}$$
+* $$5Fij~-~\text{BLKPUSH}~i,j,~\text{equivalent~to}~\text{PUSH}~{s}(j)~\text{performed}~i~\text{times,}~1 ≤$$
+* $$i ≤ 15,~0 ≤ j ≤ 15.$$
+* $$60~-~\text{PICK~or~PUSHX,~pops~integer}~i~\text{from~the~stack,~then~performs}~\text{PUSH}~{s}(i).$$
+* $$61~-~\text{ROLLX,~pops~integer}~i~\text{from~the~stack,~then~performs}~\text{BLKSWAP}~1,i.$$
 
 ## A.3 Tuple, List, and Null primitives
 
@@ -102,58 +101,79 @@ Lisp-style lists are represented with the aid of pairs, i.e., tuples consisting 
 
 The following primitives work with (the only) value $$\perp$$ of type $$N u l l$$, useful for representing empty lists, empty branches of binary trees, and absence of values in Maybe $$X$$ types. An empty Tuple created by NIL could have been used for the same purpose; however, Null is more efficient and costs less gas.
 
-* 6D - NULL or PUSHNULL $$(-\perp)$$, pushes the only value of type $$N u l l$$.
-* 6E - ISNULL $$(x-?)$$, checks whether $$x$$ is a $$N u l l$$, and returns -1 or 0 accordingly.
+* $$6D~-~\text{NULL~or~PUSHNULL}~( – ⊥),~\text{pushes~the~only~value~of~type}~\text{Null.}$$
+* $$6E~-~\text{ISNULL}~(x~–~?),~\text{checks~whether}~x~\text{is~a~Null,~and~returns}~-1~\text{or}~0$$
+$$\text{accordingly.}$$
+
 
 ### A.3.2. Tuple primitives.
 
-* 6F0 $$n$$ - TUPLE $$n\left(x_{1} \ldots x_{n}-t\right)$$, creates a new Tuple $$t=\left(x_{1}, \ldots, x_{n}\right)$$ containing $$n$$ values $$x_{1}, \ldots, x_{n}$$, where $$0 \leq n \leq 15$$
-* 6F00 - NIL $$(-t)$$, pushes the only Tuple $$t=()$$ of length zero.
-* 6F01 - SINGLE $$(x-t)$$, creates a singleton $$t:=(x)$$, i.e., a Tuple of length one.
-* 6F02 - PAIR or CONS $$(x y-t)$$, creates pair $$t:=(x, y)$$.
-* 6F03 - TRIPLE $$(x y z-t)$$, creates triple $$t:=(x, y, z)$$.
-* 6F1 $$k$$ - INDEX $$k(t-x)$$, returns the $$k$$-th element of a Tuple $$t$$, where $$0 \leq k \leq 15$$. In other words, returns $$x_{k+1}$$ if $$t=\left(x_{1}, \ldots, x_{n}\right)$$. If $$k \geq n$$, throws a range check exception.
-* 6F10 - FIRST or CAR $$(t-x)$$, returns the first element of a Tuple.
-* 6F11 - SECOND or CDR $$(t-y)$$, returns the second element of a Tuple.
-* 6F12 - THIRD $$(t-z)$$, returns the third element of a Tuple. - 6F2n - UNTUPLE $$n\left(t-x_{1} \ldots x_{n}\right)$$, unpacks a Tuple $$t=\left(x_{1}, \ldots, x_{n}\right)$$ of length equal to $$0 \leq n \leq 15$$. If $$t$$ is not a Tuple, of if $$|t| \neq n$$, a type check exception is thrown.
-* 6F21 - UNSINGLE $$(t-x)$$, unpacks a singleton $$t=(x)$$.
-* 6F22 - UNPAIR or UNCONS $$(t-x y)$$, unpacks a pair $$t=(x, y)$$.
-* 6F23 - UNTRIPLE $$(t-x y z)$$, unpacks a triple $$t=(x, y, z)$$.
-* 6F3 $$k$$ - UNPACKFIRST $$k\left(t-x_{1} \ldots x_{k}\right)$$, unpacks first $$0 \leq k \leq 15$$ elements of a Tuple $$t$$. If $$|t|<k$$, throws a type check exception.
-* 6F30 - CHKTUPLE $$(t-)$$, checks whether $$t$$ is a Tuple.
-* 6F4n-EXPLODE $$n\left(t-x_{1} \ldots x_{m} m\right)$$, unpacks a Tuple $$t=\left(x_{1}, \ldots, x_{m}\right)$$ and returns its length $$m$$, but only if $$m \leq n \leq 15$$. Otherwise throws a type check exception.
-* 6F5 $$k$$ - SETINDEX $$k\left(t x-t^{\prime}\right)$$, computes Tuple $$t^{\prime}$$ that differs from $$t$$ only at position $$t_{k+1}^{\prime}$$, which is set to $$x$$. In other words, $$\left|t^{\prime}\right|=|t|, t_{i}^{\prime}=t_{i}$$ for $$i \neq k+1$$, and $$t_{k+1}^{\prime}=x$$, for given $$0 \leq k \leq 15$$. If $$k \geq|t|$$, throws a range check exception.
-* 6F50 - SETFIRST $$\left(t x-t^{\prime}\right)$$, sets the first component of Tuple $$t$$ to $$x$$ and returns the resulting Tuple $$t^{\prime}$$.
-* 6F51 - SETSECOND $$\left(t x-t^{\prime}\right)$$, sets the second component of Tuple $$t$$ to $$x$$ and returns the resulting Tuple $$t^{\prime}$$.
-* 6F52 - SETTHIRD $$\left(t x-t^{\prime}\right)$$, sets the third component of Tuple $$t$$ to $$x$$ and returns the resulting Tuple $$t^{\prime}$$.
-* 6F6 $$k$$ - INDEXQ $$k(t-x)$$, returns the $$k$$-th element of a Tuple $$t$$, where $$0 \leq k \leq 15$$. In other words, returns $$x_{k+1}$$ if $$t=\left(x_{1}, \ldots, x_{n}\right)$$. If $$k \geq n$$, or if $$t$$ is $$N u l l$$, returns a Null instead of $$x$$.
-* 6F7 $$k$$ - SETINDEXQ $$k\left(t x-t^{\prime}\right)$$, sets the $$k$$-th component of Tuple $$t$$ to $$x$$, where $$0 \leq k<16$$, and returns the resulting Tuple $$t^{\prime}$$. If $$|t| \leq k$$, first extends the original Tuple to length $$k+1$$ by setting all new components to Null. If the original value of $$t$$ is Null, treats it as an empty Tuple. If $$t$$ is not Null or Tuple, throws an exception. If $$x$$ is Null and either $$|t| \leq k$$ or $$t$$ is $$N u l l$$, then always returns $$t^{\prime}=t$$ (and does not consume tuple creation gas).
-* 6F80 - TUPLEVAR $$\left(x_{1} \ldots x_{n} n-t\right)$$, creates a new Tuple $$t$$ of length $$n$$ similarly to TUPLE, but with $$0 \leq n \leq 255$$ taken from the stack.
-* 6F81 - INDEXVAR $$(t k-x)$$, similar to INDEX $$k$$, but with $$0 \leq k \leq 254$$ taken from the stack.
-* 6F82 - UNTUPLEVAR $$\left(t n-x_{1} \ldots x_{n}\right)$$, similar to UNTUPLE $$n$$, but with $$0 \leq n \leq 255$$ taken from the stack.
-* 6F83 - UNPACKFIRSTVAR $$\left(t n-x_{1} \ldots x_{n}\right)$$, similar to UNPACKFIRST $$n$$, but with $$0 \leq n \leq 255$$ taken from the stack.
-* 6F84 - EXPLODEVAR $$\left(t n-x_{1} \ldots x_{m} m\right)$$, similar to EXPLODE $$n$$, but with $$0 \leq n \leq 255$$ taken from the stack.
-* 6F85 - SETINDEXVAR $$\left(t x k-t^{\prime}\right)$$, similar to SETINDEX $$k$$, but with $$0 \leq k \leq 254$$ taken from the stack.
-* 6F86 - INDEXVARQ $$(t k-x)$$, similar to INDEXQ $$n$$, but with $$0 \leq k \leq 254$$ taken from the stack.
-* 6F87 - SETINDEXVARQ ( $$\left.t x k-t^{\prime}\right)$$, similar to SETINDEXQ $$k$$, but with $$0 \leq k \leq 254$$ taken from the stack.
-* 6F88 - TLEN $$(t-n)$$, returns the length of a Tuple.
-* 6F89 - QTLEN $$(t-n$$ or -1$$)$$, similar to TLEN, but returns -1 if $$t$$ is not a Tuple.
-* 6F8A - ISTUPLE $$(t-?)$$, returns -1 or 0 depending on whether $$t$$ is a Tuple.
-* 6F8B - LAST $$(t-x)$$, returns the last element $$t_{|t|}$$ of a non-empty Tuple $$t$$.
-* 6F8C - TPUSH or COMMA $$\left(t x-t^{\prime}\right)$$, appends a value $$x$$ to a Tuple $$t=$$ $$\left(x_{1}, \ldots, x_{n}\right)$$, but only if the resulting Tuple $$t^{\prime}=\left(x_{1}, \ldots, x_{n}, x\right)$$ is of length at most 255. Otherwise throws a type check exception. - 6F8D - TPOP $$\left(t-t^{\prime} x\right)$$, detaches the last element $$x=x_{n}$$ from a nonempty Tuple $$t=\left(x_{1}, \ldots, x_{n}\right)$$, and returns both the resulting Tuple $$t^{\prime}=$$ $$\left(x_{1}, \ldots, x_{n-1}\right)$$ and the original last element $$x$$.
-* 6FA0 - NULLSWAPIF $$(x-x$$ or $$\perp x)$$, pushes a $$N u l l$$ under the topmost Integer $$x$$, but only if $$x \neq 0$$.
-* 6FA1 - NULLSWAPIFNOT $$(x-x$$ or $$\perp x)$$, pushes a $$N u l l$$ under the topmost Integer $$x$$, but only if $$x=0$$. May be used for stack alignment after quiet primitives such as PLDUXQ.
-* 6FA2 - NULLROTRIF $$(x y-x y$$ or $$\perp x y)$$, pushes a Null under the second stack entry from the top, but only if the topmost Integer $$y$$ is non-zero.
-* 6FA3 - NULLROTRIFNOT $$(x y-x y$$ or $$\perp x y)$$, pushes a Null under the second stack entry from the top, but only if the topmost Integer $$y$$ is zero. May be used for stack alignment after quiet primitives such as LDUXQ.
-* 6FA4 - NULLSWAPIF2 $$(x-x$$ or $$\perp \perp x)$$, pushes two Nulls under the topmost Integer $$x$$, but only if $$x \neq 0$$. Equivalent to NULLSWAPIF; NULLSWAPIF.
-* 6FA5 - NULLSWAPIFNOT2 $$(x-x$$ or $$\perp \perp x)$$, pushes two Nulls under the topmost Integer $$x$$, but only if $$x=0$$. Equivalent to NULLSWAPIFNOT; NULLSWAPIFNOT.
-* 6FA6 - NULLROTRIF2 $$(x y-x y$$ or $$\perp \perp x y)$$, pushes two Nulls under the second stack entry from the top, but only if the topmost Integer $$y$$ is non-zero. Equivalent to NULLROTRIF; NULLROTRIF.
-* 6FA7 - NULLROTRIFNOT2 $$(x y-x y$$ or $$\perp \perp x y)$$, pushes two Nulls under the second stack entry from the top, but only if the topmost Integer $$y$$ is zero. Equivalent to NULLROTRIFNOT; NULLROTRIFNOT.
-* 6FBij-INDEX2 $$i, j(t-x)$$, recovers $$x=\left(t_{i+1}\right)_{j+1}$$ for $$0 \leq i, j \leq 3$$. Equivalent to INDEX $$i$$; INDEX $$j$$.
-* 6FB4 - CADR $$(t-x)$$, recovers $$x=\left(t_{2}\right)_{1}$$. - 6 FB5 - CDDR $$(t-x)$$, recovers $$x=\left(t_{2}\right)_{2}$$.
-* 6FE\_ $$i j k-$$ INDEX3 $$i, j, k(t-x)$$, recovers $$x=\left(\left(t_{i+1}\right)_{j+1}\right)_{k+1}$$ for $$0 \leq$$ $$i, j, k \leq 3$$. Equivalent to INDEX2 $$i, j ;$$ INDEX $$k$$.
-* 6FD4 - CADDR $$(t-x)$$, recovers $$x=\left(\left(t_{2}\right)_{2}\right)_{1}$$.
-* 6 FD5 - CDDDR $$(t-x)$$, recovers $$x=\left(\left(t_{2}\right)_{2}\right)_{2}$$.
+$$6F0n~-~\text{TUPLE}~n~(x1~.~.~.~xn~–~t),~\text{creates~a~new~Tuple}~t = (x1,~.~.~.~,~xn)$$
+$$\text{containing}~n~\text{values}~x1,~.~.~.~,~xn,~\text{where}~0 ≤ n ≤ 15.$$
+
+$$6F00~-~\text{NIL}~( –~t),~\text{pushes~the~only~Tuple}~t = ()~\text{of~length~zero.}$$
+
+$$6F01~-~\text{SINGLE}~(x~–~t),~\text{creates~a~singleton}~t := (x),~\text{i.e.,~a~Tuple~of~length~one.}$$
+
+$$6F02~-~\text{PAIR~or~CONS}~(x~y~–~t),~\text{creates~pair}~t := (x,~y).$$
+
+$$6F03~-~\text{TRIPLE}~(x~y~z~–~t),~\text{creates~triple}~t := (x,~y,~z).$$
+
+$$6F1k~-~\text{INDEX}~k~(t~–~x),~\text{returns~the}~k\text{-th~element~of~a~Tuple}~t,~\text{where}$$
+$$0 ≤ k ≤ 15.~\text{In~other~words,~returns}~x_{k+1}~\text{if}~t = (x1,~.~.~.~,~xn).~\text{If}~k ≥ n,~\text{throws~a~range~check~exception.}$$
+
+$$6F10~-~\text{FIRST~or~CAR}~(t~–~x),~\text{returns~the~first~element~of~a~Tuple.}$$
+
+$$6F11~-~\text{SECOND~or~CDR}~(t~–~y),~\text{returns~the~second~element~of~a~Tuple.}$$
+
+$$6F12~-~\text{THIRD}~(t~–~z),~\text{returns~the~third~element~of~a~Tuple.}$$
+
+$$6F2n~-~\text{UNTUPLE}~n~(t~–~x1~.~.~.~xn),~\text{unpacks~a~Tuple}~t~=~(x1,~.~.~.~,~xn)~\text{of}$$
+$$\text{length~equal~to}~0~≤~n~≤~15.~\text{If}~t~\text{is~not~a~Tuple,~or~if}~|t|~\neq~n,~\text{a~type}$$
+$$\text{check~exception~is~thrown.}$$
+
+$$6F21~-~\text{UNSINGLE}~(t~–~x),~\text{unpacks~a~singleton}~t~=~(x).$$
+
+$$6F22~-~\text{UNPAIR~or~UNCONS}~(t~–~x~y),~\text{unpacks~a~pair}~t~=~(x,~y).$$
+
+$$6F23~-~\text{UNTRIPLE}~(t~–~x~y~z),~\text{unpacks~a~triple}~t~=~(x,~y,~z).$$
+
+$$6F3k~-~\text{UNPACKFIRST}~k~(t~–~x1~.~.~.~xk),~\text{unpacks~first}~0~≤~k~≤~15$$
+$$\text{elements~of~a~Tuple}~t.~\text{If}~|t|~<~k,~\text{throws~a~type~check~exception.}$$
+
+$$6F30~-~\text{CHKTUPLE}~(t~–~),~\text{checks~whether}~t~\text{is~a~Tuple.}$$
+
+$$6F4n~-~\text{EXPLODE}~n~(t~–~x1~.~.~.~xm~m),~\text{unpacks~a~Tuple}~t~=~(x1,~.~.~.~,~xm)$$
+$$\text{and~returns~its~length}~m,~\text{but~only~if}~m~≤~n~≤~15.~\text{Otherwise~throws~a}$$
+$$\text{type~check~exception.}$$
+
+$$6F5k~-~\text{SETINDEX}~k~(t~x~–~t_0),~\text{computes~Tuple}~t_0$$
+$$\text{that~differs~from}~t$$
+$$\text{only~at~position}~t_{0k+1},~\text{which~is~set~to}~x.~\text{In~other~words,}~|t_0|~=~|t|,~t_{0i}~=~t_i$$
+$$\text{for}~i~\neq~k~+~1,~\text{and}~t_{0k+1}~=~x,~\text{for~given}~0~≤~k~≤~15.~\text{If}~k~≥~|t|,~\text{throws~a}$$
+$$\text{range~check~exception.}$$
+
+$$6F50~-~\text{SETFIRST}~(t~x~–~t_0),~\text{sets~the~first~component~of~Tuple}~t~\text{to}~x$$
+$$\text{and~returns~the~resulting~Tuple}~t_0.$$
+
+$$6F51~-~\text{SETSECOND}~(t~x~–~t_0),~\text{sets~the~second~component~of~Tuple}~t~\text{to}$$
+$$x~\text{and~returns~the~resulting~Tuple}~t_0.$$
+
+$$6F52~-~\text{SETTHIRD}~(t~x~–~t_0),~\text{sets~the~third~component~of~Tuple}~t~\text{to}~x$$
+$$\text{and~returns~the~resulting~Tuple}~t_0.$$
+
+$$6F6k~-~\text{INDEXQ}~k~(t~–~x),~\text{returns~the}~k\text{-th~element~of~a~Tuple}~t,~\text{where}$$
+$$0~≤~k~≤~15.~\text{In~other~words,~returns}~x_{k+1}~\text{if}~t~=~(x1,~.~.~.~,~xn).~\text{If}~k~≥~n,$$
+$$\text{or~if}~t~\text{is~Null,~returns~a~Null~instead~of}~x.$$
+
+$$6F7k~-~\text{SETINDEXQ}~k~(t~x~–~t_0),~\text{sets~the~k-th~component~of~Tuple}~t~\text{to}$$
+$$x,~\text{where}~0~≤~k~<~16,~\text{and~returns~the~resulting~Tuple}~t_0.~\text{If}~|t|~≤~k,$$
+$$\text{first~extends~the~original~Tuple~to~length}~k+1~\text{by~setting~all~new~components}$$
+$$\text{to~Null.~If~the~original~value~of}~t~\text{is~Null,~treats~it~as~an~empty~Tuple.}$$
+$$\text{If}~t~\text{is~not~Null~or~Tuple,~throws~an~exception.~If}~x~\text{is~Null~and~either}~|t|~≤~k$$
+$$\text{or}~t~\text{is~Null,~then~always~returns}~t_0~=~t~\text{(and~does~not~consume}$$
+$$\text{tuple~creation~gas).}$$
+
 
 ## A.4 Constant, or literal primitives
 
