@@ -174,6 +174,85 @@ $$\text{If}~t~\text{is~not~Null~or~Tuple,~throws~an~exception.~If}~x~\text{is~Nu
 $$\text{or}~t~\text{is~Null,~then~always~returns}~t_0~=~t~\text{(and~does~not~consume}$$
 $$\text{tuple~creation~gas).}$$
 
+$$6F80~-~\text{TUPLEVAR}~(x1~.~.~.~xn~n~–~t),~\text{creates~a~new~Tuple}~t~\text{of~length}~n$$
+$$\text{similarly~to}~\text{TUPLE},~\text{but~with}~0~≤~n~≤~255~\text{taken~from~the~stack.}$$
+
+$$6F81~-~\text{INDEXVAR}~(t~k~–~x),~\text{similar~to}~\text{INDEX}~k,~\text{but~with}~0~≤~k~≤~254$$
+$$\text{taken~from~the~stack.}$$
+
+$$6F82~-~\text{UNTUPLEVAR}~(t~n~–~x1~.~.~.~xn),~\text{similar~to}~\text{UNTUPLE}~n,~\text{but~with}$$
+$$0~≤~n~≤~255~\text{taken~from~the~stack.}$$
+
+$$6F83~-~\text{UNPACKFIRSTVAR}~(t~n~–~x1~.~.~.~xn),~\text{similar~to}~\text{UNPACKFIRST}~n,~\text{but~with}$$
+$$0~≤~n~≤~255~\text{taken~from~the~stack.}$$
+
+$$6F84~-~\text{EXPLODEVAR}~(t~n~–~x1~.~.~.~xm~m),~\text{similar~to}~\text{EXPLODE}~n,~\text{but~with}$$
+$$0~≤~n~≤~255~\text{taken~from~the~stack.}$$
+
+$$6F85~-~\text{SETINDEXVAR}~(t~x~k~–~t_0),~\text{similar~to}~\text{SETINDEX}~k,~\text{but~with}$$
+$$0~≤~k~≤~254~\text{taken~from~the~stack.}$$
+
+$$6F86~-~\text{INDEXVARQ}~(t~k~–~x),~\text{similar~to}~\text{INDEXQ}~n,~\text{but~with}~0~≤~k~≤~254$$
+$$\text{taken~from~the~stack.}$$
+
+$$6F87~-~\text{SETINDEXVARQ}~(t~x~k~–~t_0),~\text{similar~to}~\text{SETINDEXQ}~k,~\text{but~with}$$
+$$0~≤~k~≤~254~\text{taken~from~the~stack.}$$
+
+$$6F88~-~\text{TLEN}~(t~–~n),~\text{returns~the~length~of~a~Tuple.}$$
+
+$$6F89~-~\text{QTLEN}~(t~–~n~\text{or}~−1),~\text{similar~to}~\text{TLEN},~\text{but~returns}~−1~\text{if}~t~\text{is~not}$$
+$$\text{a~Tuple.}$$
+
+$$6F8A~-~\text{ISTUPLE}~(t~–~?),~\text{returns}~−1~\text{or}~0~\text{depending~on~whether}~t~\text{is~a}$$
+$$\text{Tuple.}$$
+
+$$6F8B~-~\text{LAST}~(t~–~x),~\text{returns~the~last~element}~t|t|~\text{of~a~non-empty~Tuple}~t.~$$
+
+$$6F8C~-~\text{TPUSH}~\text{or}~\text{COMMA}~(t~x~–~t_0),~\text{appends~a~value}~x~\text{to~a~Tuple}~t =$$
+$$(x1,~.~.~.~,~xn),~\text{but~only~if~the~resulting~Tuple}~t_0~=~(x1,~.~.~.~,~xn,~x)~\text{is~of}$$
+$$\text{length~at~most~255.~Otherwise~throws~a~type~check~exception.
+
+$$6F8D~-~\text{TPOP}~(t~–~t_0~x),~\text{detaches~the~last~element}~x~=~xn~\text{from~a~nonempty~Tuple}~t~=~(x1,~.~.~.~,~xn),$$
+$$\text{and~returns~both~the~resulting~Tuple}~t_0~\text{and~the~original~last~element}~x.$$
+
+$$6FA0~-~\text{NULLSWAPIF}~(x~–~x~\text{or}~⊥~x),~\text{pushes~a~Null~under~the~topmost}$$
+$$\text{Integer}~x,~\text{but~only~if}~x~\neq~0.$$
+
+$$6FA1~-~\text{NULLSWAPIFNOT}~(x~–~x~\text{or}~⊥~x),~\text{pushes~a~Null~under~the~topmost~Integer}$$
+$$x,~\text{but~only~if}~x~=~0.~\text{May~be~used~for~stack~alignment}$$
+$$\text{after~quiet~primitives~such~as}~\text{PLDUXQ.}$$
+
+$$6FA2~-~\text{NULLROTRIF}~(x~y~–~x~y~\text{or}~⊥~x~y),~\text{pushes~a~Null~under~the~second~stack~entry~from~the~top,}$$
+$$\text{but~only~if~the~topmost~Integer}~y~\text{is~non-zero.}$$
+
+$$6FA3~-~\text{NULLROTRIFNOT}~(x~y~–~x~y~\text{or}~⊥~x~y),~\text{pushes~a~Null~under~the~second~stack~entry~from~the~top,}$$
+$$\text{but~only~if~the~topmost~Integer}~y~\text{is~zero.}~\text{May~be~used~for~stack~alignment}$$
+$$\text{after~quiet~primitives~such~as}~\text{LDUXQ.}$$
+
+$$6FA4~-~\text{NULLSWAPIF2}~(x~–~x~\text{or}~⊥~⊥~x),~\text{pushes~two~Nulls~under~the~topmost~Integer}$$
+$$x,~\text{but~only~if}~x~\neq~0.~\text{Equivalent~to}~\text{NULLSWAPIF;}~\text{NULLSWAPIF.}$$
+
+$$6FA5~-~\text{NULLSWAPIFNOT2}~(x~–~x~\text{or}~⊥~⊥~x),~\text{pushes~two~Nulls~under~the~topmost~Integer}$$
+$$x,~\text{but~only~if}~x~=~0.~\text{Equivalent~to}~\text{NULLSWAPIFNOT;}~\text{NULLSWAPIFNOT.}$$
+
+$$6FA6~-~\text{NULLROTRIF2}~(x~y~–~x~y~\text{or}~⊥~⊥~x~y),~\text{pushes~two~Nulls~under~the~second~stack~entry~from~the~top,}$$
+$$\text{but~only~if~the~topmost~Integer}~y~\text{is~non-zero.}~\text{Equivalent~to}~\text{NULLROTRIF;}~\text{NULLROTRIF.}$$
+
+$$6FA7~-~\text{NULLROTRIFNOT2}~(x~y~–~x~y~\text{or}~⊥~⊥~x~y),~\text{pushes~two~Nulls~under~the~second~stack~entry~from~the~top,}$$
+$$\text{but~only~if~the~topmost~Integer}~y~\text{is~zero.}~\text{Equivalent~to}~\text{NULLROTRIFNOT;}~\text{NULLROTRIFNOT.}$$
+
+$$6FBij~-~\text{INDEX2}~i,j~(t~–~x),~\text{recovers}~x~=~(t_{i+1})j+1~\text{for}~0~≤~i,~j~≤~3.~\text{Equivalent~to}~\text{INDEX}~i;~\text{INDEX}~j.$$
+
+$$6FB4~-~\text{CADR}~(t~–~x),~\text{recovers}~x~=~(t_2)1.$$
+
+$$6FB5~-~\text{CDDR}~(t~–~x),~\text{recovers}~x~=~(t_2)2.$$
+
+$$6FE_ijk~-~\text{INDEX3}~i,j,k~(t~–~x),~\text{recovers}~x = (t_{i+1})j+1_{k+1}~\text{for}~0~≤~i,~j,~k~≤~3.~\text{Equivalent~to}~\text{INDEX2}~i,j;~\text{INDEX}~k.$$
+
+$$6FD4~-~\text{CADDR}~(t~–~x),~\text{recovers}~x = (t_2)2_{1}.$$
+
+$$6FD5~-~\text{CDDDR}~(t~–~x),~\text{recovers}~x = (t_2)2_{2}.$$ 
+
 
 ## A.4 Constant, or literal primitives
 
