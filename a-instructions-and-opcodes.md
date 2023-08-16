@@ -25,8 +25,8 @@ Some stack manipulation instructions have two mnemonics: one Forthstyle (e.g., -
 
 ### A.2.1. Basic stack manipulation primitives.
 
-* 00 - NOP, does nothing.
-* 01 - XCHG s1, also known as SWAP.
+* $$00~-~NOP$$, does nothing.
+* $$01~-~XCHG s1$$, also known as SWAP.
 * $$0 i-{XCHG}~{s}(i)$$ or XCHG $$ XCHG~ {s} 0, {~s}(i)$$, interchanges the top of the stack with $${s}(i), 1 \leq i \leq 15$$
 * $$10 i j-{XCHG}~{s}(i), {s}(j), 1 \leq i<j \leq 15$$, interchanges $${s}(i)$$ with $${s}(j)$$.
 * $$11 i i-{XCHG}~{s} 0, {~s}(i i)$$, with $$0 \leq i i \leq 255$$.
@@ -42,19 +42,22 @@ Some stack manipulation instructions have two mnemonics: one Forthstyle (e.g., -
 Parameters $$i, j$$, and $$k$$ of the following primitives all are 4-bit integers in the range $$0 \ldots 15$$.
 
 * $$4 i j k~-~sXCHG3$$ $${s}(i), {s}(j), {s}(k)$$, equivalent to XCHG $${s} 2, {~s}(i) ;$$ XCHG s1, $${s}(j) ;$$ XCHG $${s} 0, {~s}(k)$$, with $$0 \leq i, j, k \leq 15$$.
-* $$50 {ij}~-~XCHG2$$ $${s}(i), {s}(j)$$, equivalent to $$XCHG$$ $${s} 1, {~s}(i)$$; $$XCHG$$ $${s}(j)$$.
-* $$51 i j~-~$$X C P U~{s}(i), {s}(j)$$, equivalent to $$XCHG$$ $${s}(i) ; \operatorname{PUSH} {s}(j)$$.
-* $$52 i j~-~PUXC$$ $${s}(i), {s}(j-1)$$, equivalent to PUSH $${s}(i)$$; SWAP; XCHG $${s}(j)$$.
-* $$53ij~-~PUSH2$$ $${s}(i), {s}(j)$$, equivalent to PUSH $${s}(i)$$; PUSH $${s}(j+1)$$.
-* $$540 i j k-{XCHG3} {s}(i), {s}(j), {s}(k)$$ (long form).
-* $$541ij~-~XC2PU~{s}(i), {s}(j), {s}(k)$$, equivalent to XCHG2 $${s}(i), {s}(j)$$; PUSH $${s}(k)$$.
-* 542ijk- $$XCPUXC~{s}(i), {s}(j), {s}(k-1)$$, equivalent to XCHG $${s} 1, {~s}(i)$$; PUXC $${s}(j), {s}(k-1)$$
-* 543ijk- $$XCPU2~{s}(i), {s}(j), {s}(k)$$, equivalent to XCHG $${s}(i)$$; PUSH2 $${s}(j)$$, $${s}(k)$$.
-* 544ijk- $$PUXC2~{s}(i), {s}(j-1), {s}(k-1)$$, equivalent to PUSH $${s}(i)$$; XCHG $${s} 2 ;$$ XCHG2 $${s}(j), {s}(k)$$.
-* 545ijk- $$PUXCPU~{s}(i), {s}(j-1), {s}(k-1)$$, equivalent to PUXC $${s}(i), {s}(j-$$ 1); PUSH $${s}(k)$$.
-* 546ijk- $$PU2XC~{s}(i), {s}(j-1), {s}(k-2)$$, equivalent to PUSH $${s}(i)$$; SWAP; PUXC $${s}(j), {s}(k-1)$$.
-* 547ijk- $$PUSH3~{s}(i), {s}(j), {s}(k)$$, equivalent to PUSH $${s}(i)$$; PUSH2 $${s}(j+$$ 1), $${s}(k+1)$$.
-* 54C\_- unused.
+* $$50ij~-~XCHG2~{s}(i),~{s}(j)$$, equivalent to $$XCHG~{s}(1),~{s}(i);~XCHG~{s}(j)$$.
+* $$51ij~-~XCPU~{s}(i),~{s}(j)$$, equivalent to $$XCHG~{s}(i);~PUSH~{s}(j)$$.
+* $$52ij~-~PUXC~{s}(i),~{s}(j-1)$$, equivalent to $$PUSH~{s}(i);~SWAP;~XCHG~{s}(j)$$.
+* $$53ij~-~PUSH2~{s}(i),~{s}(j)$$, equivalent to $$PUSH~{s}(i);~PUSH~{s}(j+1)$$.
+* $$540ijk~-~XCHG3~{s}(i),~{s}(j),~{s}(k)$$ (long form).
+* $$541ijk~-~XC2PU~{s}(i),~{s}(j),~{s}(k)$$, equivalent to $$XCHG2~{s}(i),~{s}(j);~PUSH~{s}(k)$$.
+* $$542ijk~-~XCPUXC~{s}(i),~{s}(j),~{s}(k-1)$$, equivalent to $$XCHG~{s}(1),~{s}(i);~PUXC~{s}(j),~{s}(k-1)$$.
+* $$543ijk~-~XCPU2~{s}(i),~{s}(j),~{s}(k)$$, equivalent to $$XCHG~{s}(i);~PUSH2~{s}(j),~{s}(k)$$.
+* $$544ijk~-~PUXC2~{s}(i),~{s}(j-1),~{s}(k-1)$$, equivalent to $$PUSH~{s}(i);~XCHG~{s}(2);~XCHG2~{s}(j),~{s}(k)$$.
+* $$545ijk~-~PUXCPU~{s}(i),~{s}(j-1),~{s}(k-1)$$, equivalent to $$PUXC~{s}(i),~{s}(j-1);~PUSH~{s}(k)$$.
+* $$546ijk~-~PU2XC~{s}(i),~{s}(j-1),~{s}(k-2)$$, equivalent to $$PUSH~{s}(i);~SWAP;~PUXC~{s}(j),~{s}(k-1)$$.
+* $$547ijk~-~PUSH3~{s}(i),~{s}(j),~{s}(k)$$, equivalent to $$PUSH~{s}(i);~PUSH2~{s}(j+1),~{s}(k+1)$$.
+* $$54C_~-~unused$$.
+
+
+
 
 ### A.2.3. Exotic stack manipulation primitives.
 
