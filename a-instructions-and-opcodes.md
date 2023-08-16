@@ -147,11 +147,8 @@ $$6F4n~-~\text{EXPLODE}~n~(t~–~x1~.~.~.~xm~m),~\text{unpacks~a~Tuple}~t~=~(x1,
 $$\text{and~returns~its~length}~m,~\text{but~only~if}~m~≤~n~≤~15.~\text{Otherwise~throws~a}$$
 $$\text{type~check~exception.}$$
 
-$$6F5k~-~\text{SETINDEX}~k~(t~x~–~t_0),~\text{computes~Tuple}~t_0$$
-$$\text{that~differs~from}~t$$
-$$\text{only~at~position}~t_{0k+1},~\text{which~is~set~to}~x.~\text{In~other~words,}~|t_0|~=~|t|,~t_{0i}~=~t_i$$
-$$\text{for}~i~\neq~k~+~1,~\text{and}~t_{0k+1}~=~x,~\text{for~given}~0~≤~k~≤~15.~\text{If}~k~≥~|t|,~\text{throws~a}$$
-$$\text{range~check~exception.}$$
+$$6F5k~-~SETINDEX~k~(t~x~–~t^{\prime}),~\text{computes Tuple}~t^{\prime}~\text{that differs from}~t~\text{only at position}~t_{k+1}^{\prime},~\text{which is set to}~x.~\text{In other words,}~\left|t^{\prime}\right|~=~|t|,~t_i^{\prime}~=~t_i~\text{for}~i~\neq~k+1,~\text{and}~t_{k+1}^{\prime}~=~x,~\text{for given}~0~\leq~k~\leq~15.~\text{If}~k~\geq~|t|,~\text{throws a range check exception.}$$
+
 
 $$6F50~-~\text{SETFIRST}~(t~x~–~t_0),~\text{sets~the~first~component~of~Tuple}~t~\text{to}~x$$
 $$\text{and~returns~the~resulting~Tuple}~t_0.$$
