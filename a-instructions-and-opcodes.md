@@ -41,13 +41,13 @@ Some stack manipulation instructions have two mnemonics: one Forthstyle (e.g., -
 
 Parameters $$i, j$$, and $$k$$ of the following primitives all are 4-bit integers in the range $$0 \ldots 15$$.
 
-* $$4 i j k$$ - $$XCHG3$$ $${s}(i), {s}(j), {s}(k)$$, equivalent to XCHG $${s} 2, {~s}(i) ;$$ XCHG s1, $${s}(j) ;$$ XCHG $${s} 0, {~s}(k)$$, with $$0 \leq i, j, k \leq 15$$.
-* $$50 {ij}$$ - $$XCHG2$$ $${s}(i), {s}(j)$$, equivalent to $$XCHG$$ $${s} 1, {~s}(i)$$; $$XCHG$$ $${s}(j)$$.
-* $$51 i j$$ - $$X C P U~{s}(i), {s}(j)$$, equivalent to $$XCHG$$ $${s}(i) ; \operatorname{PUSH} {s}(j)$$.
-* $$52 i j$$ - $$PUXC $${s}(i), {s}(j-1)$$, equivalent to PUSH $${s}(i)$$; SWAP; XCHG $${s}(j)$$.
+* $$4 i j k~-~sXCHG3$$ $${s}(i), {s}(j), {s}(k)$$, equivalent to XCHG $${s} 2, {~s}(i) ;$$ XCHG s1, $${s}(j) ;$$ XCHG $${s} 0, {~s}(k)$$, with $$0 \leq i, j, k \leq 15$$.
+* $$50 {ij}~-~XCHG2$$ $${s}(i), {s}(j)$$, equivalent to $$XCHG$$ $${s} 1, {~s}(i)$$; $$XCHG$$ $${s}(j)$$.
+* $$51 i j~-~$$X C P U~{s}(i), {s}(j)$$, equivalent to $$XCHG$$ $${s}(i) ; \operatorname{PUSH} {s}(j)$$.
+* $$52 i j~-~PUXC$$ $${s}(i), {s}(j-1)$$, equivalent to PUSH $${s}(i)$$; SWAP; XCHG $${s}(j)$$.
 * $$53ij~-~PUSH2$$ $${s}(i), {s}(j)$$, equivalent to PUSH $${s}(i)$$; PUSH $${s}(j+1)$$.
 * $$540 i j k-{XCHG3} {s}(i), {s}(j), {s}(k)$$ (long form).
-* 541ijk- $$XC2PU~{s}(i), {s}(j), {s}(k)$$, equivalent to XCHG2 $${s}(i), {s}(j)$$; PUSH $${s}(k)$$.
+* $$541ij~-~XC2PU~{s}(i), {s}(j), {s}(k)$$, equivalent to XCHG2 $${s}(i), {s}(j)$$; PUSH $${s}(k)$$.
 * 542ijk- $$XCPUXC~{s}(i), {s}(j), {s}(k-1)$$, equivalent to XCHG $${s} 1, {~s}(i)$$; PUXC $${s}(j), {s}(k-1)$$
 * 543ijk- $$XCPU2~{s}(i), {s}(j), {s}(k)$$, equivalent to XCHG $${s}(i)$$; PUSH2 $${s}(j)$$, $${s}(k)$$.
 * 544ijk- $$PUXC2~{s}(i), {s}(j-1), {s}(k-1)$$, equivalent to PUSH $${s}(i)$$; XCHG $${s} 2 ;$$ XCHG2 $${s}(j), {s}(k)$$.
