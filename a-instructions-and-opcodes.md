@@ -25,7 +25,7 @@ Some stack manipulation instructions have two mnemonics: one Forthstyle (e.g., -
 
 ### A.2.1. Basic stack manipulation primitives.
 
-* $$00~-~NOP$$, does nothing.
+* $$00~-~NOP,~\text{does~nothing.}$$
 * $$01~-~XCHG s1$$, also known as SWAP.
 * $$0 i-{XCHG}~{s}(i)$$ or XCHG $$ XCHG~ {s} 0, {~s}(i)$$, interchanges the top of the stack with $${s}(i), 1 \leq i \leq 15$$
 * $$10 i j-{XCHG}~{s}(i), {s}(j), 1 \leq i<j \leq 15$$, interchanges $${s}(i)$$ with $${s}(j)$$.
@@ -41,7 +41,7 @@ Some stack manipulation instructions have two mnemonics: one Forthstyle (e.g., -
 
 Parameters $$i, j$$, and $$k$$ of the following primitives all are 4-bit integers in the range $$0 \ldots 15$$.
 
-* $$4 i j k~-~sXCHG3$$ $${s}(i), {s}(j), {s}(k)$$, equivalent to XCHG $${s} 2, {~s}(i) ;$$ XCHG s1, $${s}(j) ;$$ XCHG $${s} 0, {~s}(k)$$, with $$0 \leq i, j, k \leq 15$$.
+* $$4ijk~-~XCHG3~{s}(i), {s}(j), {s}(k)$$, equivalent to $$XCHG~{s}(2), {s}(i);~XCHG~{s}(1), {s}(j);~XCHG~{s}(0), {s}(k),~\text{with}~0 ≤ i, j, k ≤ 15$$.
 * $$50ij~-~XCHG2~{s}(i),~{s}(j)$$, equivalent to $$XCHG~{s}(1),~{s}(i);~XCHG~{s}(j)$$.
 * $$51ij~-~XCPU~{s}(i),~{s}(j)$$, equivalent to $$XCHG~{s}(i);~PUSH~{s}(j)$$.
 * $$52ij~-~PUXC~{s}(i),~{s}(j-1)$$, equivalent to $$PUSH~{s}(i);~SWAP;~XCHG~{s}(j)$$.
