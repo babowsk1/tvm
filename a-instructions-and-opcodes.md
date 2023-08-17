@@ -147,31 +147,31 @@ $$6F4n~-~\text{EXPLODE}~n~(t~–~x1~.~.~.~xm~m),~\text{unpacks~a~Tuple}~t~=~(x1,
 $$\text{and~returns~its~length}~m,~\text{but~only~if}~m~≤~n~≤~15.~\text{Otherwise~throws~a}$$
 $$\text{type~check~exception.}$$
 
-$$6F5k~-~\text{SETINDEX}~k~(t~x~–~t^{\prime}),~\text{computes~Tuple}~t^{\prime}$$
+$$6F5k~-~\text{SETINDEX}~k~(t~x~–~t_0),~\text{computes~Tuple}~t_0$$
 $$\text{that~differs~from}~t$$
-$$\text{only~at~position}~t_{0k+1},~\text{which~is~set~to}~x.~\text{In~other~words,}~|t^{\prime}|~=~|t|,~t_{0i}~=~t_i$$
+$$\text{only~at~position}~t_{0k+1},~\text{which~is~set~to}~x.~\text{In~other~words,}~|t_0|~=~|t|,~t_{0i}~=~t_i$$
 $$\text{for}~i~\neq~k~+~1,~\text{and}~t_{0k+1}~=~x,~\text{for~given}~0~≤~k~≤~15.~\text{If}~k~≥~|t|,~\text{throws~a}$$
 $$\text{range~check~exception.}$$
 
-$$6F50~-~\text{SETFIRST}~(t~x~–~t^{\prime}),~\text{sets~the~first~component~of~Tuple}~t~\text{to}~x$$
-$$\text{and~returns~the~resulting~Tuple}~t^{\prime}.$$
+$$6F50~-~\text{SETFIRST}~(t~x~–~t_0),~\text{sets~the~first~component~of~Tuple}~t~\text{to}~x$$
+$$\text{and~returns~the~resulting~Tuple}~t_0.$$
 
-$$6F51~-~\text{SETSECOND}~(t~x~–~t^{\prime}),~\text{sets~the~second~component~of~Tuple}~t~\text{to}$$
-$$x~\text{and~returns~the~resulting~Tuple}~t^{\prime}.$$
+$$6F51~-~\text{SETSECOND}~(t~x~–~t_0),~\text{sets~the~second~component~of~Tuple}~t~\text{to}$$
+$$x~\text{and~returns~the~resulting~Tuple}~t_0.$$
 
-$$6F52~-~\text{SETTHIRD}~(t~x~–~t^{\prime}),~\text{sets~the~third~component~of~Tuple}~t~\text{to}~x$$
-$$\text{and~returns~the~resulting~Tuple}~t^{\prime}.$$
+$$6F52~-~\text{SETTHIRD}~(t~x~–~t_0),~\text{sets~the~third~component~of~Tuple}~t~\text{to}~x$$
+$$\text{and~returns~the~resulting~Tuple}~t_0.$$
 
 $$6F6k~-~\text{INDEXQ}~k~(t~–~x),~\text{returns~the}~k\text{-th~element~of~a~Tuple}~t,~\text{where}$$
 $$0~≤~k~≤~15.~\text{In~other~words,~returns}~x_{k+1}~\text{if}~t~=~(x1,~.~.~.~,~xn).~\text{If}~k~≥~n,$$
 $$\text{or~if}~t~\text{is~Null,~returns~a~Null~instead~of}~x.$$
 
-$$6F7k~-~\text{SETINDEXQ}~k~(t~x~–~t^{\prime}),~\text{sets~the~k-th~component~of~Tuple}~t~\text{to}$$
-$$x,~\text{where}~0~≤~k~<~16,~\text{and~returns~the~resulting~Tuple}~t^{\prime}.~\text{If}~|t|~≤~k,$$
+$$6F7k~-~\text{SETINDEXQ}~k~(t~x~–~t_0),~\text{sets~the~k-th~component~of~Tuple}~t~\text{to}$$
+$$x,~\text{where}~0~≤~k~<~16,~\text{and~returns~the~resulting~Tuple}~t_0.~\text{If}~|t|~≤~k,$$
 $$\text{first~extends~the~original~Tuple~to~length}~k+1~\text{by~setting~all~new~components}$$
 $$\text{to~Null.~If~the~original~value~of}~t~\text{is~Null,~treats~it~as~an~empty~Tuple.}$$
 $$\text{If}~t~\text{is~not~Null~or~Tuple,~throws~an~exception.~If}~x~\text{is~Null~and~either}~|t|~≤~k$$
-$$\text{or}~t~\text{is~Null,~then~always~returns}~t^{\prime}~=~t~\text{(and~does~not~consume}$$
+$$\text{or}~t~\text{is~Null,~then~always~returns}~t_0~=~t~\text{(and~does~not~consume}$$
 $$\text{tuple~creation~gas).}$$
 
 $$6F80~-~\text{TUPLEVAR}~(x1~.~.~.~xn~n~–~t),~\text{creates~a~new~Tuple}~t~\text{of~length}~n$$
@@ -189,13 +189,13 @@ $$0~≤~n~≤~255~\text{taken~from~the~stack.}$$
 $$6F84~-~\text{EXPLODEVAR}~(t~n~–~x1~.~.~.~xm~m),~\text{similar~to}~\text{EXPLODE}~n,~\text{but~with}$$
 $$0~≤~n~≤~255~\text{taken~from~the~stack.}$$
 
-$$6F85~-~\text{SETINDEXVAR}~(t~x~k~–~t^{\prime}),~\text{similar~to}~\text{SETINDEX}~k,~\text{but~with}$$
+$$6F85~-~\text{SETINDEXVAR}~(t~x~k~–~t_0),~\text{similar~to}~\text{SETINDEX}~k,~\text{but~with}$$
 $$0~≤~k~≤~254~\text{taken~from~the~stack.}$$
 
 $$6F86~-~\text{INDEXVARQ}~(t~k~–~x),~\text{similar~to}~\text{INDEXQ}~n,~\text{but~with}~0~≤~k~≤~254$$
 $$\text{taken~from~the~stack.}$$
 
-$$6F87~-~\text{SETINDEXVARQ}~(t~x~k~–~t^{\prime}),~\text{similar~to}~\text{SETINDEXQ}~k,~\text{but~with}$$
+$$6F87~-~\text{SETINDEXVARQ}~(t~x~k~–~t_0),~\text{similar~to}~\text{SETINDEXQ}~k,~\text{but~with}$$
 $$0~≤~k~≤~254~\text{taken~from~the~stack.}$$
 
 $$6F88~-~\text{TLEN}~(t~–~n),~\text{returns~the~length~of~a~Tuple.}$$
@@ -208,12 +208,12 @@ $$\text{Tuple.}$$
 
 $$6F8B~-~\text{LAST}~(t~–~x),~\text{returns~the~last~element}~t|t|~\text{of~a~non-empty~Tuple}~t.~$$
 
-$$6F8C~-~\text{TPUSH}~\text{or}~\text{COMMA}~(t~x~–~t^{\prime}),~\text{appends~a~value}~x~\text{to~a~Tuple}~t =$$
-$$(x1,~.~.~.~,~xn),~\text{but~only~if~the~resulting~Tuple}~t^{\prime}~=~(x1,~.~.~.~,~xn,~x)~\text{is~of}$$
+$$6F8C~-~\text{TPUSH}~\text{or}~\text{COMMA}~(t~x~–~t_0),~\text{appends~a~value}~x~\text{to~a~Tuple}~t =$$
+$$(x1,~.~.~.~,~xn),~\text{but~only~if~the~resulting~Tuple}~t_0~=~(x1,~.~.~.~,~xn,~x)~\text{is~of}$$
 $$\text{length~at~most~255.~Otherwise~throws~a~type~check~exception.
 
-$$6F8D~-~\text{TPOP}~(t~–~t^{\prime}~x),~\text{detaches~the~last~element}~x~=~xn~\text{from~a~nonempty~Tuple}~t~=~(x1,~.~.~.~,~xn),$$
-$$\text{and~returns~both~the~resulting~Tuple}~t^{\prime}~\text{and~the~original~last~element}~x.$$
+$$6F8D~-~\text{TPOP}~(t~–~t_0~x),~\text{detaches~the~last~element}~x~=~xn~\text{from~a~nonempty~Tuple}~t~=~(x1,~.~.~.~,~xn),$$
+$$\text{and~returns~both~the~resulting~Tuple}~t_0~\text{and~the~original~last~element}~x.$$
 
 $$6FA0~-~\text{NULLSWAPIF}~(x~–~x~\text{or}~⊥~x),~\text{pushes~a~Null~under~the~topmost}$$
 $$\text{Integer}~x,~\text{but~only~if}~x~\neq~0.$$
