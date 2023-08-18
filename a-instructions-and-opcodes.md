@@ -27,7 +27,7 @@ Some stack manipulation instructions have two mnemonics: one Forthstyle (e.g., -
 
 * $$00~-~NOP,~\text{does~nothing.}$$
 * $$01~-~XCHG~{s}(1),~\text{also~known~as~SWAP.}$$
-* $$0i~-~\text{XCHG}~{s}(i)~\text{or}~\text{XCHG}~{s}(0),{s}(i)$$, interchanges the top of the stack with $${s}(i)$$, $$1 ≤ i ≤ 15$$.
+* $$0i~-~XCHG~{s}(i)~\text{or}~XCHG~{s}(0),{s}(i),~\text{interchanges~the~top~of~the~stack~with}~{s}(i),~1 ≤ i ≤ 15.$$
 * $$10ij~-~XCHG~{s}(i),{s}(j),~1 ≤ i < j ≤ 15,~\text{interchanges}~{s}(i)~\text{with}~{s}(j).$$
 * $$11ii~-~XCHG~{s}(0),{s}(ii),~\text{with}~0 ≤ ii ≤ 255.$$
 * $$1i~-~XCHG~{s}(1),{s}(i),~2 ≤ i ≤ 15.$$
@@ -42,14 +42,14 @@ Some stack manipulation instructions have two mnemonics: one Forthstyle (e.g., -
 
 Parameters $$i, j$$, and $$k$$ of the following primitives all are 4-bit integers in the range $$0 \ldots 15$$.
 
-* $$4ijk~-~\text{XCHG3}~{s}(i),{s}(j),{s}(k)$$, equivalent to $$\text{XCHG}~s2,{s}(i);~\text{XCHG}~s1,{s}(j);~\text{XCHG}~s0,{s}(k),~\text{with}~0 ≤ i, j, k ≤ 15$$.
+* $$4ijk~-~XCHG3~{s}(i), {s}(j), {s}(k)$$, equivalent to $$XCHG~{s}(2), {s}(i);~XCHG~{s}(1), {s}(j);~XCHG~{s}(0), {s}(k),~\text{with}~0 ≤ i, j, k ≤ 15$$.
 * $$50ij~-~XCHG2~{s}(i),~{s}(j)$$, equivalent to $$XCHG~{s}(1),~{s}(i);~XCHG~{s}(j)$$.
 * $$51ij~-~XCPU~{s}(i),~{s}(j)$$, equivalent to $$XCHG~{s}(i);~PUSH~{s}(j)$$.
 * $$52ij~-~PUXC~{s}(i),~{s}(j-1)$$, equivalent to $$PUSH~{s}(i);~SWAP;~XCHG~{s}(j)$$.
 * $$53ij~-~PUSH2~{s}(i),~{s}(j)$$, equivalent to $$PUSH~{s}(i);~PUSH~{s}(j+1)$$.
 * $$540ijk~-~XCHG3~{s}(i),~{s}(j),~{s}(k)$$ (long form).
 * $$541ijk~-~XC2PU~{s}(i),~{s}(j),~{s}(k)$$, equivalent to $$XCHG2~{s}(i),~{s}(j);~PUSH~{s}(k)$$.
-* $$542ijk~-~\text{XCPUXC}~{s}(i),{s}(j),{s}(k−1)$$, equivalent to $$\text{XCHG}~s1,{s}(i);~\text{PUXC}~{s}(j),{s}(k − 1)$$.
+* $$542ijk~-~XCPUXC~{s}(i),~{s}(j),~{s}(k-1)$$, equivalent to $$XCHG~{s}(1),~{s}(i);~PUXC~{s}(j),~{s}(k-1)$$.
 * $$543ijk~-~XCPU2~{s}(i),~{s}(j),~{s}(k)$$, equivalent to $$XCHG~{s}(i);~PUSH2~{s}(j),~{s}(k)$$.
 * $$544ijk~-~PUXC2~{s}(i),~{s}(j-1),~{s}(k-1)$$, equivalent to $$PUSH~{s}(i);~XCHG~{s}(2);~XCHG2~{s}(j),~{s}(k)$$.
 * $$545ijk~-~PUXCPU~{s}(i),~{s}(j-1),~{s}(k-1)$$, equivalent to $$PUXC~{s}(i),~{s}(j-1);~PUSH~{s}(k)$$.
