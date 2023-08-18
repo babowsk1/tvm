@@ -70,7 +70,7 @@ Parameters $$i, j$$, and $$k$$ of the following primitives all are 4-bit integer
 * $$\text{stack~entries~in~the~other~direction.}~\text{Equivalent~to}~\text{BLKSWAP}~i+1,1.$$
 * $$56ii~-~\text{PUSH}~{s}(ii)~\text{for}~0 ≤ ii ≤ 255.$$
 * $$57ii~-~\text{POP}~{s}(ii)~\text{for}~0 ≤ ii ≤ 255.$$
-* $$58~-~\text{ROT}~(a~b~c~–~b~c~a),~\text{equivalent~to}~\text{BLKSWAP}~1,2~\text{or~to}~\text{XCHG2}~{s}(2),{s}(1).$$$
+* $$58~-~\text{ROT}~(a~b~c~–~b~c~a)$$, equivalent to $$\text{BLKSWAP}~1,2~\text{or~to}~\text{XCHG2}~s2,s1$$.
 * $$59~-~\text{ROTREV~or}~-ROT~(a~b~c~–~c~a~b),~\text{equivalent~to}~\text{BLKSWAP}~2,1~\text{or~to}$$
 * $$\text{XCHG2}~{s}(2),{s}(2).$$
 * $$5A~-~\text{SWAP2~or~2SWAP}~(a~b~c~d~–~c~d~a~b),~\text{equivalent~to}~\text{BLKSWAP}~2,2~\text{or}$$
