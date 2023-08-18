@@ -210,7 +210,7 @@ $$6F8B~-~\text{LAST}~(t~–~x),~\text{returns~the~last~element}~t|t|~\text{of~a~
 
 $$6F8C~-~\text{TPUSH}~\text{or}~\text{COMMA}~(t~x~–~t_0),~\text{appends~a~value}~x~\text{to~a~Tuple}~t =$$
 $$(x1,~.~.~.~,~xn),~\text{but~only~if~the~resulting~Tuple}~t_0~=~(x1,~.~.~.~,~xn,~x)~\text{is~of}$$
-$$\text{length~at~most~255.~Otherwise~throws~a~type~check~exception.
+$$\text{length~at~most~255.~Otherwise~throws~a~type~check~exception}.
 
 $$6F8D~-~\text{TPOP}~(t~–~t_0~x),~\text{detaches~the~last~element}~x~=~xn~\text{from~a~nonempty~Tuple}~t~=~(x1,~.~.~.~,~xn),$$
 $$\text{and~returns~both~the~resulting~Tuple}~t_0~\text{and~the~original~last~element}~x.$$
