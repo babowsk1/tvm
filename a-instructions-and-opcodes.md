@@ -59,30 +59,22 @@ Parameters $$i, j$$, and $$k$$ of the following primitives all are 4-bit integer
 
 ### A.2.3. Exotic stack manipulation primitives.
 
-* $$55ij~-~\text{BLKSWAP}~i+1,j+1,~\text{permutes two blocks}~{s}(j+i+1)~\ldots~{s}(j+1)$$
-* $$\text{and}~{s}(j)~\ldots~{s}0,~\text{for}~0 ≤ i, j ≤ 15.$$
-* $$\text{Equivalent~to}~\text{REVERSE}~i+1,j+1;~\text{REVERSE}~j+1,0;~\text{REVERSE}~i+j+2,0.$$
+* $$55ij~-~\text{BLKSWAP}~i+1,j+1,~\text{permutes two blocks}~{s}(j+i+1)~\ldots~{s}(j+1)~\text{and}~{s}(j)~\ldots~{s}0,~\text{for}~0 ≤ i, j ≤ 15.~\text{Equivalent~to}~\text{REVERSE}~i+1,j+1;~\text{REVERSE}~j+1,0;~\text{REVERSE}~i+j+2,0.$$
 * $$5513~-~\text{ROT2~or~2ROT}~(a~b~c~d~e~f~–~c~d~e~f~a~b),~\text{rotates~the~three}$$
 * $$\text{topmost~pairs~of~stack~entries.}$$
-* $$550i~-~\text{ROLL}~i+1,~\text{rotates~the~top}~i+1~\text{stack~entries.}~\text{Equivalent~to}$$
-* $$\text{BLKSWAP}~1,i+1.$$
-* $$55i0~-~\text{ROLLREV}~i+1~\text{or}~-ROLL~i+1,~\text{rotates~the~top}~i+1$$
-* $$\text{stack~entries~in~the~other~direction.}~\text{Equivalent~to}~\text{BLKSWAP}~i+1,1.$$
+* $$550i~-~\text{ROLL}~i+1,~\text{rotates~the~top}~i+1~\text{stack~entries.}~\text{Equivalent~to}~\text{BLKSWAP}~1,i+1.$$
+* $$55i0~-~\text{ROLLREV}~i+1~\text{or}~-ROLL~i+1,~\text{rotates~the~top}~i+1~\text{stack~entries~in~the~other~direction.}~\text{Equivalent~to}~\text{BLKSWAP}~i+1,1.$$
 * $$56ii~-~\text{PUSH}~{s}(ii)~\text{for}~0 ≤ ii ≤ 255.$$
 * $$57ii~-~\text{POP}~{s}(ii)~\text{for}~0 ≤ ii ≤ 255.$$
 * $$58~-~\text{ROT}~(a~b~c~–~b~c~a)$$, equivalent to $$\text{BLKSWAP}~1,2~\text{or~to}~\text{XCHG2}~s2,s1$$.
-* $$59~-~\text{ROTREV~or}~-ROT~(a~b~c~–~c~a~b),~\text{equivalent~to}~\text{BLKSWAP}~2,1~\text{or~to}$$
-* $$\text{XCHG2}~{s}(2),{s}(2).$$
-* $$5A~-~\text{SWAP2~or~2SWAP}~(a~b~c~d~–~c~d~a~b),~\text{equivalent~to}~\text{BLKSWAP}~2,2~\text{or}$$
-* $$\text{to}~\text{XCHG2}~{s}(3),{s}(2).$$
+* $$59~-~\text{ROTREV~or}~-ROT~(a~b~c~–~c~a~b),~\text{equivalent~to}~\text{BLKSWAP}~2,1~\text{or~to}~\text{XCHG2}~{s}(2),{s}(2).$$
+* $$5A~-~\text{SWAP2~or~2SWAP}~(a~b~c~d~–~c~d~a~b),~\text{equivalent~to}~\text{BLKSWAP}~2,2~\text{or}~\text{to}~\text{XCHG2}~{s}(3),{s}(2).$$
 * $$5B~-~\text{DROP2~or~2DROP}~(a~b~–~),~\text{equivalent~to}~\text{DROP;}~\text{DROP.}$$
 * $$5C~-~\text{DUP2~or~2DUP}~(a~b~–~a~b~a~b),~\text{equivalent~to}~\text{PUSH2}~{s}(1),{s}(0).$$
 * $$5D~-~\text{OVER2~or~2OVER}~(a~b~c~d~–~a~b~c~d~a~b),~\text{equivalent~to}~\text{PUSH2}~{s}(3),{s}(2).$$
-* $$5Eij~-~\text{REVERSE}~i+2,j,~\text{reverses~the~order~of}~{s}(j+i+1)~\ldots~{s}(j)~\text{for}$$
-* $$0 ≤ i, j ≤ 15;~\text{equivalent~to~a~sequence~of}~\frac{b}{2}~\text{XCHGs.}$$
+* $$5Eij~-~\text{REVERSE}~i+2,j,~\text{reverses~the~order~of}~{s}(j+i+1)~\ldots~{s}(j)~\text{for}~0 ≤ i, j ≤ 15;~\text{equivalent~to~a~sequence~of}~\frac{b}{2}~\text{XCHGs.}$$
 * $$5F0i~-~\text{BLKDROP}~i,~\text{equivalent~to}~\text{DROP}~\text{performed}~i~\text{times.}$$
-* $$5Fij~-~\text{BLKPUSH}~i,j,~\text{equivalent~to}~\text{PUSH}~{s}(j)~\text{performed}~i~\text{times,}~1 ≤$$
-* $$i ≤ 15,~0 ≤ j ≤ 15.$$
+* $$5Fij~-~\text{BLKPUSH}~i,j,~\text{equivalent~to}~\text{PUSH}~{s}(j)~\text{performed}~i~\text{times,}~1≤i≤15,~0≤j≤15.$$
 * $$60~-~\text{PICK~or~PUSHX,~pops~integer}~i~\text{from~the~stack,~then~performs}~\text{PUSH}~{s}(i).$$
 * $$61~-~\text{ROLLX,~pops~integer}~i~\text{from~the~stack,~then~performs}~\text{BLKSWAP}~1,i.$$
 
