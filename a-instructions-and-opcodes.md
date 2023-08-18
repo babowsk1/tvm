@@ -27,7 +27,7 @@ Some stack manipulation instructions have two mnemonics: one Forthstyle (e.g., -
 
 * $$00~-~NOP,~\text{does~nothing.}$$
 * $$01~-~XCHG~{s}(1),~\text{also~known~as~SWAP.}$$
-* $$0i~-~\text{XCHG}~s(i)~\text{or}~\text{XCHG}~s0,s(i),~\text{interchanges~the~top~of~the~stack~with}~s(i),~1~≤~i~≤~15.$$
+* $$0i~-~\text{XCHG}~{s}(i)~\text{or}~\text{XCHG}~{s}(0),{s}(i)$$, interchanges the top of the stack with $${s}(i)$$, $$1 ≤ i ≤ 15$$.
 * $$10ij~-~XCHG~{s}(i),{s}(j),~1 ≤ i < j ≤ 15,~\text{interchanges}~{s}(i)~\text{with}~{s}(j).$$
 * $$11ii~-~XCHG~{s}(0),{s}(ii),~\text{with}~0 ≤ ii ≤ 255.$$
 * $$1i~-~XCHG~{s}(1),{s}(i),~2 ≤ i ≤ 15.$$
@@ -42,14 +42,14 @@ Some stack manipulation instructions have two mnemonics: one Forthstyle (e.g., -
 
 Parameters $$i, j$$, and $$k$$ of the following primitives all are 4-bit integers in the range $$0 \ldots 15$$.
 
-* $$4ijk~-~XCHG3~{s}(i), {s}(j), {s}(k)$$, equivalent to $$XCHG~{s}(2), {s}(i);~XCHG~{s}(1), {s}(j);~XCHG~{s}(0), {s}(k),~\text{with}~0 ≤ i, j, k ≤ 15$$.
+* $$4ijk~-~\text{XCHG3}~{s}(i),{s}(j),{s}(k)$$, equivalent to $$\text{XCHG}~s2,{s}(i);~\text{XCHG}~s1,{s}(j);~\text{XCHG}~s0,{s}(k),~\text{with}~0 ≤ i, j, k ≤ 15$$.
 * $$50ij~-~XCHG2~{s}(i),~{s}(j)$$, equivalent to $$XCHG~{s}(1),~{s}(i);~XCHG~{s}(j)$$.
 * $$51ij~-~XCPU~{s}(i),~{s}(j)$$, equivalent to $$XCHG~{s}(i);~PUSH~{s}(j)$$.
 * $$52ij~-~PUXC~{s}(i),~{s}(j-1)$$, equivalent to $$PUSH~{s}(i);~SWAP;~XCHG~{s}(j)$$.
 * $$53ij~-~PUSH2~{s}(i),~{s}(j)$$, equivalent to $$PUSH~{s}(i);~PUSH~{s}(j+1)$$.
 * $$540ijk~-~XCHG3~{s}(i),~{s}(j),~{s}(k)$$ (long form).
 * $$541ijk~-~XC2PU~{s}(i),~{s}(j),~{s}(k)$$, equivalent to $$XCHG2~{s}(i),~{s}(j);~PUSH~{s}(k)$$.
-* $$542ijk~-~XCPUXC~{s}(i),~{s}(j),~{s}(k-1)$$, equivalent to $$XCHG~{s}(1),~{s}(i);~PUXC~{s}(j),~{s}(k-1)$$.
+* $$542ijk~-~\text{XCPUXC}~{s}(i),{s}(j),{s}(k−1)$$, equivalent to $$\text{XCHG}~s1,{s}(i);~\text{PUXC}~{s}(j),{s}(k − 1)$$.
 * $$543ijk~-~XCPU2~{s}(i),~{s}(j),~{s}(k)$$, equivalent to $$XCHG~{s}(i);~PUSH2~{s}(j),~{s}(k)$$.
 * $$544ijk~-~PUXC2~{s}(i),~{s}(j-1),~{s}(k-1)$$, equivalent to $$PUSH~{s}(i);~XCHG~{s}(2);~XCHG2~{s}(j),~{s}(k)$$.
 * $$545ijk~-~PUXCPU~{s}(i),~{s}(j-1),~{s}(k-1)$$, equivalent to $$PUXC~{s}(i),~{s}(j-1);~PUSH~{s}(k)$$.
@@ -59,22 +59,21 @@ Parameters $$i, j$$, and $$k$$ of the following primitives all are 4-bit integer
 
 ### A.2.3. Exotic stack manipulation primitives.
 
-* $$55ij~-~\text{BLKSWAP}~i+1,j+1,~\text{permutes two blocks}~{s}(j+i+1)~\ldots~{s}(j+1)~\text{and}~{s}(j)~\ldots~{s}0,~\text{for}~0 ≤ i, j ≤ 15.~\text{Equivalent~to}~\text{REVERSE}~i+1,j+1;~\text{REVERSE}~j+1,0;~\text{REVERSE}~i+j+2,0.$$
-* $$5513~-~\text{ROT2~or~2ROT}~(a~b~c~d~e~f~–~c~d~e~f~a~b),~\text{rotates~the~three}$$
-* $$\text{topmost~pairs~of~stack~entries.}$$
-* $$550i~-~\text{ROLL}~i+1,~\text{rotates~the~top}~i+1~\text{stack~entries.}~\text{Equivalent~to}~\text{BLKSWAP}~1,i+1.$$
-* $$55i0~-~\text{ROLLREV}~i+1~\text{or}~-ROLL~i+1,~\text{rotates~the~top}~i+1~\text{stack~entries~in~the~other~direction.}~\text{Equivalent~to}~\text{BLKSWAP}~i+1,1.$$
+* $$55ij~-~\text{BLKSWAP}~i+1,j +1$$, permutes two blocks $${s}(j +i+1). . . {s}(j +1)$$ and $${s}(j). . . {s}(0)$$, for $$0 ≤ i, j ≤ 15$$. Equivalent to $$\text{REVERSE}~i + 1,j + 1;~\text{REVERSE}~j + 1,0;~\text{REVERSE}~i + j + 2,0$$.
+* $$5513~-~\text{ROT2}~\text{or}~2ROT~(a~b~c~d~e~f~–~c~d~e~f~a~b)$$, rotates the three topmost pairs of stack entries.
+* $$550i~-~\text{ROLL}~i + 1$$, rotates the top $$i + 1$$ stack entries. Equivalent to $$\text{BLKSWAP}~1,i + 1$$.
+* $$55i0~-~\text{ROLLREV}~i+1~\text{or}~-ROLL~i+1$$, rotates the top $$i+1$$ stack entries in the other direction. Equivalent to $$\text{BLKSWAP}~i + 1,1$$.
 * $$56ii~-~\text{PUSH}~{s}(ii)~\text{for}~0 ≤ ii ≤ 255.$$
 * $$57ii~-~\text{POP}~{s}(ii)~\text{for}~0 ≤ ii ≤ 255.$$
 * $$58~-~\text{ROT}~(a~b~c~–~b~c~a)$$, equivalent to $$\text{BLKSWAP}~1,2~\text{or~to}~\text{XCHG2}~s2,s1$$.
-* $$59~-~\text{ROTREV~or}~-ROT~(a~b~c~–~c~a~b),~\text{equivalent~to}~\text{BLKSWAP}~2,1~\text{or~to}~\text{XCHG2}~{s}(2),{s}(2).$$
-* $$5A~-~\text{SWAP2~or~2SWAP}~(a~b~c~d~–~c~d~a~b),~\text{equivalent~to}~\text{BLKSWAP}~2,2~\text{or}~\text{to}~\text{XCHG2}~{s}(3),{s}(2).$$
+* $$59~-~\text{ROTREV}~\text{or}~-ROT~(a~b~c~–~c~a~b)$$, equivalent to $$\text{BLKSWAP}~2,1~\text{or~to}~\text{XCHG2}~s2,s2$$.
+* $$5A~-~\text{SWAP2}~\text{or}~2SWAP~(a~b~c~d~–~c~d~a~b)$$, equivalent to $$\text{BLKSWAP}~2,2~\text{or~to}~\text{XCHG2}~s3,s2$$.
 * $$5B~-~\text{DROP2~or~2DROP}~(a~b~–~),~\text{equivalent~to}~\text{DROP;}~\text{DROP.}$$
 * $$5C~-~\text{DUP2~or~2DUP}~(a~b~–~a~b~a~b),~\text{equivalent~to}~\text{PUSH2}~{s}(1),{s}(0).$$
 * $$5D~-~\text{OVER2~or~2OVER}~(a~b~c~d~–~a~b~c~d~a~b),~\text{equivalent~to}~\text{PUSH2}~{s}(3),{s}(2).$$
 * $$5Eij~-~\text{REVERSE}~i+2,j,~\text{reverses~the~order~of}~{s}(j+i+1)~\ldots~{s}(j)~\text{for}~0 ≤ i, j ≤ 15;~\text{equivalent~to~a~sequence~of}~\frac{b}{2}~\text{XCHGs.}$$
 * $$5F0i~-~\text{BLKDROP}~i,~\text{equivalent~to}~\text{DROP}~\text{performed}~i~\text{times.}$$
-* $$5Fij~-~\text{BLKPUSH}~i,j,~\text{equivalent~to}~\text{PUSH}~{s}(j)~\text{performed}~i~\text{times,}~1≤i≤15,~0≤j≤15.$$
+* $$5Fij~-~\text{BLKPUSH}~i,j$$, equivalent to $$\text{PUSH}~{s}(j)~\text{performed}~i~\text{times},~1 ≤ i ≤ 15,~0 ≤ j ≤ 15$$.
 * $$60~-~\text{PICK~or~PUSHX,~pops~integer}~i~\text{from~the~stack,~then~performs}~\text{PUSH}~{s}(i).$$
 * $$61~-~\text{ROLLX,~pops~integer}~i~\text{from~the~stack,~then~performs}~\text{BLKSWAP}~1,i.$$
 
