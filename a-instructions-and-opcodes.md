@@ -27,7 +27,7 @@ Some stack manipulation instructions have two mnemonics: one Forthstyle (e.g., -
 
 * $$00~-~NOP,~\text{does~nothing.}$$
 * $$01~-~XCHG~{s}(1),~\text{also~known~as~SWAP.}$$
-* $$0i~-~\text{XCHG}~s(i)~\text{or}~\text{XCHG}~s0,s(i),~\text{interchanges~the~top~of~the~stack~with}~s(i),~1~≤~i~≤~15$$.
+* $$0i~-~\text{XCHG}~s(i)~\text{or}~\text{XCHG}~s0,s(i),~\text{interchanges~the~top~of~the~stack~with}~s(i),~1~≤~i~≤~15.$$
 * $$10ij~-~XCHG~{s}(i),{s}(j),~1 ≤ i < j ≤ 15,~\text{interchanges}~{s}(i)~\text{with}~{s}(j).$$
 * $$11ii~-~XCHG~{s}(0),{s}(ii),~\text{with}~0 ≤ ii ≤ 255.$$
 * $$1i~-~XCHG~{s}(1),{s}(i),~2 ≤ i ≤ 15.$$
