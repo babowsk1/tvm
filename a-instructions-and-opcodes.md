@@ -146,27 +146,6 @@ $$6F50~-~\text{SETFIRST}~(t~x~–~t')$$, sets the first component of *Tuple* $$t
 * $$6FD4~-~\text{CADDR}(t~-~x)$$, recovers $$x=(t_2)_{2_1}$$.
 * $$6FD5~-~\text{CDDDR}(t~-~x)$$, recovers $$x=(t_2)_{2_2}$$.
 
-
-
-
-
-
-
-
-* 6FA0 - NULLSWAPIF $$(x-x$$ or $$\perp x)$$, pushes a $$N u l l$$ under the topmost Integer $$x$$, but only if $$x \neq 0$$.
-* 6FA1 - NULLSWAPIFNOT $$(x-x$$ or $$\perp x)$$, pushes a $$N u l l$$ under the topmost Integer $$x$$, but only if $$x=0$$. May be used for stack alignment after quiet primitives such as PLDUXQ.
-* 6FA2 - NULLROTRIF $$(x y-x y$$ or $$\perp x y)$$, pushes a Null under the second stack entry from the top, but only if the topmost Integer $$y$$ is non-zero.
-* 6FA3 - NULLROTRIFNOT $$(x y-x y$$ or $$\perp x y)$$, pushes a Null under the second stack entry from the top, but only if the topmost Integer $$y$$ is zero. May be used for stack alignment after quiet primitives such as LDUXQ.
-* 6FA4 - NULLSWAPIF2 $$(x-x$$ or $$\perp \perp x)$$, pushes two Nulls under the topmost Integer $$x$$, but only if $$x \neq 0$$. Equivalent to NULLSWAPIF; NULLSWAPIF.
-* 6FA5 - NULLSWAPIFNOT2 $$(x-x$$ or $$\perp \perp x)$$, pushes two Nulls under the topmost Integer $$x$$, but only if $$x=0$$. Equivalent to NULLSWAPIFNOT; NULLSWAPIFNOT.
-* 6FA6 - NULLROTRIF2 $$(x y-x y$$ or $$\perp \perp x y)$$, pushes two Nulls under the second stack entry from the top, but only if the topmost Integer $$y$$ is non-zero. Equivalent to NULLROTRIF; NULLROTRIF.
-* 6FA7 - NULLROTRIFNOT2 $$(x y-x y$$ or $$\perp \perp x y)$$, pushes two Nulls under the second stack entry from the top, but only if the topmost Integer $$y$$ is zero. Equivalent to NULLROTRIFNOT; NULLROTRIFNOT.
-* 6FBij-INDEX2 $$i, j(t-x)$$, recovers $$x=\left(t_{i+1}\right)_{j+1}$$ for $$0 \leq i, j \leq 3$$. Equivalent to INDEX $$i$$; INDEX $$j$$.
-* 6FB4 - CADR $$(t-x)$$, recovers $$x=\left(t_{2}\right)_{1}$$. - 6 FB5 - CDDR $$(t-x)$$, recovers $$x=\left(t_{2}\right)_{2}$$.
-* 6FE\_ $$i j k-$$ INDEX3 $$i, j, k(t-x)$$, recovers $$x=\left(\left(t_{i+1}\right)_{j+1}\right)_{k+1}$$ for $$0 \leq$$ $$i, j, k \leq 3$$. Equivalent to INDEX2 $$i, j ;$$ INDEX $$k$$.
-* 6FD4 - CADDR $$(t-x)$$, recovers $$x=\left(\left(t_{2}\right)_{2}\right)_{1}$$.
-* 6 FD5 - CDDDR $$(t-x)$$, recovers $$x=\left(\left(t_{2}\right)_{2}\right)_{2}$$.
-
 ## A.4 Constant, or literal primitives
 
 The following primitives push into the stack one literal (or unnamed constant) of some type and range, stored as a part (an immediate argument) of the instruction. Therefore, if the immediate argument is absent or too short, an "invalid or too short opcode" exception (code 6) is thrown.
