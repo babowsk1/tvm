@@ -109,32 +109,50 @@ The following primitives work with (the only) value $$\perp$$ of type *Null*, us
 * $$6F22~-~\text{UNPAIR or UNCONS}~(t~–~x~y)$$, unpacks a pair $$t = (x, y)$$.
 * $$6F23~-~\text{UNTRIPLE}~(t~–~x~y~z)$$, unpacks a triple $$t = (x, y, z)$$.
 * $$6F3k~-~\text{UNPACKFIRST}~k~(t~–~x_1~.~.~.~x_k)$$, unpacks the first $$0 \leq k \leq 15$$ elements of a Tuple $$t$$. If $$|t| < k$$, throws a type check exception.
-* $$6F30~-~\text{CHKTUPLE}~(t~–~)$$, checks whether $$t$$ is a Tuple.
-* $$6F4n~-~\text{EXPLODE}~n~(t~–~x_1~.~.~.~x_m~m)$$, unpacks a Tuple $$t = (x_1, . . . , x_m)$$ and returns its length $$m$$, but only if $$m \leq n \leq 15$$. Otherwise throws a type check exception.
-* $$6F5k~-~\text{SETINDEX}~k~(t~x~–~t')$$, computes Tuple $$t'$$ that differs from $$t$$ only at position $$t'[k+1]$$, which is set to $$x$$. In other words, $$|t'| = |t|$$, $$t'[i] = t[i]$$ for $$i \neq k + 1$$, and $$t'[k+1] = x$$, for given $$0 \leq k \leq 15$$. If $$k \geq |t|$$, throws a range check exception.
-$$6F50~-~\text{SETFIRST}~(t~x~–~t')$$, sets the first component of Tuple $$t$$ to $$x$$ and returns the resulting Tuple $$t'$$.
-* $$6F51~-~\text{SETSECOND}~(t~x~–~t')$$, sets the second component of Tuple $$t$$ to $$x$$ and returns the resulting Tuple $$t'$$.
-* $$6F52~-~\text{SETTHIRD}~(t~x~–~t')$$, sets the third component of Tuple $$t$$ to $$x$$ and returns the resulting Tuple $$t'$$.
-* $$6F6k~-~\text{INDEXQ}~k~(t~–~x)$$, returns the $$k$$-th element of a Tuple $$t$$, where $$0 \leq k \leq 15$$. In other words, returns $$t[k+1]$$ if $$t = (x_1, . . . , x_n)$$. If $$k \geq n$$, or if $$t$$ is Null, returns a Null instead of $$x$$.
+* $$6F30~-~\text{CHKTUPLE}~(t~–~)$$, checks whether $$t$$ is a *Tuple*.
+* $$6F4n~-~\text{EXPLODE}~n~(t~–~x_1~.~.~.~x_m~m)$$, unpacks a *Tuple* $$t = (x_1, . . . , x_m)$$ and returns its length $$m$$, but only if $$m \leq n \leq 15$$. Otherwise throws a type check exception.
+* $$6F5k~-~\text{SETINDEX}~k~(t~x~–~t')$$, computes *Tuple* $$t'$$ that differs from $$t$$ only at position $$t'[k+1]$$, which is set to $$x$$. In other words, $$|t'| = |t|$$, $$t'[i] = t[i]$$ for $$i \neq k + 1$$, and $$t'[k+1] = x$$, for given $$0 \leq k \leq 15$$. If $$k \geq |t|$$, throws a range check exception.
+$$6F50~-~\text{SETFIRST}~(t~x~–~t')$$, sets the first component of *Tuple* $$t$$ to $$x$$ and returns the resulting *Tuple* $$t'$$.
+* $$6F51~-~\text{SETSECOND}~(t~x~–~t')$$, sets the second component of *Tuple* $$t$$ to $$x$$ and returns the resulting *Tuple* $$t'$$.
+* $$6F52~-~\text{SETTHIRD}~(t~x~–~t')$$, sets the third component of *Tuple* $$t$$ to $$x$$ and returns the resulting *Tuple* $$t'$$.
+* $$6F6k~-~\text{INDEXQ}~k~(t~–~x)$$, returns the $$k$$-th element of a *Tuple* $$t$$, where $$0 \leq k \leq 15$$. In other words, returns $$t[k+1]$$ if $$t = (x_1, . . . , x_n)$$. If $$k \geq n$$, or if $$t$$ is *Null*, returns a *Null* instead of $$x$$.
+* $$6F7k~-~\text{SETINDEXQ}~k~(t~x~–~t')$$, sets the $$k$$-th component of *Tuple* $$t$$ to $$x$$, where $$0 \leq k < 16$$, and returns the resulting *Tuple* $$t'$$. If $$|t| \leq k$$, first extends the original *Tuple* to length $$k+1$$ by setting all new components to *Null*. If the original value of $$t$$ is *Null*, treats it as an empty *Tuple*. If $$t$$ is not *Null* or *Tuple*, throws an exception. If $$x$$ is *Null* and either $$|t| \leq k$$ or $$t$$ is *Null*, then always returns $$t' = t$$ (and does not consume tuple creation gas).
+* $$6F80~-~\text{TUPLEVAR}~(x_1~\dots~x_n~n~-~t)$$, creates a new *Tuple* $$t$$ of length $$n$$ similarly to $$TUPLE$$, but with $$0 \leq n \leq 255$$ taken from the stack.
+* $$6F81~-~\text{INDEXVAR}~(t~k~-~x)$$, similar to $$INDEX~k$$, but with $$0 \leq k \leq 254$$ taken from the stack.
+* $$6F82~-~\text{UNTUPLEVAR}~(t~n~-~x_1~\dots~x_n)$$, similar to $$UNTUPLE~n$$, but with $$0 \leq n \leq 255$$ taken from the stack.
+* $$6F83~-~\text{UNPACKFIRSTVAR}~(t~n~-~x_1~\dots~x_n)$$, similar to $$UNPACKFIRST~n$$, but with $$0 \leq n \leq 255$$ taken from the stack.
+* $$6F84~-~\text{EXPLODEVAR}~(t~n~-~x_1~\dots~x_m~m)$$, similar to $$EXPLODE~n$$, but with $$0 \leq n \leq 255$$ taken from the stack.
+* $$6F85~-~\text{SETINDEXVAR}~(t~x~k~-~t')$$, similar to $$SETINDEX~k$$, but with $$0 \leq k \leq 254$$ taken from the stack.
+* $$6F86~-~\text{INDEXVARQ}~(t~k~-~x)$$, similar to $$INDEXQ~n$$, but with $$0 \leq k \leq 254$$ taken from the stack.
+* $$6F87~-~\text{SETINDEXVARQ}~(t~x~k~-~t')$$, similar to $$SETINDEXQ~k$$, but with $$0 \leq k \leq 254$$ taken from the stack.
+* $$6F88~-~\text{TLEN}~(t~-~n)$$, returns the length of a *Tuple*.
+* $$6F89~-~\text{QTLEN}~(t~-~n~\text{ or }~-1)$$, similar to $$TLEN$$, but returns $$-1$$ if $$t$$ is not a *Tuple*.
+* $$6F8A~-~\text{ISTUPLE}~(t~-~?)$$, returns $$-1$$ or $$0$$ depending on whether $$t$$ is a *Tuple*.
+* $$6F8B~-~\text{LAST}~(t~-~x)$$, returns the last element $$t|t|$$ of a non-empty *Tuple* $$t$$.
+* $$6F8C~-~\text{TPUSH}~\text{or}~\text{COMMA}~(t~x~-~t')$$, appends a value $$x$$ to a *Tuple* $$t = (x_1, \dots , x_n)$$, but only if the resulting *Tuple* $$t' = (x_1, \dots , x_n, x)$$ is of length at most 255. Otherwise throws a type check exception.
+* $$6F8D~-~\text{TPOP}~(t~-~t'~x)$$, detaches the last element $$x = x_n$$ from a non-empty *Tuple* $$t = (x_1, \dots, x_n)$$, and returns both the resulting *Tuple* $$t' = (x_1, \dots, x_{n-1})$$ and the original last element $$x$$.
+* $$6FA0~-~\text{NULLSWAPIF}~(x~-~x~\text{or}~\bot~x)$$, pushes a *Null* under the topmost Integer $$x$$, but only if $$x \neq 0$$.
+* $$6FA1~-~\text{NULLSWAPIFNOT}~(x~-~x~\text{or}~\bot~x)$$, pushes a *Null* under the topmost Integer $$x$$, but only if $$x = 0$$. May be used for stack alignment after quiet primitives such as $$PLDUXQ$$.
+* $$6FA2~-~\text{NULLROTRIF}~(x~y~-~x~y~\text{or}~\bot~x~y)$$, pushes a *Null* under the second stack entry from the top, but only if the topmost Integer $$y$$ is non-zero.
+* $$6FA3~-~\text{NULLROTRIFNOT}~(x~y~-~x~y~\text{or}~\bot~x~y)$$, pushes a *Null* under the second stack entry from the top, but only if the topmost Integer $$y$$ is zero. May be used for stack alignment after quiet primitives such as $$LDUXQ$$.
+* $$6FA4~-~\text{NULLSWAPIF2}~(x~-~x~\text{or}~\bot~\bot~x)$$, pushes two *Nulls* under the topmost Integer $$x$$, but only if $$x \neq 0$$. Equivalent to $$NULLSWAPIF; NULLSWAPIF$$.
+* $$6FA5~-~\text{NULLSWAPIFNOT2}~(x~-~x~\text{or}~\bot~\bot~x)$$, pushes two *Nulls* under the topmost Integer $$x$$, but only if $$x = 0$$. Equivalent to $$NULLSWAPIFNOT; NULLSWAPIFNOT$$.
+* $$6FA6~-~\text{NULLROTRIF2}~(x~y~-~x~y~\text{or}~\bot~\bot~x~y)$$, pushes two *Nulls* under the second stack entry from the top, but only if the topmost Integer $$y$$ is non-zero. Equivalent to $$NULLROTRIF; NULLROTRIF$$.
+* $$6FA7~-~\text{NULLROTRIFNOT2}~(x~y~-~x~y~\text{or}~\bot~\bot~x~y)$$, pushes two *Nulls* under the second stack entry from the top, but only if the topmost Integer $$y$$ is zero. Equivalent to $$NULLROTRIFNOT; NULLROTRIFNOT$$.
+* $$6FB_{ij}~-~\text{INDEX2}~i,j~(t~-~x)$$, recovers $$x = (t_{i+1})_{j+1}$$ for $$0 \leq i, j \leq 3$$. Equivalent to $$INDEX~i; INDEX~j$$.
+* $$6FB4~-~\text{CADR}~(t~-~x)$$, recovers $$x = (t_2)_1$$.
+* $$6FB5~-~\text{CDDR}(t~-~x)$$, recovers $$x=(t_2)_2$$.
+* $$6FE_{ijk}~-~\text{INDEX3}~i,j,k(t~-~x)$$, recovers $$x=(t_{i+1})_{j+1,k+1}$$ for $$0\leq~i,~j,~k\leq~3$$. Equivalent to $$INDEX2~i,j;~INDEX~k$$.
+* $$6FD4~-~\text{CADDR}(t~-~x)$$, recovers $$x=(t_2)_{2_1}$$.
+* $$6FD5~-~\text{CDDDR}(t~-~x)$$, recovers $$x=(t_2)_{2_2}$$.
 
 
 
 
 
-* 6F7 $$k$$ - SETINDEXQ $$k\left(t x-t^{\prime}\right)$$, sets the $$k$$-th component of Tuple $$$t$$$ to $$x$$, where $$0 \leq k<16$$, and returns the resulting Tuple $$$t^{\prime}$$. If $$|t| \leq k$$, first extends the original Tuple to length $$k+1$$ by setting all new components to Null. If the original value of $$$t$$$ is Null, treats it as an empty Tuple. If $$$t$$$ is not Null or Tuple, throws an exception. If $$x$$ is Null and either $$|t| \leq k$$ or $$$t$$$ is $$N u l l$$, then always returns $$$t^{\prime}=t$$$ (and does not consume tuple creation gas).
-* 6F80 - TUPLEVAR $$\left(x_{1} \ldots x_{n} n-t\right)$$, creates a new Tuple $$$t$$$ of length $$n$$ similarly to TUPLE, but with $$0 \leq n \leq 255$$ taken from the stack.
-* 6F81 - INDEXVAR $$(t k-x)$$, similar to INDEX $$k$$, but with $$0 \leq k \leq 254$$ taken from the stack.
-* 6F82 - UNTUPLEVAR $$\left(t n-x_{1} \ldots x_{n}\right)$$, similar to UNTUPLE $$n$$, but with $$0 \leq n \leq 255$$ taken from the stack.
-* 6F83 - UNPACKFIRSTVAR $$\left(t n-x_{1} \ldots x_{n}\right)$$, similar to UNPACKFIRST $$n$$, but with $$0 \leq n \leq 255$$ taken from the stack.
-* 6F84 - EXPLODEVAR $$\left(t n-x_{1} \ldots x_{m} m\right)$$, similar to EXPLODE $$n$$, but with $$0 \leq n \leq 255$$ taken from the stack.
-* 6F85 - SETINDEXVAR $$\left(t x k-t^{\prime}\right)$$, similar to SETINDEX $$k$$, but with $$0 \leq k \leq 254$$ taken from the stack.
-* 6F86 - INDEXVARQ $$(t k-x)$$, similar to INDEXQ $$n$$, but with $$0 \leq k \leq 254$$ taken from the stack.
-* 6F87 - SETINDEXVARQ ( $$\left.t x k-t^{\prime}\right)$$, similar to SETINDEXQ $$k$$, but with $$0 \leq k \leq 254$$ taken from the stack.
-* 6F88 - TLEN $$(t-n)$$, returns the length of a Tuple.
-* 6F89 - QTLEN $$(t-n$$ or -1$$)$$, similar to TLEN, but returns -1 if $$$t$$$ is not a Tuple.
-* 6F8A - ISTUPLE $$(t-?)$$, returns -1 or 0 depending on whether $$$t$$$ is a Tuple.
-* 6F8B - LAST $$(t-x)$$, returns the last element $$$t_{|t|}$$ of a non-empty Tuple $$$t$$$.
-* 6F8C - TPUSH or COMMA $$\left(t x-t^{\prime}\right)$$, appends a value $$x$$ to a Tuple $$$t=$$ $$\left(x_{1}, \ldots, x_{n}\right)$$, but only if the resulting Tuple $$$t^{\prime}=\left(x_{1}, \ldots, x_{n}, x\right)$$ is of length at most 255. Otherwise throws a type check exception. - 6F8D - TPOP $$\left(t-t^{\prime} x\right)$$, detaches the last element $$x=x_{n}$$ from a nonempty Tuple $$$t=\left(x_{1}, \ldots, x_{n}\right)$$, and returns both the resulting Tuple $$$t^{\prime}=$$ $$\left(x_{1}, \ldots, x_{n-1}\right)$$ and the original last element $$x$$.
+
+
+
 * 6FA0 - NULLSWAPIF $$(x-x$$ or $$\perp x)$$, pushes a $$N u l l$$ under the topmost Integer $$x$$, but only if $$x \neq 0$$.
 * 6FA1 - NULLSWAPIFNOT $$(x-x$$ or $$\perp x)$$, pushes a $$N u l l$$ under the topmost Integer $$x$$, but only if $$x=0$$. May be used for stack alignment after quiet primitives such as PLDUXQ.
 * 6FA2 - NULLROTRIF $$(x y-x y$$ or $$\perp x y)$$, pushes a Null under the second stack entry from the top, but only if the topmost Integer $$y$$ is non-zero.
