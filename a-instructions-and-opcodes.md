@@ -131,20 +131,36 @@ $$6F50~-~\text{SETFIRST}~(t~x~–~t')$$, sets the first component of *Tuple* $$t
 * $$6F8B~-~\text{LAST}~(t~-~x)$$, returns the last element $$t|t|$$ of a non-empty *Tuple* $$t$$.
 * $$6F8C~-~\text{TPUSH}~\text{or}~\text{COMMA}~(t~x~-~t')$$, appends a value $$x$$ to a *Tuple* $$t = (x_1, \dots , x_n)$$, but only if the resulting *Tuple* $$t' = (x_1, \dots , x_n, x)$$ is of length at most 255. Otherwise throws a type check exception.
 * $$6F8D~-~\text{TPOP}~(t~-~t'~x)$$, detaches the last element $$x = x_n$$ from a non-empty *Tuple* $$t = (x_1, \dots, x_n)$$, and returns both the resulting *Tuple* $$t' = (x_1, \dots, x_{n-1})$$ and the original last element $$x$$.
-* $$6FA0~-~\text{NULLSWAPIF}~(x~-~x~\text{or}~\bot~x)$$, pushes a *Null* under the topmost Integer $$x$$, but only if $$x~\neq~0$$.
-* $$6FA1~-~\text{NULLSWAPIFNOT}~(x~-~x~\text{or}~\bot~x)$$, pushes a *Null* under the topmost Integer $$x$$, but only if $$x~=~0$$. May be used for stack alignment after quiet primitives such as $$PLDUXQ$$.
-* $$6FA2~-~\text{NULLROTRIF}~(x~y~-~x~y~\text{or}~\bot~x~y)$$, pushes a *Null* under the second stack entry from the top, but only if the topmost Integer $$y$$ is non-zero.
-* $$6FA3~-~\text{NULLROTRIFNOT}~(x~y~-~x~y~\text{or}~\bot~x~y)$$, pushes a *Null* under the second stack entry from the top, but only if the topmost Integer $$y$$ is zero. May be used for stack alignment after quiet primitives such as $$LDUXQ$$.
-* $$6FA4~-~\text{NULLSWAPIF2}~(x~-~x~\text{or}~\bot~\bot~x)$$, pushes two *Nulls* under the topmost Integer $$x$$, but only if $$x~\neq~0$$. Equivalent to $$NULLSWAPIF;~NULLSWAPIF$$.
-* $$6FA5~-~\text{NULLSWAPIFNOT2}~(x~-~x~\text{or}~\bot~\bot~x)$$, pushes two *Nulls* under the topmost Integer $$x$$, but only if $$x~=~0$$. Equivalent to $$NULLSWAPIFNOT;~NULLSWAPIFNOT$$.
-* $$6FA6~-~\text{NULLROTRIF2}~(x~y~-~x~y~\text{or}~\bot~\bot~x~y)$$, pushes two *Nulls* under the second stack entry from the top, but only if the topmost Integer $$y$$ is non-zero. Equivalent to $$NULLROTRIF;~NULLROTRIF$$.
-* $$6FA7~-~\text{NULLROTRIFNOT2}~(x~y~-~x~y~\text{or}~\bot~\bot~x~y)$$, pushes two *Nulls* under the second stack entry from the top, but only if the topmost Integer $$y$$ is zero. Equivalent to $$NULLROTRIFNOT;~NULLROTRIFNOT$$.
+* $$6FA0~-~\text{NULLSWAPIF}~(x~-~x~\text{or}~\bot~x)$$, pushes a *Null* under the topmost *Integer* $$x$$, but only if $$x~\neq~0$$.
+* $$6FA1~-~\text{NULLSWAPIFNOT}~(x~-~x~\text{or}~\bot~x)$$, pushes a *Null* under the topmost *Integer* $$x$$, but only if $$x~=~0$$. May be used for stack alignment after quiet primitives such as $$PLDUXQ$$.
+* $$6FA2~-~\text{NULLROTRIF}~(x~y~-~x~y~\text{or}~\bot~x~y)$$, pushes a *Null* under the second stack entry from the top, but only if the topmost *Integer* $$y$$ is non-zero.
+* $$6FA3~-~\text{NULLROTRIFNOT}~(x~y~-~x~y~\text{or}~\bot~x~y)$$, pushes a *Null* under the second stack entry from the top, but only if the topmost *Integer* $$y$$ is zero. May be used for stack alignment after quiet primitives such as $$LDUXQ$$.
+* $$6FA4~-~\text{NULLSWAPIF2}~(x~-~x~\text{or}~\bot~\bot~x)$$, pushes two *Nulls* under the topmost *Integer* $$x$$, but only if $$x~\neq~0$$. Equivalent to $$NULLSWAPIF;~NULLSWAPIF$$.
+* $$6FA5~-~\text{NULLSWAPIFNOT2}~(x~-~x~\text{or}~\bot~\bot~x)$$, pushes two *Nulls* under the topmost *Integer* $$x$$, but only if $$x~=~0$$. Equivalent to $$NULLSWAPIFNOT;~NULLSWAPIFNOT$$.
+* $$6FA6~-~\text{NULLROTRIF2}~(x~y~-~x~y~\text{or}~\bot~\bot~x~y)$$, pushes two *Nulls* under the second stack entry from the top, but only if the topmost *Integer* $$y$$ is non-zero. Equivalent to $$NULLROTRIF;~NULLROTRIF$$.
+* $$6FA7~-~\text{NULLROTRIFNOT2}~(x~y~-~x~y~\text{or}~\bot~\bot~x~y)$$, pushes two *Nulls* under the second stack entry from the top, but only if the topmost *Integer* $$y$$ is zero. Equivalent to $$NULLROTRIFNOT;~NULLROTRIFNOT$$.
 * $$6FB_{ij}~-~\text{INDEX2}~i,j~(t~-~x)$$, recovers $$x~=~(t_{i+1})_{j+1}$$ for $$0~\leq~i,~j~\leq~3$$. Equivalent to $$INDEX~i;~INDEX~j$$.
 * $$6FB4~-~\text{CADR}~(t~-~x)$$, recovers $$x~=~(t_2)_1$$.
 * $$6FB5~-~\text{CDDR}~(t~-~x)$$, recovers $$x=(t_2)_2$$.
 * $$6FE_{ijk}~-~\text{INDEX3}~i,j,k~(t~-~x)$$, recovers $$x=(t_{i+1})_{j+1,k+1}$$ for $$0\leq~i,~j,~k\leq~3$$. Equivalent to $$INDEX2~i,j;~INDEX~k$$.
 * $$6FD4~-~\text{CADDR}~(t~-~x)$$, recovers $$x=(t_2)_{2_1}$$.
 * $$6FD5~-~\text{CDDDR}~(t~-~x)$$, recovers $$x=(t_2)_{2_2}$$.
+* $$7i$$ — $$\text{PUSHINT}~x$$ with $$−5 \leq x \leq 10$$, pushes *integer* $$x$$ into the stack; here $$i$$ equals four lower-order bits of $$x$$ (i.e., $$i = x \mod 16$$).
+* $$70$$ — $$\text{ZERO}$$, $$\text{FALSE}$$, or $$\text{PUSHINT 0}$$, pushes a zero.
+* $$71$$ — $$\text{ONE}$$ or $$\text{PUSHINT 1}$$.
+* $$72$$ — $$\text{TWO}$$ or $$\text{PUSHINT 2}$$.
+* $$7A$$ — $$\text{TEN}$$ or $$\text{PUSHINT 10}$$.
+* $$7F$$ — $$\text{TRUE}$$ or $$\text{PUSHINT -1}$$.
+* $$80xx$$ — $$\text{PUSHINT}~xx$$ with $$-128 \leq xx \leq 127$$.
+* $$81xxxx$$ — $$\text{PUSHINT}~xxxx$$ with $$−2^{15} \leq xxxx < 2^{15}$$, a signed 16-bit big-endian integer.
+* $$81FC18$$ — $$\text{PUSHINT −1000}$$.
+* $$82lxxx$$ — $$\text{PUSHINT}~xxx$$, where 5-bit $$0 \leq l \leq 30$$ determines the length $$n = 8l + 19$$ of signed big-endian integer xxx. The total length of this instruction is $$l + 4$$ bytes or $$n + 13 = 8l + 32$$ bits.
+* $$821005F5E100$$ — $$\text{PUSHINT 108}$$.
+* $$83xx$$ — $$\text{PUSHPOW2}~(xx + 1)$$, (quietly) pushes $$2^{xx+1}$$ for \(0 \leq xx \leq 255\).
+* $$83FF$$ — $$\text{PUSHNAN}$$, pushes $$\text{NaN}$$.
+* $$84xx$$ — $$\text{PUSHPOW2DEC}~(xx + 1)$$, pushes $$2^{xx+1} − 1$$ for \(0 \leq xx \leq 255\).
+* $$85xx$$ — $$\text{PUSHNEGPOW2}~(xx + 1)$$, pushes $$−2^{xx+1}$$ for \(0 \leq xx \leq 255\).
+* $$86$$, $$87$$ — reserved for *integer* constants.
 
 
 ## A.4 Constant, or literal primitives
@@ -173,18 +189,22 @@ The following primitives push into the stack one literal (or unnamed constant) o
 
 Most of the instructions listed below push literal slices, continuations, cells, and cell references, stored as immediate arguments to the instruction. Therefore, if the immediate argument is absent or too short, an "invalid or too short opcode" exception (code 6) is thrown.
 
-* 88 - PUSHREF, pushes the first reference of cc.code into the stack as a Cell (and removes this reference from the current continuation).
-* 89 - PUSHREFSLICE, similar to PUSHREF, but converts the cell into a Slice.
-* 8A - PUSHREFCONT, similar to PUSHREFSLICE, but makes a simple ordinary Continuation out of the cell.
-* 8Bxsss - PUSHSLICE sss, pushes the (prefix) subslice of cc . code consisting of its first $$8 x+4$$ bits and no references (i.e., essentially a bitstring), where $$0 \leq x \leq 15$$. A completion tag is assumed, meaning that all trailing zeroes and the last binary one (if present) are removed from this bitstring. If the original bitstring consists only of zeroes, an empty slice will be pushed.
-* 8B08 - PUSHSLICE x8\_, pushes an empty slice (bitstring '”).
-* 8B04 - PUSHSLICE $$\mathrm{x}_{-}$$, pushes bitstring ' 0 '.
-* 8BOC - PUSHSLICE $$\mathrm{xC}_{-}$$, pushes bitstring ' 1 '.
-* 8Crxxssss - PUSHSLICE ssss, pushes the (prefix) subslice of cc.code consisting of its first $$1 \leq r+1 \leq 4$$ references and up to first $$8 x x+1$$ bits of data, with $$0 \leq x x \leq 31$$. A completion tag is also assumed. - 8C01 is equivalent to PUSHREFSLICE.
-* 8Drxxsssss - PUSHSLICE sssss, pushes the subslice of cc. code consisting of $$0 \leq r \leq 4$$ references and up to $$8 x x+6$$ bits of data, with $$0 \leq x x \leq 127$$. A completion tag is assumed.
-* 8DE\_ \_ unused (reserved).
-* 8F\_rXxcccc - PUSHCONT cccc, where cccc is the simple ordinary continuation made from the first $$0 \leq r \leq 3$$ references and the first $$0 \leq x x \leq 127$$ bytes of cc.code.
-* $$9 x \operatorname{xcc}$$ - PUSHCONT ccc, pushes an $$x$$-byte continuation for $$0 \leq x \leq 15$$.
+* $$88$$ — $$\text{PUSHREF}$$, pushes the first reference of cc.code into the stack as
+a *Cell* (and removes this reference from the current continuation).
+* $$89$$ — $$\text{PUSHREFSLICE}$$, similar to $$\text{PUSHREF}$$, but converts the cell into a
+*Slice*.
+* $$8A$$ — $$\text{PUSHREFCONT}$$, similar to $$\text{PUSHREFSLICE}$$, but makes a simple ordinary *Continuation* out of the cell.
+* $$8Bxsss$$ — $$\text{PUSHSLICE}~sss$$, pushes the (prefix) subslice of cc.code consisting of its first $$8x + 4$$ bits and no references (i.e., essentially a bitstring), where $$0 \leq x \leq 15$$. A completion tag is assumed, meaning that
+all trailing zeroes and the last binary one (if present) are removed from
+this bitstring. If the original bitstring consists only of zeroes, an empty
+slice will be pushed.
+* $$8B08$$ — $$\text{PUSHSLICE}~x8_$$, pushes an empty slice (bitstring ‘’).
+* $$8B04$$ — $$\text{PUSHSLICE}~x4_$$, pushes bitstring $$‘0’$$.
+* $$8B0C$$ — $$\text{PUSHSLICE}~xC_$$, pushes bitstring $$‘1’$$.
+* $$8Crxxssss$$ — $$\text{PUSHSLICE}~ssss$$, pushes the (prefix) subslice of cc.code
+consisting of its first $$1 \leq r + 1 \leq 4$$ references and up to first $$8xx + 1$$
+bits of data, with $$0 \leq xx \leq 31$$. A completion tag is also assumed.
+
 
 ## A.5 Arithmetic primitives
 
