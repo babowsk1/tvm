@@ -81,41 +81,49 @@ Parameters $$i, j$$, and $$k$$ of the following primitives all are 4-bit integer
 
 Tuples are ordered collections consisting of at most 255 TVM stack values of arbitrary types (not necessarily the same). Tuple primitives create, modify, and unpack Tuples; they manipulate values of arbitrary types in the process, similarly to the stack primitives. We do not recommend using Tuples of more than 15 elements.
 
-When a Tuple $$t$$ contains elements $$x_{1}, \ldots, x_{n}$$ (in that order), we write $$t=\left(x_{1}, \ldots, x_{n}\right)$$; number $$n \geq 0$$ is the length of Tuple $$t$$. It is also denoted by $$|t|$$. Tuples of length two are called pairs, and Tuples of length three are triples.
+When a Tuple $$$t$$$ contains elements $$x_{1}, \ldots, x_{n}$$ (in that order), we write $$$t=\left(x_{1}, \ldots, x_{n}\right)$$; number $$n \geq 0$$ is the *length* of *Tuple* $$$t$$$. It is also denoted by $$|t|$$. Tuples of length two are called pairs, and Tuples of length three are triples.
 
-Lisp-style lists are represented with the aid of pairs, i.e., tuples consisting of exactly two elements. An empty list is represented by a Null value, and a non-empty list is represented by pair $$(h, t)$$, where $$h$$ is the first element of the list, and $$t$$ is its tail.
+Lisp-style lists are represented with the aid of pairs, i.e., tuples consisting of exactly two elements. An empty list is represented by a Null value, and a non-empty list is represented by pair $$(h, t)$$, where $$h$$ is the first element of the list, and $$$t$$$ is its tail.
 
 ### A.3.1. Null primitives.
 
-The following primitives work with (the only) value $$\perp$$ of type $$N u l l$$, useful for representing empty lists, empty branches of binary trees, and absence of values in Maybe $$X$$ types. An empty Tuple created by NIL could have been used for the same purpose; however, Null is more efficient and costs less gas.
+The following primitives work with (the only) value $$\perp$$ of type *Null*, useful for representing empty lists, empty branches of binary trees, and absence of values in *Maybe* $$X$$ types. An empty *Tuple* created by $$NIL$$ could have been used for the same purpose; however, *Null* is more efficient and costs less gas.
 
-* 6D - NULL or PUSHNULL $$(-\perp)$$, pushes the only value of type $$N u l l$$.
-* 6E - ISNULL $$(x-?)$$, checks whether $$x$$ is a $$N u l l$$, and returns -1 or 0 accordingly.
+* $$6D~-~\text{NULL}~\text{or}~\text{PUSHNULL}~(–~\bot)$$, pushes the only value of type *Null*.
+* $$6E~-~\text{ISNULL}~(x~–~?)$$, checks whether x is a *Null*, and returns $$−1$$ or $$0$$ accordingly.
+
 
 ### A.3.2. Tuple primitives.
 
-* 6F0 $$n$$ - TUPLE $$n\left(x_{1} \ldots x_{n}-t\right)$$, creates a new Tuple $$t=\left(x_{1}, \ldots, x_{n}\right)$$ containing $$n$$ values $$x_{1}, \ldots, x_{n}$$, where $$0 \leq n \leq 15$$
-* 6F00 - NIL $$(-t)$$, pushes the only Tuple $$t=()$$ of length zero.
-* 6F01 - SINGLE $$(x-t)$$, creates a singleton $$t:=(x)$$, i.e., a Tuple of length one.
-* 6F02 - PAIR or CONS $$(x y-t)$$, creates pair $$t:=(x, y)$$.
-* 6F03 - TRIPLE $$(x y z-t)$$, creates triple $$t:=(x, y, z)$$.
-* 6F1 $$k$$ - INDEX $$k(t-x)$$, returns the $$k$$-th element of a Tuple $$t$$, where $$0 \leq k \leq 15$$. In other words, returns $$x_{k+1}$$ if $$t=\left(x_{1}, \ldots, x_{n}\right)$$. If $$k \geq n$$, throws a range check exception.
-* 6F10 - FIRST or CAR $$(t-x)$$, returns the first element of a Tuple.
-* 6F11 - SECOND or CDR $$(t-y)$$, returns the second element of a Tuple.
-* 6F12 - THIRD $$(t-z)$$, returns the third element of a Tuple. - 6F2n - UNTUPLE $$n\left(t-x_{1} \ldots x_{n}\right)$$, unpacks a Tuple $$t=\left(x_{1}, \ldots, x_{n}\right)$$ of length equal to $$0 \leq n \leq 15$$. If $$t$$ is not a Tuple, of if $$|t| \neq n$$, a type check exception is thrown.
-* 6F21 - UNSINGLE $$(t-x)$$, unpacks a singleton $$t=(x)$$.
-* 6F22 - UNPAIR or UNCONS $$(t-x y)$$, unpacks a pair $$t=(x, y)$$.
-* 6F23 - UNTRIPLE $$(t-x y z)$$, unpacks a triple $$t=(x, y, z)$$.
-* 6F3 $$k$$ - UNPACKFIRST $$k\left(t-x_{1} \ldots x_{k}\right)$$, unpacks first $$0 \leq k \leq 15$$ elements of a Tuple $$t$$. If $$|t|<k$$, throws a type check exception.
-* 6F30 - CHKTUPLE $$(t-)$$, checks whether $$t$$ is a Tuple.
-* 6F4n-EXPLODE $$n\left(t-x_{1} \ldots x_{m} m\right)$$, unpacks a Tuple $$t=\left(x_{1}, \ldots, x_{m}\right)$$ and returns its length $$m$$, but only if $$m \leq n \leq 15$$. Otherwise throws a type check exception.
-* 6F5 $$k$$ - SETINDEX $$k\left(t x-t^{\prime}\right)$$, computes Tuple $$t^{\prime}$$ that differs from $$t$$ only at position $$t_{k+1}^{\prime}$$, which is set to $$x$$. In other words, $$\left|t^{\prime}\right|=|t|, t_{i}^{\prime}=t_{i}$$ for $$i \neq k+1$$, and $$t_{k+1}^{\prime}=x$$, for given $$0 \leq k \leq 15$$. If $$k \geq|t|$$, throws a range check exception.
-* 6F50 - SETFIRST $$\left(t x-t^{\prime}\right)$$, sets the first component of Tuple $$t$$ to $$x$$ and returns the resulting Tuple $$t^{\prime}$$.
-* 6F51 - SETSECOND $$\left(t x-t^{\prime}\right)$$, sets the second component of Tuple $$t$$ to $$x$$ and returns the resulting Tuple $$t^{\prime}$$.
-* 6F52 - SETTHIRD $$\left(t x-t^{\prime}\right)$$, sets the third component of Tuple $$t$$ to $$x$$ and returns the resulting Tuple $$t^{\prime}$$.
-* 6F6 $$k$$ - INDEXQ $$k(t-x)$$, returns the $$k$$-th element of a Tuple $$t$$, where $$0 \leq k \leq 15$$. In other words, returns $$x_{k+1}$$ if $$t=\left(x_{1}, \ldots, x_{n}\right)$$. If $$k \geq n$$, or if $$t$$ is $$N u l l$$, returns a Null instead of $$x$$.
-* 6F7 $$k$$ - SETINDEXQ $$k\left(t x-t^{\prime}\right)$$, sets the $$k$$-th component of Tuple $$t$$ to $$x$$, where $$0 \leq k<16$$, and returns the resulting Tuple $$t^{\prime}$$. If $$|t| \leq k$$, first extends the original Tuple to length $$k+1$$ by setting all new components to Null. If the original value of $$t$$ is Null, treats it as an empty Tuple. If $$t$$ is not Null or Tuple, throws an exception. If $$x$$ is Null and either $$|t| \leq k$$ or $$t$$ is $$N u l l$$, then always returns $$t^{\prime}=t$$ (and does not consume tuple creation gas).
-* 6F80 - TUPLEVAR $$\left(x_{1} \ldots x_{n} n-t\right)$$, creates a new Tuple $$t$$ of length $$n$$ similarly to TUPLE, but with $$0 \leq n \leq 255$$ taken from the stack.
+$$6F0n~-~\text{TUPLE}~n~(x1~.~.~.~xn~–~t)$$, creates a new *Tuple* $$t = (x1, . . . , xn)$$ containing $$n$$ values $$x1, . . . , xn$$, where $$0 ≤ n ≤ 15$$.
+$$6F00~-~\text{NIL}~( – t)$$, pushes the only *Tuple* $$t = ()$$ of length zero.
+$$6F01~-~\text{SINGLE}~(x~–~t)$$, creates a singleton $$t := (x)$$, i.e., a *Tuple* of length one.
+$$6F02~-~\text{PAIR}~\text{or}~\text{CONS}~(x~y~–~t)$$, creates pair $$t := (x, y)$$.
+$$6F03~-~\text{TRIPLE}~(x~y~z~–~t)$$, creates triple $$t := (x, y, z)$$.
+$$6F1k~-~\text{INDEX}~k~(t~–~x)$$, returns the $$k$$-th element of a *Tuple* $$t$$, where $$0 ≤ k ≤ 15$$. In other words, returns $$x_k+1$$ if $$t = (x1, . . . , xn)$$. If $$k ≥ n$$, throws a range check exception.
+$$6F10~-~\text{FIRST}~\text{or}~\text{CAR}~(t~–~x)$$, returns the first element of a *Tuple*.
+$$6F11~-~\text{SECOND}~\text{or}~\text{CDR}~(t~–~y)$$, returns the second element of a *Tuple*.
+$$6F12~-~\text{THIRD}~(t~–~z)$$, returns the third element of a *Tuple*.
+$$6F2n~-~\text{UNTUPLE}~n~(t~–~x_1~.~.~.~x_n)$$, unpacks a *Tuple* $$t = (x_1, . . . ,x_n)$$ of length equal to $$0 ≤ n ≤ 15$$. If $$t$$ is not a *Tuple*, or if $$|t| \neq n$$, a type check exception is *thrown*.
+$$6F21~-~\text{UNSINGLE}~(t~–~x)$$, unpacks a singleton $$t = (x)$$.
+$$6F22~-~\text{UNPAIR or UNCONS}~(t~–~x~y)$$, unpacks a pair $$t = (x, y)$$.
+$$6F23~-~\text{UNTRIPLE}~(t~–~x~y~z)$$, unpacks a triple $$t = (x, y, z)$$.
+$$6F3k~-~\text{UNPACKFIRST}~k~(t~–~x_1~.~.~.~x_k)$$, unpacks the first $$0 \leq k \leq 15$$ elements of a Tuple $$t$$. If $$|t| < k$$, throws a type check exception.
+$$6F30~-~\text{CHKTUPLE}~(t~–~)$$, checks whether $$t$$ is a Tuple.
+$$6F4n~-~\text{EXPLODE}~n~(t~–~x_1~.~.~.~x_m~m)$$, unpacks a Tuple $$t = (x_1, . . . , x_m)$$ and returns its length $$m$$, but only if $$m \leq n \leq 15$$. Otherwise throws a type check exception.
+
+$$6F5k~-~\text{SETINDEX}~k~(t~x~–~t')$$, computes Tuple $$t'$$ that differs from $$t$$ only at position $$t'[k+1]$$, which is set to $$x$$. In other words, $$|t'| = |t|$$, $$t'[i] = t[i]$$ for $$i \neq k + 1$$, and $$t'[k+1] = x$$, for given $$0 \leq k \leq 15$$. If $$k \geq |t|$$, throws a range check exception.
+$$6F50~-~\text{SETFIRST}~(t~x~–~t')$$, sets the first component of Tuple $$t$$ to $$x$$ and returns the resulting Tuple $$t'$$.
+$$6F51~-~\text{SETSECOND}~(t~x~–~t')$$, sets the second component of Tuple $$t$$ to $$x$$ and returns the resulting Tuple $$t'$$.
+$$6F52~-~\text{SETTHIRD}~(t~x~–~t')$$, sets the third component of Tuple $$t$$ to $$x$$ and returns the resulting Tuple $$t'$$.
+$$6F6k~-~\text{INDEXQ}~k~(t~–~x)$$, returns the $$k$$-th element of a Tuple $$t$$, where $$0 \leq k \leq 15$$. In other words, returns $$t[k+1]$$ if $$t = (x_1, . . . , x_n)$$. If $$k \geq n$$, or if $$t$$ is Null, returns a Null instead of $$x$$.
+
+
+
+
+
+* 6F7 $$k$$ - SETINDEXQ $$k\left(t x-t^{\prime}\right)$$, sets the $$k$$-th component of Tuple $$$t$$$ to $$x$$, where $$0 \leq k<16$$, and returns the resulting Tuple $$$t^{\prime}$$. If $$|t| \leq k$$, first extends the original Tuple to length $$k+1$$ by setting all new components to Null. If the original value of $$$t$$$ is Null, treats it as an empty Tuple. If $$$t$$$ is not Null or Tuple, throws an exception. If $$x$$ is Null and either $$|t| \leq k$$ or $$$t$$$ is $$N u l l$$, then always returns $$$t^{\prime}=t$$$ (and does not consume tuple creation gas).
+* 6F80 - TUPLEVAR $$\left(x_{1} \ldots x_{n} n-t\right)$$, creates a new Tuple $$$t$$$ of length $$n$$ similarly to TUPLE, but with $$0 \leq n \leq 255$$ taken from the stack.
 * 6F81 - INDEXVAR $$(t k-x)$$, similar to INDEX $$k$$, but with $$0 \leq k \leq 254$$ taken from the stack.
 * 6F82 - UNTUPLEVAR $$\left(t n-x_{1} \ldots x_{n}\right)$$, similar to UNTUPLE $$n$$, but with $$0 \leq n \leq 255$$ taken from the stack.
 * 6F83 - UNPACKFIRSTVAR $$\left(t n-x_{1} \ldots x_{n}\right)$$, similar to UNPACKFIRST $$n$$, but with $$0 \leq n \leq 255$$ taken from the stack.
@@ -124,10 +132,10 @@ The following primitives work with (the only) value $$\perp$$ of type $$N u l l$
 * 6F86 - INDEXVARQ $$(t k-x)$$, similar to INDEXQ $$n$$, but with $$0 \leq k \leq 254$$ taken from the stack.
 * 6F87 - SETINDEXVARQ ( $$\left.t x k-t^{\prime}\right)$$, similar to SETINDEXQ $$k$$, but with $$0 \leq k \leq 254$$ taken from the stack.
 * 6F88 - TLEN $$(t-n)$$, returns the length of a Tuple.
-* 6F89 - QTLEN $$(t-n$$ or -1$$)$$, similar to TLEN, but returns -1 if $$t$$ is not a Tuple.
-* 6F8A - ISTUPLE $$(t-?)$$, returns -1 or 0 depending on whether $$t$$ is a Tuple.
-* 6F8B - LAST $$(t-x)$$, returns the last element $$t_{|t|}$$ of a non-empty Tuple $$t$$.
-* 6F8C - TPUSH or COMMA $$\left(t x-t^{\prime}\right)$$, appends a value $$x$$ to a Tuple $$t=$$ $$\left(x_{1}, \ldots, x_{n}\right)$$, but only if the resulting Tuple $$t^{\prime}=\left(x_{1}, \ldots, x_{n}, x\right)$$ is of length at most 255. Otherwise throws a type check exception. - 6F8D - TPOP $$\left(t-t^{\prime} x\right)$$, detaches the last element $$x=x_{n}$$ from a nonempty Tuple $$t=\left(x_{1}, \ldots, x_{n}\right)$$, and returns both the resulting Tuple $$t^{\prime}=$$ $$\left(x_{1}, \ldots, x_{n-1}\right)$$ and the original last element $$x$$.
+* 6F89 - QTLEN $$(t-n$$ or -1$$)$$, similar to TLEN, but returns -1 if $$$t$$$ is not a Tuple.
+* 6F8A - ISTUPLE $$(t-?)$$, returns -1 or 0 depending on whether $$$t$$$ is a Tuple.
+* 6F8B - LAST $$(t-x)$$, returns the last element $$$t_{|t|}$$ of a non-empty Tuple $$$t$$$.
+* 6F8C - TPUSH or COMMA $$\left(t x-t^{\prime}\right)$$, appends a value $$x$$ to a Tuple $$$t=$$ $$\left(x_{1}, \ldots, x_{n}\right)$$, but only if the resulting Tuple $$$t^{\prime}=\left(x_{1}, \ldots, x_{n}, x\right)$$ is of length at most 255. Otherwise throws a type check exception. - 6F8D - TPOP $$\left(t-t^{\prime} x\right)$$, detaches the last element $$x=x_{n}$$ from a nonempty Tuple $$$t=\left(x_{1}, \ldots, x_{n}\right)$$, and returns both the resulting Tuple $$$t^{\prime}=$$ $$\left(x_{1}, \ldots, x_{n-1}\right)$$ and the original last element $$x$$.
 * 6FA0 - NULLSWAPIF $$(x-x$$ or $$\perp x)$$, pushes a $$N u l l$$ under the topmost Integer $$x$$, but only if $$x \neq 0$$.
 * 6FA1 - NULLSWAPIFNOT $$(x-x$$ or $$\perp x)$$, pushes a $$N u l l$$ under the topmost Integer $$x$$, but only if $$x=0$$. May be used for stack alignment after quiet primitives such as PLDUXQ.
 * 6FA2 - NULLROTRIF $$(x y-x y$$ or $$\perp x y)$$, pushes a Null under the second stack entry from the top, but only if the topmost Integer $$y$$ is non-zero.
@@ -200,7 +208,7 @@ Most of the instructions listed below push literal slices, continuations, cells,
 The general encoding of a DIV, DIVMOD, or MOD operation is A9mscdf, with an optional pre-multiplication and an optional replacement of the division or multiplication by a shift. Variable one- or two-bit fields $$m, s, c, d$$, and $$f$$ are as follows: - $$0 \leq m \leq 1$$ - Indicates whether there is pre-multiplication (MULDIV operation and its variants), possibly replaced by a left shift.
 
 * $$0 \leq s \leq 2$$ - Indicates whether either the multiplication or the division have been replaced by shifts: $$s=0$$-no replacement, $$s=1$$-division replaced by a right shift, $$s=2$$-multiplication replaced by a left shift (possible only for $$m=1$$ ).
-* $$0 \leq c \leq 1$$ - Indicates whether there is a constant one-byte argument $$t t$$ for the shift operator (if $$s \neq 0$$ ). For $$s=0, c=0$$. If $$c=1$$, then $$0 \leq t t \leq 255$$, and the shift is performed by $$t t+1$$ bits. If $$s \neq 0$$ and $$c=0$$, then the shift amount is provided to the instruction as a top-of-stack Integer in range $$0 \ldots 256$$.
+* $$0 \leq c \leq 1$$ - Indicates whether there is a constant one-byte argument $$$t t$$$ for the shift operator (if $$s \neq 0$$ ). For $$s=0, c=0$$. If $$c=1$$, then $$0 \leq t t \leq 255$$, and the shift is performed by $$$t t+1$$ bits. If $$s \neq 0$$ and $$c=0$$, then the shift amount is provided to the instruction as a top-of-stack Integer in range $$0 \ldots 256$$.
 * $$1 \leq d \leq 3$$ - Indicates which results of division are required: 1-only the quotient, 2 -only the remainder, 3-both.
 * $$0 \leq f \leq 2$$ - Rounding mode: 0-floor, 1-nearest integer, 2-ceiling (cf. [$$\mathbf{1.5.6}$$](./))
 
@@ -214,19 +222,19 @@ Examples:
 * A90D - DIVMODR $$\left(x y-q^{\prime} r^{\prime}\right)$$, where $$q^{\prime}:=\lfloor x / y+1 / 2\rfloor, r^{\prime}:=x-y q^{\prime}$$.
 * A90E - DIVMODC $$\left(x y-q^{\prime \prime} r^{\prime \prime}\right)$$, where $$q^{\prime \prime}:=\lceil x / y\rceil, r^{\prime \prime}:=x-y q^{\prime \prime}$$.
 * A924 - same as RSHIFT: $$\left(x y-\left\lfloor x \cdot 2^{-y}\right\rfloor\right)$$ for $$0 \leq y \leq 256$$.
-* A934tt - same as RSHIFT $$t t+1:\left(x-\left\lfloor x \cdot 2^{-t t-1}\right\rfloor\right)$$.
-* A938tt - MODPOW2 $$t t+1:\left(x-x \bmod 2^{t t+1}\right)$$.
+* A934tt - same as RSHIFT $$$t t+1:\left(x-\left\lfloor x \cdot 2^{-t t-1}\right\rfloor\right)$$.
+* A938tt - MODPOW2 $$$t t+1:\left(x-x \bmod 2^{t t+1}\right)$$.
 * A985 - MULDIVR $$\left(x y z-q^{\prime}\right)$$, where $$q^{\prime}=\lfloor x y / z+1 / 2\rfloor$$. - A98C - MULDIVMOD $$(x y z-q r)$$, where $$q:=\lfloor x \cdot y / z\rfloor, r:=x \cdot y \bmod z$$ (same as $$* /$$ MOD in Forth).
 * A9A4 - MULRSHIFT $$\left(x y z-\left\lfloor x y \cdot 2^{-z}\right\rfloor\right)$$ for $$0 \leq z \leq 256$$.
 * A9A5 - MULRSHIFTR $$\left(x y z-\left\lfloor x y \cdot 2^{-z}+1 / 2\right\rfloor\right)$$ for $$0 \leq z \leq 256$$.
-* A9B4tt - MULRSHIFT $$t t+1\left(x y-\left\lfloor x y \cdot 2^{-t t-1}\right\rfloor\right)$$.
-* A9B5tt - MULRSHIFTR $$t t+1\left(x y-\left\lfloor x y \cdot 2^{-t t-1}+1 / 2\right\rfloor\right)$$.
+* A9B4tt - MULRSHIFT $$$t t+1\left(x y-\left\lfloor x y \cdot 2^{-t t-1}\right\rfloor\right)$$.
+* A9B5tt - MULRSHIFTR $$$t t+1\left(x y-\left\lfloor x y \cdot 2^{-t t-1}+1 / 2\right\rfloor\right)$$.
 * A9C4 - LSHIFTDIV $$\left(x y z-\left\lfloor 2^{z} x / y\right\rfloor\right)$$ for $$0 \leq z \leq 256$$.
 * A9C5 - LSHIFTDIVR $$\left(x y z-\left\lfloor 2^{z} x / y+1 / 2\right\rfloor\right)$$ for $$0 \leq z \leq 256$$.
-* A9D4tt - LSHIFTDIV $$t t+1\left(x y-\left\lfloor 2^{t t+1} x / y\right\rfloor\right)$$.
-* A9D5tt - LSHIFTDIVR $$t t+1\left(x y-\left\lfloor 2^{t t+1} x / y+1 / 2\right\rfloor\right)$$.
+* A9D4tt - LSHIFTDIV $$$t t+1\left(x y-\left\lfloor 2^{t t+1} x / y\right\rfloor\right)$$.
+* A9D5tt - LSHIFTDIVR $$$t t+1\left(x y-\left\lfloor 2^{t t+1} x / y+1 / 2\right\rfloor\right)$$.
 
-The most useful of these operations are DIV, DIVMOD, MOD, DIVR, DIVC, MODPOW2 $$t$$, and RSHIFTR $$t$$ (for integer arithmetic); and MULDIVMOD, MULDIV, MULDIVR, LSHIFTDIVR $$t$$, and MULRSHIFTR $$t$$ (for fixed-point arithmetic).
+The most useful of these operations are DIV, DIVMOD, MOD, DIVR, DIVC, MODPOW2 $$$t$$$, and RSHIFTR $$$t$$$ (for integer arithmetic); and MULDIVMOD, MULDIV, MULDIVR, LSHIFTDIVR $$$t$$$, and MULRSHIFTR $$$t$$$ (for fixed-point arithmetic).
 
 ### A.5.3. Shifts, logical operations.
 
@@ -926,17 +934,17 @@ created_lt:uint64 created_at:uint32 = CommonMsgInfoRelaxed;
 
 ```
 
-A deserialized MsgAddress is represented by a Tuple $$t$$ as follows:
+A deserialized MsgAddress is represented by a Tuple $$$t$$$ as follows:
 
-* addr\_none is represented by $$t=(0)$$, i.e., a Tuple containing exactly one Integer equal to zero.
-* addr\_extern is represented by $$t=(1, s)$$, where Slice $$s$$ contains the field external\_address. In other words, $$t$$ is a pair (a Tuple consisting of two entries), containing an Integer equal to one and Slice s.
-* addr\_std is represented by $$t=(2, u, x, s)$$, where $$u$$ is either a $$N u l l$$ (if anycast is absent) or a Slice $$s^{\prime}$$ containing rewrite\_pfx (if anycast is present). Next, Integer $$x$$ is the workchain\_id, and Slice s contains the address. - addr\_var is represented by $$t=(3, u, x, s)$$, where $$u, x$$, and $$s$$ have the same meaning as for addr\_std.
+* addr\_none is represented by $$$t=(0)$$, i.e., a Tuple containing exactly one Integer equal to zero.
+* addr\_extern is represented by $$$t=(1, s)$$, where Slice $$s$$ contains the field external\_address. In other words, $$$t$$$ is a pair (a Tuple consisting of two entries), containing an Integer equal to one and Slice s.
+* addr\_std is represented by $$$t=(2, u, x, s)$$, where $$u$$ is either a $$N u l l$$ (if anycast is absent) or a Slice $$s^{\prime}$$ containing rewrite\_pfx (if anycast is present). Next, Integer $$x$$ is the workchain\_id, and Slice s contains the address. - addr\_var is represented by $$$t=(3, u, x, s)$$, where $$u, x$$, and $$s$$ have the same meaning as for addr\_std.
 
 The following primitives, which use the above conventions, are defined:
 
 * FA40 - LDMSGADDR $$\left(s-s^{\prime} s^{\prime \prime}\right)$$, loads from CellSlice $$s$$ the only prefix that is a valid MsgAddress, and returns both this prefix $$s^{\prime}$$ and the remainder $$s^{\prime \prime}$$ of $$s$$ as CellSlices.
 * FA41 - LDMSGADDRQ $$\left(s-s^{\prime} s^{\prime \prime}-1\right.$$ or $$s$$ 0), a quiet version of LDMSGADDR: on success, pushes an extra -1 ; on failure, pushes the original $$s$$ and a zero.
-* FA42 - PARSEMSGADDR $$(s-t)$$, decomposes CellSlice s containing a valid MsgAddress into a Tuple $$t$$ with separate fields of this MsgAddress. If $$s$$ is not a valid MsgAddress, a cell deserialization exception is thrown.
+* FA42 - PARSEMSGADDR $$(s-t)$$, decomposes CellSlice s containing a valid MsgAddress into a Tuple $$$t$$$ with separate fields of this MsgAddress. If $$s$$ is not a valid MsgAddress, a cell deserialization exception is thrown.
 * FA43 - PARSEMSGADDRQ $$(s-t-1$$ or 0$$)$$, a quiet version of PARSEMSGADDR: returns a zero on error instead of throwing an exception.
 * FA44 - REWRITESTDADDR $$(s-x y)$$, parses CellSlice s containing a valid MsgAddressint (usually a msg\_addr\_std), applies rewriting from the anycast (if present) to the same-length prefix of the address, and returns both the workchain $$x$$ and the 256-bit address $$y$$ as Integers. If the address is not 256-bit, or if $$s$$ is not a valid serialization of MsgAddress Int, throws a cell deserialization exception.
 * FA45 - REWRITESTDADDRQ $$(s-x y-1$$ or 0 ), a quiet version of primitive REWRITESTDADDR.
