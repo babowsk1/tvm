@@ -131,20 +131,21 @@ $$6F50~-~\text{SETFIRST}~(t~x~–~t')$$, sets the first component of *Tuple* $$t
 * $$6F8B~-~\text{LAST}~(t~-~x)$$, returns the last element $$t|t|$$ of a non-empty *Tuple* $$t$$.
 * $$6F8C~-~\text{TPUSH}~\text{or}~\text{COMMA}~(t~x~-~t')$$, appends a value $$x$$ to a *Tuple* $$t = (x_1, \dots , x_n)$$, but only if the resulting *Tuple* $$t' = (x_1, \dots , x_n, x)$$ is of length at most 255. Otherwise throws a type check exception.
 * $$6F8D~-~\text{TPOP}~(t~-~t'~x)$$, detaches the last element $$x = x_n$$ from a non-empty *Tuple* $$t = (x_1, \dots, x_n)$$, and returns both the resulting *Tuple* $$t' = (x_1, \dots, x_{n-1})$$ and the original last element $$x$$.
-* $$6FA0~-~\text{NULLSWAPIF}~(x~-~x~\text{or}~\bot~x)$$, pushes a *Null* under the topmost Integer $$x$$, but only if $$x \neq 0$$.
-* $$6FA1~-~\text{NULLSWAPIFNOT}~(x~-~x~\text{or}~\bot~x)$$, pushes a *Null* under the topmost Integer $$x$$, but only if $$x = 0$$. May be used for stack alignment after quiet primitives such as $$PLDUXQ$$.
+* $$6FA0~-~\text{NULLSWAPIF}~(x~-~x~\text{or}~\bot~x)$$, pushes a *Null* under the topmost Integer $$x$$, but only if $$x~\neq~0$$.
+* $$6FA1~-~\text{NULLSWAPIFNOT}~(x~-~x~\text{or}~\bot~x)$$, pushes a *Null* under the topmost Integer $$x$$, but only if $$x~=~0$$. May be used for stack alignment after quiet primitives such as $$PLDUXQ$$.
 * $$6FA2~-~\text{NULLROTRIF}~(x~y~-~x~y~\text{or}~\bot~x~y)$$, pushes a *Null* under the second stack entry from the top, but only if the topmost Integer $$y$$ is non-zero.
 * $$6FA3~-~\text{NULLROTRIFNOT}~(x~y~-~x~y~\text{or}~\bot~x~y)$$, pushes a *Null* under the second stack entry from the top, but only if the topmost Integer $$y$$ is zero. May be used for stack alignment after quiet primitives such as $$LDUXQ$$.
-* $$6FA4~-~\text{NULLSWAPIF2}~(x~-~x~\text{or}~\bot~\bot~x)$$, pushes two *Nulls* under the topmost Integer $$x$$, but only if $$x \neq 0$$. Equivalent to $$NULLSWAPIF; NULLSWAPIF$$.
-* $$6FA5~-~\text{NULLSWAPIFNOT2}~(x~-~x~\text{or}~\bot~\bot~x)$$, pushes two *Nulls* under the topmost Integer $$x$$, but only if $$x = 0$$. Equivalent to $$NULLSWAPIFNOT; NULLSWAPIFNOT$$.
-* $$6FA6~-~\text{NULLROTRIF2}~(x~y~-~x~y~\text{or}~\bot~\bot~x~y)$$, pushes two *Nulls* under the second stack entry from the top, but only if the topmost Integer $$y$$ is non-zero. Equivalent to $$NULLROTRIF; NULLROTRIF$$.
-* $$6FA7~-~\text{NULLROTRIFNOT2}~(x~y~-~x~y~\text{or}~\bot~\bot~x~y)$$, pushes two *Nulls* under the second stack entry from the top, but only if the topmost Integer $$y$$ is zero. Equivalent to $$NULLROTRIFNOT; NULLROTRIFNOT$$.
-* $$6FB_{ij}~-~\text{INDEX2}~i,j~(t~-~x)$$, recovers $$x = (t_{i+1})_{j+1}$$ for $$0 \leq i, j \leq 3$$. Equivalent to $$INDEX~i; INDEX~j$$.
-* $$6FB4~-~\text{CADR}~(t~-~x)$$, recovers $$x = (t_2)_1$$.
+* $$6FA4~-~\text{NULLSWAPIF2}~(x~-~x~\text{or}~\bot~\bot~x)$$, pushes two *Nulls* under the topmost Integer $$x$$, but only if $$x~\neq~0$$. Equivalent to $$NULLSWAPIF;~NULLSWAPIF$$.
+* $$6FA5~-~\text{NULLSWAPIFNOT2}~(x~-~x~\text{or}~\bot~\bot~x)$$, pushes two *Nulls* under the topmost Integer $$x$$, but only if $$x~=~0$$. Equivalent to $$NULLSWAPIFNOT;~NULLSWAPIFNOT$$.
+* $$6FA6~-~\text{NULLROTRIF2}~(x~y~-~x~y~\text{or}~\bot~\bot~x~y)$$, pushes two *Nulls* under the second stack entry from the top, but only if the topmost Integer $$y$$ is non-zero. Equivalent to $$NULLROTRIF;~NULLROTRIF$$.
+* $$6FA7~-~\text{NULLROTRIFNOT2}~(x~y~-~x~y~\text{or}~\bot~\bot~x~y)$$, pushes two *Nulls* under the second stack entry from the top, but only if the topmost Integer $$y$$ is zero. Equivalent to $$NULLROTRIFNOT;~NULLROTRIFNOT$$.
+* $$6FB_{ij}~-~\text{INDEX2}~i,j~(t~-~x)$$, recovers $$x~=~(t_{i+1})_{j+1}$$ for $$0~\leq~i,~j~\leq~3$$. Equivalent to $$INDEX~i;~INDEX~j$$.
+* $$6FB4~-~\text{CADR}~(t~-~x)$$, recovers $$x~=~(t_2)_1$$.
 * $$6FB5~-~\text{CDDR}(t~-~x)$$, recovers $$x=(t_2)_2$$.
 * $$6FE_{ijk}~-~\text{INDEX3}~i,j,k(t~-~x)$$, recovers $$x=(t_{i+1})_{j+1,k+1}$$ for $$0\leq~i,~j,~k\leq~3$$. Equivalent to $$INDEX2~i,j;~INDEX~k$$.
 * $$6FD4~-~\text{CADDR}(t~-~x)$$, recovers $$x=(t_2)_{2_1}$$.
 * $$6FD5~-~\text{CDDDR}(t~-~x)$$, recovers $$x=(t_2)_{2_2}$$.
+
 
 ## A.4 Constant, or literal primitives
 
