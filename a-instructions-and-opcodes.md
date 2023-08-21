@@ -95,28 +95,27 @@ The following primitives work with (the only) value $$\perp$$ of type *Null*, us
 
 ### A.3.2. Tuple primitives.
 
-$$6F0n~-~\text{TUPLE}~n~(x1~.~.~.~xn~–~t)$$, creates a new *Tuple* $$t = (x1, . . . , xn)$$ containing $$n$$ values $$x1, . . . , xn$$, where $$0 ≤ n ≤ 15$$.
-$$6F00~-~\text{NIL}~( – t)$$, pushes the only *Tuple* $$t = ()$$ of length zero.
-$$6F01~-~\text{SINGLE}~(x~–~t)$$, creates a singleton $$t := (x)$$, i.e., a *Tuple* of length one.
-$$6F02~-~\text{PAIR}~\text{or}~\text{CONS}~(x~y~–~t)$$, creates pair $$t := (x, y)$$.
-$$6F03~-~\text{TRIPLE}~(x~y~z~–~t)$$, creates triple $$t := (x, y, z)$$.
-$$6F1k~-~\text{INDEX}~k~(t~–~x)$$, returns the $$k$$-th element of a *Tuple* $$t$$, where $$0 ≤ k ≤ 15$$. In other words, returns $$x_k+1$$ if $$t = (x1, . . . , xn)$$. If $$k ≥ n$$, throws a range check exception.
-$$6F10~-~\text{FIRST}~\text{or}~\text{CAR}~(t~–~x)$$, returns the first element of a *Tuple*.
-$$6F11~-~\text{SECOND}~\text{or}~\text{CDR}~(t~–~y)$$, returns the second element of a *Tuple*.
-$$6F12~-~\text{THIRD}~(t~–~z)$$, returns the third element of a *Tuple*.
-$$6F2n~-~\text{UNTUPLE}~n~(t~–~x_1~.~.~.~x_n)$$, unpacks a *Tuple* $$t = (x_1, . . . ,x_n)$$ of length equal to $$0 ≤ n ≤ 15$$. If $$t$$ is not a *Tuple*, or if $$|t| \neq n$$, a type check exception is *thrown*.
-$$6F21~-~\text{UNSINGLE}~(t~–~x)$$, unpacks a singleton $$t = (x)$$.
-$$6F22~-~\text{UNPAIR or UNCONS}~(t~–~x~y)$$, unpacks a pair $$t = (x, y)$$.
-$$6F23~-~\text{UNTRIPLE}~(t~–~x~y~z)$$, unpacks a triple $$t = (x, y, z)$$.
-$$6F3k~-~\text{UNPACKFIRST}~k~(t~–~x_1~.~.~.~x_k)$$, unpacks the first $$0 \leq k \leq 15$$ elements of a Tuple $$t$$. If $$|t| < k$$, throws a type check exception.
-$$6F30~-~\text{CHKTUPLE}~(t~–~)$$, checks whether $$t$$ is a Tuple.
-$$6F4n~-~\text{EXPLODE}~n~(t~–~x_1~.~.~.~x_m~m)$$, unpacks a Tuple $$t = (x_1, . . . , x_m)$$ and returns its length $$m$$, but only if $$m \leq n \leq 15$$. Otherwise throws a type check exception.
-
-$$6F5k~-~\text{SETINDEX}~k~(t~x~–~t')$$, computes Tuple $$t'$$ that differs from $$t$$ only at position $$t'[k+1]$$, which is set to $$x$$. In other words, $$|t'| = |t|$$, $$t'[i] = t[i]$$ for $$i \neq k + 1$$, and $$t'[k+1] = x$$, for given $$0 \leq k \leq 15$$. If $$k \geq |t|$$, throws a range check exception.
+* $$6F0n~-~\text{TUPLE}~n~(x1~.~.~.~xn~–~t)$$, creates a new *Tuple* $$t = (x1, . . . , xn)$$ containing $$n$$ values $$x1, . . . , xn$$, where $$0 ≤ n ≤ 15$$.
+* $$6F00~-~\text{NIL}~( – t)$$, pushes the only *Tuple* $$t = ()$$ of length zero.
+* $$6F01~-~\text{SINGLE}~(x~–~t)$$, creates a singleton $$t := (x)$$, i.e., a *Tuple* of length one.
+* $$6F02~-~\text{PAIR}~\text{or}~\text{CONS}~(x~y~–~t)$$, creates pair $$t := (x, y)$$.
+* $$6F03~-~\text{TRIPLE}~(x~y~z~–~t)$$, creates triple $$t := (x, y, z)$$.
+* $$6F1k~-~\text{INDEX}~k~(t~–~x)$$, returns the $$k$$-th element of a *Tuple* $$t$$, where $$0 ≤ k ≤ 15$$. In other words, returns $$x_k+1$$ if $$t = (x1, . . . , xn)$$. If $$k ≥ n$$, throws a range check exception.
+* $$6F10~-~\text{FIRST}~\text{or}~\text{CAR}~(t~–~x)$$, returns the first element of a *Tuple*.
+* $$6F11~-~\text{SECOND}~\text{or}~\text{CDR}~(t~–~y)$$, returns the second element of a *Tuple*.
+* $$6F12~-~\text{THIRD}~(t~–~z)$$, returns the third element of a *Tuple*.
+* $$6F2n~-~\text{UNTUPLE}~n~(t~–~x_1~.~.~.~x_n)$$, unpacks a *Tuple* $$t = (x_1, . . . ,x_n)$$ of length equal to $$0 ≤ n ≤ 15$$. If $$t$$ is not a *Tuple*, or if $$|t| \neq n$$, a type check exception is *thrown*.
+* $$6F21~-~\text{UNSINGLE}~(t~–~x)$$, unpacks a singleton $$t = (x)$$.
+* $$6F22~-~\text{UNPAIR or UNCONS}~(t~–~x~y)$$, unpacks a pair $$t = (x, y)$$.
+* $$6F23~-~\text{UNTRIPLE}~(t~–~x~y~z)$$, unpacks a triple $$t = (x, y, z)$$.
+* $$6F3k~-~\text{UNPACKFIRST}~k~(t~–~x_1~.~.~.~x_k)$$, unpacks the first $$0 \leq k \leq 15$$ elements of a Tuple $$t$$. If $$|t| < k$$, throws a type check exception.
+* $$6F30~-~\text{CHKTUPLE}~(t~–~)$$, checks whether $$t$$ is a Tuple.
+* $$6F4n~-~\text{EXPLODE}~n~(t~–~x_1~.~.~.~x_m~m)$$, unpacks a Tuple $$t = (x_1, . . . , x_m)$$ and returns its length $$m$$, but only if $$m \leq n \leq 15$$. Otherwise throws a type check exception.
+* $$6F5k~-~\text{SETINDEX}~k~(t~x~–~t')$$, computes Tuple $$t'$$ that differs from $$t$$ only at position $$t'[k+1]$$, which is set to $$x$$. In other words, $$|t'| = |t|$$, $$t'[i] = t[i]$$ for $$i \neq k + 1$$, and $$t'[k+1] = x$$, for given $$0 \leq k \leq 15$$. If $$k \geq |t|$$, throws a range check exception.
 $$6F50~-~\text{SETFIRST}~(t~x~–~t')$$, sets the first component of Tuple $$t$$ to $$x$$ and returns the resulting Tuple $$t'$$.
-$$6F51~-~\text{SETSECOND}~(t~x~–~t')$$, sets the second component of Tuple $$t$$ to $$x$$ and returns the resulting Tuple $$t'$$.
-$$6F52~-~\text{SETTHIRD}~(t~x~–~t')$$, sets the third component of Tuple $$t$$ to $$x$$ and returns the resulting Tuple $$t'$$.
-$$6F6k~-~\text{INDEXQ}~k~(t~–~x)$$, returns the $$k$$-th element of a Tuple $$t$$, where $$0 \leq k \leq 15$$. In other words, returns $$t[k+1]$$ if $$t = (x_1, . . . , x_n)$$. If $$k \geq n$$, or if $$t$$ is Null, returns a Null instead of $$x$$.
+* $$6F51~-~\text{SETSECOND}~(t~x~–~t')$$, sets the second component of Tuple $$t$$ to $$x$$ and returns the resulting Tuple $$t'$$.
+* $$6F52~-~\text{SETTHIRD}~(t~x~–~t')$$, sets the third component of Tuple $$t$$ to $$x$$ and returns the resulting Tuple $$t'$$.
+* $$6F6k~-~\text{INDEXQ}~k~(t~–~x)$$, returns the $$k$$-th element of a Tuple $$t$$, where $$0 \leq k \leq 15$$. In other words, returns $$t[k+1]$$ if $$t = (x_1, . . . , x_n)$$. If $$k \geq n$$, or if $$t$$ is Null, returns a Null instead of $$x$$.
 
 
 
