@@ -141,10 +141,10 @@ $$6F50~-~\text{SETFIRST}~(t~x~–~t')$$, sets the first component of *Tuple* $$t
 * $$6FA7~-~\text{NULLROTRIFNOT2}~(x~y~-~x~y~\text{or}~\bot~\bot~x~y)$$, pushes two *Nulls* under the second stack entry from the top, but only if the topmost Integer $$y$$ is zero. Equivalent to $$NULLROTRIFNOT;~NULLROTRIFNOT$$.
 * $$6FB_{ij}~-~\text{INDEX2}~i,j~(t~-~x)$$, recovers $$x~=~(t_{i+1})_{j+1}$$ for $$0~\leq~i,~j~\leq~3$$. Equivalent to $$INDEX~i;~INDEX~j$$.
 * $$6FB4~-~\text{CADR}~(t~-~x)$$, recovers $$x~=~(t_2)_1$$.
-* $$6FB5~-~\text{CDDR}(t~-~x)$$, recovers $$x=(t_2)_2$$.
-* $$6FE_{ijk}~-~\text{INDEX3}~i,j,k(t~-~x)$$, recovers $$x=(t_{i+1})_{j+1,k+1}$$ for $$0\leq~i,~j,~k\leq~3$$. Equivalent to $$INDEX2~i,j;~INDEX~k$$.
-* $$6FD4~-~\text{CADDR}(t~-~x)$$, recovers $$x=(t_2)_{2_1}$$.
-* $$6FD5~-~\text{CDDDR}(t~-~x)$$, recovers $$x=(t_2)_{2_2}$$.
+* $$6FB5~-~\text{CDDR}~(t~-~x)$$, recovers $$x=(t_2)_2$$.
+* $$6FE_{ijk}~-~\text{INDEX3}~i,j,k~(t~-~x)$$, recovers $$x=(t_{i+1})_{j+1,k+1}$$ for $$0\leq~i,~j,~k\leq~3$$. Equivalent to $$INDEX2~i,j;~INDEX~k$$.
+* $$6FD4~-~\text{CADDR}~(t~-~x)$$, recovers $$x=(t_2)_{2_1}$$.
+* $$6FD5~-~\text{CDDDR}~(t~-~x)$$, recovers $$x=(t_2)_{2_2}$$.
 
 
 ## A.4 Constant, or literal primitives
