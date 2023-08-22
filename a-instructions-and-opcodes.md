@@ -566,10 +566,10 @@ All these primitives first check whether there is enough space in the Builder, a
 * $$\text{E30E}$$ — $$\text{IFELSEREF}$$ ($$f~c \to$$), equivalent to $$\text{PUSHREFCONT};~\text{IFELSE}$$.
 * $$\text{E30F}$$ — $$\text{IFREFELSEREF}$$ ($$f \to$$), equivalent to $$\text{PUSHREFCONT};~\text{PUSHREFCONT};~\text{IFELSE}$$.
 * $$\text{E310–E31F}$$ — reserved for loops with break operators, cf. A.8.3 below.
-* $$\text{E39}_{n}$$ — $$\text{IFBITJMP}~ n$$ ($$x~c \to x$$), checks whether bit $$0 \leq n \leq 31$$ is set in integer $$x$$, and if so, performs $$\text{JMPX}$$ to continuation $$c$$. Value $$x$$ is left in the stack.
-* $$\text{E3B}_{n}$$ — $$\text{IFNBITJMP}~ n$$ ($$x~c \to x$$), jumps to $$c$$ if bit $$0 \leq n \leq 31$$ is not set in integer $$x$$.
-* $$\text{E3D}_{n}$$ — $$\text{IFBITJMPREF}~ n$$ ($$x \to x$$), performs a $$\text{JMPREF}$$ if bit $$0 \leq n \leq 31$$ is set in integer $$x$$.
-* $$\text{E3F}_{n}$$ — $$\text{IFNBITJMPREF}~ n$$ ($$x \to x$$), performs a $$\text{JMPREF}$$ if bit $$0 \leq n \leq 31$$ is not set in integer $$x$$.
+* $$\text{E39_n}$$ — $$\text{IFBITJMP}~ n$$ ($$x~c \to x$$), checks whether bit $$0 \leq n \leq 31$$ is set in integer $$x$$, and if so, performs $$\text{JMPX}$$ to continuation $$c$$. Value $$x$$ is left in the stack.
+* $$\text{E3B_n}$$ — $$\text{IFNBITJMP}~ n$$ ($$x~c \to x$$), jumps to $$c$$ if bit $$0 \leq n \leq 31$$ is not set in integer $$x$$.
+* $$\text{E3D_n}$$ — $$\text{IFBITJMPREF}~ n$$ ($$x \to x$$), performs a $$\text{JMPREF}$$ if bit $$0 \leq n \leq 31$$ is set in integer $$x$$.
+* $$\text{E3F_n}$$ — $$\text{IFNBITJMPREF}~ n$$ ($$x \to x$$), performs a $$\text{JMPREF}$$ if bit $$0 \leq n \leq 31$$ is not set in integer $$x$$.
 
 ### A.8.3. Control flow primitives: loops.
 
