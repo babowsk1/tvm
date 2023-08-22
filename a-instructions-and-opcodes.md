@@ -25,24 +25,24 @@ Some stack manipulation instructions have two mnemonics: one Forthstyle (e.g., -
 
 ### A.2.1. Basic stack manipulation primitives.
 
-* $$00~-~NOP,~\text{does~nothing.}$$
-* $$01~-~XCHG~{s}(1),~\text{also~known~as~SWAP.}$$
-* $$0i~-~XCHG~{s}(i)~\text{or}~XCHG~{s}(0),{s}(i),~\text{interchanges~the~top~of~the~stack~with}~{s}(i),~1 ≤ i ≤ 15.$$
-* $$10ij~-~XCHG~{s}(i),{s}(j),~1 ≤ i < j ≤ 15,~\text{interchanges}~{s}(i)~\text{with}~{s}(j).$$
-* $$11ii~-~XCHG~{s}(0),{s}(ii),~\text{with}~0 ≤ ii ≤ 255.$$
+* $$00~-~NOP,~{does~nothing.}$$
+* $$01~-~XCHG~{s}(1),~{also~known~as~SWAP.}$$
+* $$0i~-~XCHG~{s}(i)~{or}~XCHG~{s}(0),{s}(i),~{interchanges~the~top~of~the~stack~with}~{s}(i),~1 ≤ i ≤ 15.$$
+* $$10ij~-~XCHG~{s}(i),{s}(j),~1 ≤ i < j ≤ 15,~{interchanges}~{s}(i)~{with}~{s}(j).$$
+* $$11ii~-~XCHG~{s}(0),{s}(ii),~{with}~0 ≤ ii ≤ 255.$$
 * $$1i~-~XCHG~{s}(1),{s}(i),~2 ≤ i ≤ 15.$$
-* $$2i~-~PUSH~{s}(i),~0 ≤ i ≤ 15,~\text{pushes~a~copy~of~the~old}~{s}(i)~\text{into~the~stack.}$$
-* $$20~-~PUSH~{s}(0),~\text{also~known~as~DUP.}$$
-* $$21~-~PUSH~{s}(1),~\text{also~known~as~OVER.}$$
-* $$3i~-~POP~{s}(i),~0 ≤ i ≤ 15,~\text{pops~the~old~top-of-stack~value~into~the~old}~{s}(i).$$
-* $$30~-~POP~{s}(0),~\text{also~known~as~DROP,~discards~the~top-of-stack~value.}$$
-* $$31~-~\text{POP}~{s}(1),~\text{also~known~as~NIP.}$$
+* $$2i~-~PUSH~{s}(i),~0 ≤ i ≤ 15,~{pushes~a~copy~of~the~old}~{s}(i)~{into~the~stack.}$$
+* $$20~-~PUSH~{s}(0),~{also~known~as~DUP.}$$
+* $$21~-~PUSH~{s}(1),~{also~known~as~OVER.}$$
+* $$3i~-~POP~{s}(i),~0 ≤ i ≤ 15,~{pops~the~old~top-of-stack~value~into~the~old}~{s}(i).$$
+* $$30~-~POP~{s}(0),~{also~known~as~DROP,~discards~the~top-of-stack~value.}$$
+* $$31~-~{POP}~{s}(1),~{also~known~as~NIP.}$$
 
 ### A.2.2. Compound stack manipulation primitives.
 
 Parameters $$i, j$$, and $$k$$ of the following primitives all are 4-bit integers in the range $$0 \ldots 15$$.
 
-* $$4ijk~-~XCHG3~{s}(i), {s}(j), {s}(k)$$, equivalent to $$XCHG~{s}(2), {s}(i);~XCHG~{s}(1), {s}(j);~XCHG~{s}(0), {s}(k),~\text{with}~0 ≤ i, j, k ≤ 15$$.
+* $$4ijk~-~XCHG3~{s}(i), {s}(j), {s}(k)$$, equivalent to $$XCHG~{s}(2), {s}(i);~XCHG~{s}(1), {s}(j);~XCHG~{s}(0), {s}(k),~{with}~0 ≤ i, j, k ≤ 15$$.
 * $$50ij~-~XCHG2~{s}(i),~{s}(j)$$, equivalent to $$XCHG~{s}(1),~{s}(i);~XCHG~{s}(j)$$.
 * $$51ij~-~XCPU~{s}(i),~{s}(j)$$, equivalent to $$XCHG~{s}(i);~PUSH~{s}(j)$$.
 * $$52ij~-~PUXC~{s}(i),~{s}(j-1)$$, equivalent to $$PUSH~{s}(i);~SWAP;~XCHG~{s}(j)$$.
@@ -59,23 +59,23 @@ Parameters $$i, j$$, and $$k$$ of the following primitives all are 4-bit integer
 
 ### A.2.3. Exotic stack manipulation primitives.
 
-* $$55ij~-~\text{BLKSWAP}~i+1,j +1$$, permutes two blocks $${s}(j +i+1). . . {s}(j +1)$$ and $${s}(j). . . {s}(0)$$, for $$0 ≤ i, j ≤ 15$$. Equivalent to $$\text{REVERSE}~i + 1,j + 1;~\text{REVERSE}~j + 1,0;~\text{REVERSE}~i + j + 2,0$$.
-* $$5513~-~\text{ROT2}~\text{or}~2ROT~(a~b~c~d~e~f~–~c~d~e~f~a~b)$$, rotates the three topmost pairs of stack entries.
-* $$550i~-~\text{ROLL}~i + 1$$, rotates the top $$i + 1$$ stack entries. Equivalent to $$\text{BLKSWAP}~1,i + 1$$.
-* $$55i0~-~\text{ROLLREV}~i+1~\text{or}~-ROLL~i+1$$, rotates the top $$i+1$$ stack entries in the other direction. Equivalent to $$\text{BLKSWAP}~i + 1,1$$.
-* $$56ii~-~\text{PUSH}~{s}(ii)~\text{for}~0 ≤ ii ≤ 255.$$
-* $$57ii~-~\text{POP}~{s}(ii)~\text{for}~0 ≤ ii ≤ 255.$$
-* $$58~-~\text{ROT}~(a~b~c~–~b~c~a)$$, equivalent to $$\text{BLKSWAP}~1,2~\text{or~to}~\text{XCHG2}~s2,s1$$.
-* $$59~-~\text{ROTREV}~\text{or}~-ROT~(a~b~c~–~c~a~b)$$, equivalent to $$\text{BLKSWAP}~2,1~\text{or~to}~\text{XCHG2}~s2,s2$$.
-* $$5A~-~\text{SWAP2}~\text{or}~2SWAP~(a~b~c~d~–~c~d~a~b)$$, equivalent to $$\text{BLKSWAP}~2,2~\text{or~to}~\text{XCHG2}~s3,s2$$.
-* $$5B~-~\text{DROP2~or~2DROP}~(a~b~–~),~\text{equivalent~to}~\text{DROP;}~\text{DROP.}$$
-* $$5C~-~\text{DUP2~or~2DUP}~(a~b~–~a~b~a~b),~\text{equivalent~to}~\text{PUSH2}~{s}(1),{s}(0).$$
-* $$5D~-~\text{OVER2~or~2OVER}~(a~b~c~d~–~a~b~c~d~a~b),~\text{equivalent~to}~\text{PUSH2}~{s}(3),{s}(2).$$
-* $$5Eij~-~\text{REVERSE}~i+2,j,~\text{reverses~the~order~of}~{s}(j+i+1)~\ldots~{s}(j)~\text{for}~0 ≤ i, j ≤ 15;~\text{equivalent~to~a~sequence~of}~\frac{b}{2}~\text{XCHGs.}$$
-* $$5F0i~-~\text{BLKDROP}~i,~\text{equivalent~to}~\text{DROP}~\text{performed}~i~\text{times.}$$
-* $$5Fij~-~\text{BLKPUSH}~i,j$$, equivalent to $$\text{PUSH}~{s}(j)~\text{performed}~i~\text{times},~1 ≤ i ≤ 15,~0 ≤ j ≤ 15$$.
-* $$60~-~\text{PICK~or~PUSHX,~pops~integer}~i~\text{from~the~stack,~then~performs}~\text{PUSH}~{s}(i).$$
-* $$61~-~\text{ROLLX,~pops~integer}~i~\text{from~the~stack,~then~performs}~\text{BLKSWAP}~1,i.$$
+* $$55ij~-~{BLKSWAP}~i+1,j +1$$, permutes two blocks $${s}(j +i+1). . . {s}(j +1)$$ and $${s}(j). . . {s}(0)$$, for $$0 ≤ i, j ≤ 15$$. Equivalent to $${REVERSE}~i + 1,j + 1;~{REVERSE}~j + 1,0;~{REVERSE}~i + j + 2,0$$.
+* $$5513~-~{ROT2}~{or}~2ROT~(a~b~c~d~e~f~–~c~d~e~f~a~b)$$, rotates the three topmost pairs of stack entries.
+* $$550i~-~{ROLL}~i + 1$$, rotates the top $$i + 1$$ stack entries. Equivalent to $${BLKSWAP}~1,i + 1$$.
+* $$55i0~-~{ROLLREV}~i+1~{or}~-ROLL~i+1$$, rotates the top $$i+1$$ stack entries in the other direction. Equivalent to $${BLKSWAP}~i + 1,1$$.
+* $$56ii~-~{PUSH}~{s}(ii)~{for}~0 ≤ ii ≤ 255.$$
+* $$57ii~-~{POP}~{s}(ii)~{for}~0 ≤ ii ≤ 255.$$
+* $$58~-~{ROT}~(a~b~c~–~b~c~a)$$, equivalent to $${BLKSWAP}~1,2~{or~to}~{XCHG2}~s2,s1$$.
+* $$59~-~{ROTREV}~{or}~-ROT~(a~b~c~–~c~a~b)$$, equivalent to $${BLKSWAP}~2,1~{or~to}~{XCHG2}~s2,s2$$.
+* $$5A~-~{SWAP2}~{or}~2SWAP~(a~b~c~d~–~c~d~a~b)$$, equivalent to $${BLKSWAP}~2,2~{or~to}~{XCHG2}~s3,s2$$.
+* $$5B~-~{DROP2~or~2DROP}~(a~b~–~),~{equivalent~to}~{DROP;}~{DROP.}$$
+* $$5C~-~{DUP2~or~2DUP}~(a~b~–~a~b~a~b),~{equivalent~to}~{PUSH2}~{s}(1),{s}(0).$$
+* $$5D~-~{OVER2~or~2OVER}~(a~b~c~d~–~a~b~c~d~a~b),~{equivalent~to}~{PUSH2}~{s}(3),{s}(2).$$
+* $$5Eij~-~{REVERSE}~i+2,j,~{reverses~the~order~of}~{s}(j+i+1)~\ldots~{s}(j)~{for}~0 ≤ i, j ≤ 15;~{equivalent~to~a~sequence~of}~\frac{b}{2}~{XCHGs.}$$
+* $$5F0i~-~{BLKDROP}~i,~{equivalent~to}~{DROP}~{performed}~i~{times.}$$
+* $$5Fij~-~{BLKPUSH}~i,j$$, equivalent to $${PUSH}~{s}(j)~{performed}~i~{times},~1 ≤ i ≤ 15,~0 ≤ j ≤ 15$$.
+* $$60~-~{PICK~or~PUSHX,~pops~integer}~i~{from~the~stack,~then~performs}~{PUSH}~{s}(i).$$
+* $$61~-~{ROLLX,~pops~integer}~i~{from~the~stack,~then~performs}~{BLKSWAP}~1,i.$$
 
 ## A.3 Tuple, List, and Null primitives
 
@@ -89,77 +89,77 @@ Lisp-style lists are represented with the aid of pairs, i.e., tuples consisting 
 
 The following primitives work with (the only) value $$\perp$$ of type *Null*, useful for representing empty lists, empty branches of binary trees, and absence of values in *Maybe* $$X$$ types. An empty *Tuple* created by $$NIL$$ could have been used for the same purpose; however, *Null* is more efficient and costs less gas.
 
-* $$6D~-~\text{NULL}~\text{or}~\text{PUSHNULL}~(–~\bot)$$, pushes the only value of type *Null*.
-* $$6E~-~\text{ISNULL}~(x~–~?)$$, checks whether x is a *Null*, and returns $$−1$$ or $$0$$ accordingly.
+* $$6D~-~{NULL}~{or}~{PUSHNULL}~(–~\bot)$$, pushes the only value of type *Null*.
+* $$6E~-~{ISNULL}~(x~–~?)$$, checks whether x is a *Null*, and returns $$−1$$ or $$0$$ accordingly.
 
 
 ### A.3.2. Tuple primitives.
 
-* $$6F0n~-~\text{TUPLE}~n~(x1~.~.~.~xn~–~t)$$, creates a new *Tuple* $$t = (x1, . . . , xn)$$ containing $$n$$ values $$x1, . . . , xn$$, where $$0 ≤ n ≤ 15$$.
-* $$6F00~-~\text{NIL}~( – t)$$, pushes the only *Tuple* $$t = ()$$ of length zero.
-* $$6F01~-~\text{SINGLE}~(x~–~t)$$, creates a singleton $$t := (x)$$, i.e., a *Tuple* of length one.
-* $$6F02~-~\text{PAIR}~\text{or}~\text{CONS}~(x~y~–~t)$$, creates pair $$t := (x, y)$$.
-* $$6F03~-~\text{TRIPLE}~(x~y~z~–~t)$$, creates triple $$t := (x, y, z)$$.
-* $$6F1k~-~\text{INDEX}~k~(t~–~x)$$, returns the $$k$$-th element of a *Tuple* $$t$$, where $$0 ≤ k ≤ 15$$. In other words, returns $$x_k+1$$ if $$t = (x1, . . . , xn)$$. If $$k ≥ n$$, throws a range check exception.
-* $$6F10~-~\text{FIRST}~\text{or}~\text{CAR}~(t~–~x)$$, returns the first element of a *Tuple*.
-* $$6F11~-~\text{SECOND}~\text{or}~\text{CDR}~(t~–~y)$$, returns the second element of a *Tuple*.
-* $$6F12~-~\text{THIRD}~(t~–~z)$$, returns the third element of a *Tuple*.
-* $$6F2n~-~\text{UNTUPLE}~n~(t~–~x_1~.~.~.~x_n)$$, unpacks a *Tuple* $$t = (x_1, . . . ,x_n)$$ of length equal to $$0 ≤ n ≤ 15$$. If $$t$$ is not a *Tuple*, or if $$|t| \neq n$$, a type check exception is *thrown*.
-* $$6F21~-~\text{UNSINGLE}~(t~–~x)$$, unpacks a singleton $$t = (x)$$.
-* $$6F22~-~\text{UNPAIR or UNCONS}~(t~–~x~y)$$, unpacks a pair $$t = (x, y)$$.
-* $$6F23~-~\text{UNTRIPLE}~(t~–~x~y~z)$$, unpacks a triple $$t = (x, y, z)$$.
-* $$6F3k~-~\text{UNPACKFIRST}~k~(t~–~x_1~.~.~.~x_k)$$, unpacks the first $$0 \leq k \leq 15$$ elements of a Tuple $$t$$. If $$|t| < k$$, throws a type check exception.
-* $$6F30~-~\text{CHKTUPLE}~(t~–~)$$, checks whether $$t$$ is a *Tuple*.
-* $$6F4n~-~\text{EXPLODE}~n~(t~–~x_1~.~.~.~x_m~m)$$, unpacks a *Tuple* $$t = (x_1, . . . , x_m)$$ and returns its length $$m$$, but only if $$m \leq n \leq 15$$. Otherwise throws a type check exception.
-* $$6F5k~-~\text{SETINDEX}~k~(t~x~–~t')$$, computes *Tuple* $$t'$$ that differs from $$t$$ only at position $$t'[k+1]$$, which is set to $$x$$. In other words, $$|t'| = |t|$$, $$t'[i] = t[i]$$ for $$i \neq k + 1$$, and $$t'[k+1] = x$$, for given $$0 \leq k \leq 15$$. If $$k \geq |t|$$, throws a range check exception.
-$$6F50~-~\text{SETFIRST}~(t~x~–~t')$$, sets the first component of *Tuple* $$t$$ to $$x$$ and returns the resulting *Tuple* $$t'$$.
-* $$6F51~-~\text{SETSECOND}~(t~x~–~t')$$, sets the second component of *Tuple* $$t$$ to $$x$$ and returns the resulting *Tuple* $$t'$$.
-* $$6F52~-~\text{SETTHIRD}~(t~x~–~t')$$, sets the third component of *Tuple* $$t$$ to $$x$$ and returns the resulting *Tuple* $$t'$$.
-* $$6F6k~-~\text{INDEXQ}~k~(t~–~x)$$, returns the $$k$$-th element of a *Tuple* $$t$$, where $$0 \leq k \leq 15$$. In other words, returns $$t[k+1]$$ if $$t = (x_1, . . . , x_n)$$. If $$k \geq n$$, or if $$t$$ is *Null*, returns a *Null* instead of $$x$$.
-* $$6F7k~-~\text{SETINDEXQ}~k~(t~x~–~t')$$, sets the $$k$$-th component of *Tuple* $$t$$ to $$x$$, where $$0 \leq k < 16$$, and returns the resulting *Tuple* $$t'$$. If $$|t| \leq k$$, first extends the original *Tuple* to length $$k+1$$ by setting all new components to *Null*. If the original value of $$t$$ is *Null*, treats it as an empty *Tuple*. If $$t$$ is not *Null* or *Tuple*, throws an exception. If $$x$$ is *Null* and either $$|t| \leq k$$ or $$t$$ is *Null*, then always returns $$t' = t$$ (and does not consume tuple creation gas).
-* $$6F80~-~\text{TUPLEVAR}~(x_1~\dots~x_n~n~-~t)$$, creates a new *Tuple* $$t$$ of length $$n$$ similarly to $$TUPLE$$, but with $$0 \leq n \leq 255$$ taken from the stack.
-* $$6F81~-~\text{INDEXVAR}~(t~k~-~x)$$, similar to $$INDEX~k$$, but with $$0 \leq k \leq 254$$ taken from the stack.
-* $$6F82~-~\text{UNTUPLEVAR}~(t~n~-~x_1~\dots~x_n)$$, similar to $$UNTUPLE~n$$, but with $$0 \leq n \leq 255$$ taken from the stack.
-* $$6F83~-~\text{UNPACKFIRSTVAR}~(t~n~-~x_1~\dots~x_n)$$, similar to $$UNPACKFIRST~n$$, but with $$0 \leq n \leq 255$$ taken from the stack.
-* $$6F84~-~\text{EXPLODEVAR}~(t~n~-~x_1~\dots~x_m~m)$$, similar to $$EXPLODE~n$$, but with $$0 \leq n \leq 255$$ taken from the stack.
-* $$6F85~-~\text{SETINDEXVAR}~(t~x~k~-~t')$$, similar to $$SETINDEX~k$$, but with $$0 \leq k \leq 254$$ taken from the stack.
-* $$6F86~-~\text{INDEXVARQ}~(t~k~-~x)$$, similar to $$INDEXQ~n$$, but with $$0 \leq k \leq 254$$ taken from the stack.
-* $$6F87~-~\text{SETINDEXVARQ}~(t~x~k~-~t')$$, similar to $$SETINDEXQ~k$$, but with $$0 \leq k \leq 254$$ taken from the stack.
-* $$6F88~-~\text{TLEN}~(t~-~n)$$, returns the length of a *Tuple*.
-* $$6F89~-~\text{QTLEN}~(t~-~n~\text{ or }~-1)$$, similar to $$TLEN$$, but returns $$-1$$ if $$t$$ is not a *Tuple*.
-* $$6F8A~-~\text{ISTUPLE}~(t~-~?)$$, returns $$-1$$ or $$0$$ depending on whether $$t$$ is a *Tuple*.
-* $$6F8B~-~\text{LAST}~(t~-~x)$$, returns the last element $$t|t|$$ of a non-empty *Tuple* $$t$$.
-* $$6F8C~-~\text{TPUSH}~\text{or}~\text{COMMA}~(t~x~-~t')$$, appends a value $$x$$ to a *Tuple* $$t = (x_1, \dots , x_n)$$, but only if the resulting *Tuple* $$t' = (x_1, \dots , x_n, x)$$ is of length at most 255. Otherwise throws a type check exception.
-* $$6F8D~-~\text{TPOP}~(t~-~t'~x)$$, detaches the last element $$x = x_n$$ from a non-empty *Tuple* $$t = (x_1, \dots, x_n)$$, and returns both the resulting *Tuple* $$t' = (x_1, \dots, x_{n-1})$$ and the original last element $$x$$.
-* $$6FA0~-~\text{NULLSWAPIF}~(x~-~x~\text{or}~\bot~x)$$, pushes a *Null* under the topmost *Integer* $$x$$, but only if $$x~\neq~0$$.
-* $$6FA1~-~\text{NULLSWAPIFNOT}~(x~-~x~\text{or}~\bot~x)$$, pushes a *Null* under the topmost *Integer* $$x$$, but only if $$x~=~0$$. May be used for stack alignment after quiet primitives such as $$PLDUXQ$$.
-* $$6FA2~-~\text{NULLROTRIF}~(x~y~-~x~y~\text{or}~\bot~x~y)$$, pushes a *Null* under the second stack entry from the top, but only if the topmost *Integer* $$y$$ is non-zero.
-* $$6FA3~-~\text{NULLROTRIFNOT}~(x~y~-~x~y~\text{or}~\bot~x~y)$$, pushes a *Null* under the second stack entry from the top, but only if the topmost *Integer* $$y$$ is zero. May be used for stack alignment after quiet primitives such as $$LDUXQ$$.
-* $$6FA4~-~\text{NULLSWAPIF2}~(x~-~x~\text{or}~\bot~\bot~x)$$, pushes two *Nulls* under the topmost *Integer* $$x$$, but only if $$x~\neq~0$$. Equivalent to $$NULLSWAPIF;~NULLSWAPIF$$.
-* $$6FA5~-~\text{NULLSWAPIFNOT2}~(x~-~x~\text{or}~\bot~\bot~x)$$, pushes two *Nulls* under the topmost *Integer* $$x$$, but only if $$x~=~0$$. Equivalent to $$NULLSWAPIFNOT;~NULLSWAPIFNOT$$.
-* $$6FA6~-~\text{NULLROTRIF2}~(x~y~-~x~y~\text{or}~\bot~\bot~x~y)$$, pushes two *Nulls* under the second stack entry from the top, but only if the topmost *Integer* $$y$$ is non-zero. Equivalent to $$NULLROTRIF;~NULLROTRIF$$.
-* $$6FA7~-~\text{NULLROTRIFNOT2}~(x~y~-~x~y~\text{or}~\bot~\bot~x~y)$$, pushes two *Nulls* under the second stack entry from the top, but only if the topmost *Integer* $$y$$ is zero. Equivalent to $$NULLROTRIFNOT;~NULLROTRIFNOT$$.
-* $$6FB_{ij}~-~\text{INDEX2}~i,j~(t~-~x)$$, recovers $$x~=~(t_{i+1})_{j+1}$$ for $$0~\leq~i,~j~\leq~3$$. Equivalent to $$INDEX~i;~INDEX~j$$.
-* $$6FB4~-~\text{CADR}~(t~-~x)$$, recovers $$x~=~(t_2)_1$$.
-* $$6FB5~-~\text{CDDR}~(t~-~x)$$, recovers $$x=(t_2)_2$$.
-* $$6FE_{ijk}~-~\text{INDEX3}~i,j,k~(t~-~x)$$, recovers $$x=(t_{i+1})_{j+1,k+1}$$ for $$0\leq~i,~j,~k\leq~3$$. Equivalent to $$INDEX2~i,j;~INDEX~k$$.
-* $$6FD4~-~\text{CADDR}~(t~-~x)$$, recovers $$x=(t_2)_{2_1}$$.
-* $$6FD5~-~\text{CDDDR}~(t~-~x)$$, recovers $$x=(t_2)_{2_2}$$.
-* $$7i$$ — $$\text{PUSHINT}~x$$ with $$−5 \leq x \leq 10$$, pushes *integer* $$x$$ into the stack; here $$i$$ equals four lower-order bits of $$x$$ (i.e., $$i = x \mod 16$$).
-* $$70$$ — $$\text{ZERO}$$, $$\text{FALSE}$$, or $$\text{PUSHINT 0}$$, pushes a zero.
-* $$71$$ — $$\text{ONE}$$ or $$\text{PUSHINT 1}$$.
-* $$72$$ — $$\text{TWO}$$ or $$\text{PUSHINT 2}$$.
-* $$7A$$ — $$\text{TEN}$$ or $$\text{PUSHINT 10}$$.
-* $$7F$$ — $$\text{TRUE}$$ or $$\text{PUSHINT -1}$$.
-* $$80xx$$ — $$\text{PUSHINT}~xx$$ with $$-128 \leq xx \leq 127$$.
-* $$81xxxx$$ — $$\text{PUSHINT}~xxxx$$ with $$−2^{15} \leq xxxx < 2^{15}$$, a signed 16-bit big-endian integer.
-* $$81FC18$$ — $$\text{PUSHINT −1000}$$.
-* $$82lxxx$$ — $$\text{PUSHINT}~xxx$$, where 5-bit $$0 \leq l \leq 30$$ determines the length $$n = 8l + 19$$ of signed big-endian integer xxx. The total length of this instruction is $$l + 4$$ bytes or $$n + 13 = 8l + 32$$ bits.
-* $$821005F5E100$$ — $$\text{PUSHINT 108}$$.
-* $$83xx$$ — $$\text{PUSHPOW2}~(xx + 1)$$, (quietly) pushes $$2^{xx+1}$$ for \(0 \leq xx \leq 255\).
-* $$83FF$$ — $$\text{PUSHNAN}$$, pushes $$\text{NaN}$$.
-* $$84xx$$ — $$\text{PUSHPOW2DEC}~(xx + 1)$$, pushes $$2^{xx+1} − 1$$ for \(0 \leq xx \leq 255\).
-* $$85xx$$ — $$\text{PUSHNEGPOW2}~(xx + 1)$$, pushes $$−2^{xx+1}$$ for \(0 \leq xx \leq 255\).
+* $$6F0n~-~{TUPLE}~n~(x1~.~.~.~xn~–~t)$$, creates a new *Tuple* $$t = (x1, . . . , xn)$$ containing $$n$$ values $$x1, . . . , xn$$, where $$0 ≤ n ≤ 15$$.
+* $$6F00~-~{NIL}~( – t)$$, pushes the only *Tuple* $$t = ()$$ of length zero.
+* $$6F01~-~{SINGLE}~(x~–~t)$$, creates a singleton $$t := (x)$$, i.e., a *Tuple* of length one.
+* $$6F02~-~{PAIR}~{or}~{CONS}~(x~y~–~t)$$, creates pair $$t := (x, y)$$.
+* $$6F03~-~{TRIPLE}~(x~y~z~–~t)$$, creates triple $$t := (x, y, z)$$.
+* $$6F1k~-~{INDEX}~k~(t~–~x)$$, returns the $$k$$-th element of a *Tuple* $$t$$, where $$0 ≤ k ≤ 15$$. In other words, returns $$x_k+1$$ if $$t = (x1, . . . , xn)$$. If $$k ≥ n$$, throws a range check exception.
+* $$6F10~-~{FIRST}~{or}~{CAR}~(t~–~x)$$, returns the first element of a *Tuple*.
+* $$6F11~-~{SECOND}~{or}~{CDR}~(t~–~y)$$, returns the second element of a *Tuple*.
+* $$6F12~-~{THIRD}~(t~–~z)$$, returns the third element of a *Tuple*.
+* $$6F2n~-~{UNTUPLE}~n~(t~–~x_1~.~.~.~x_n)$$, unpacks a *Tuple* $$t = (x_1, . . . ,x_n)$$ of length equal to $$0 ≤ n ≤ 15$$. If $$t$$ is not a *Tuple*, or if $$|t| \neq n$$, a type check exception is *thrown*.
+* $$6F21~-~{UNSINGLE}~(t~–~x)$$, unpacks a singleton $$t = (x)$$.
+* $$6F22~-~{UNPAIR or UNCONS}~(t~–~x~y)$$, unpacks a pair $$t = (x, y)$$.
+* $$6F23~-~{UNTRIPLE}~(t~–~x~y~z)$$, unpacks a triple $$t = (x, y, z)$$.
+* $$6F3k~-~{UNPACKFIRST}~k~(t~–~x_1~.~.~.~x_k)$$, unpacks the first $$0 \leq k \leq 15$$ elements of a Tuple $$t$$. If $$|t| < k$$, throws a type check exception.
+* $$6F30~-~{CHKTUPLE}~(t~–~)$$, checks whether $$t$$ is a *Tuple*.
+* $$6F4n~-~{EXPLODE}~n~(t~–~x_1~.~.~.~x_m~m)$$, unpacks a *Tuple* $$t = (x_1, . . . , x_m)$$ and returns its length $$m$$, but only if $$m \leq n \leq 15$$. Otherwise throws a type check exception.
+* $$6F5k~-~{SETINDEX}~k~(t~x~–~t')$$, computes *Tuple* $$t'$$ that differs from $$t$$ only at position $$t'[k+1]$$, which is set to $$x$$. In other words, $$|t'| = |t|$$, $$t'[i] = t[i]$$ for $$i \neq k + 1$$, and $$t'[k+1] = x$$, for given $$0 \leq k \leq 15$$. If $$k \geq |t|$$, throws a range check exception.
+$$6F50~-~{SETFIRST}~(t~x~–~t')$$, sets the first component of *Tuple* $$t$$ to $$x$$ and returns the resulting *Tuple* $$t'$$.
+* $$6F51~-~{SETSECOND}~(t~x~–~t')$$, sets the second component of *Tuple* $$t$$ to $$x$$ and returns the resulting *Tuple* $$t'$$.
+* $$6F52~-~{SETTHIRD}~(t~x~–~t')$$, sets the third component of *Tuple* $$t$$ to $$x$$ and returns the resulting *Tuple* $$t'$$.
+* $$6F6k~-~{INDEXQ}~k~(t~–~x)$$, returns the $$k$$-th element of a *Tuple* $$t$$, where $$0 \leq k \leq 15$$. In other words, returns $$t[k+1]$$ if $$t = (x_1, . . . , x_n)$$. If $$k \geq n$$, or if $$t$$ is *Null*, returns a *Null* instead of $$x$$.
+* $$6F7k~-~{SETINDEXQ}~k~(t~x~–~t')$$, sets the $$k$$-th component of *Tuple* $$t$$ to $$x$$, where $$0 \leq k < 16$$, and returns the resulting *Tuple* $$t'$$. If $$|t| \leq k$$, first extends the original *Tuple* to length $$k+1$$ by setting all new components to *Null*. If the original value of $$t$$ is *Null*, treats it as an empty *Tuple*. If $$t$$ is not *Null* or *Tuple*, throws an exception. If $$x$$ is *Null* and either $$|t| \leq k$$ or $$t$$ is *Null*, then always returns $$t' = t$$ (and does not consume tuple creation gas).
+* $$6F80~-~{TUPLEVAR}~(x_1~\dots~x_n~n~-~t)$$, creates a new *Tuple* $$t$$ of length $$n$$ similarly to $$TUPLE$$, but with $$0 \leq n \leq 255$$ taken from the stack.
+* $$6F81~-~{INDEXVAR}~(t~k~-~x)$$, similar to $$INDEX~k$$, but with $$0 \leq k \leq 254$$ taken from the stack.
+* $$6F82~-~{UNTUPLEVAR}~(t~n~-~x_1~\dots~x_n)$$, similar to $$UNTUPLE~n$$, but with $$0 \leq n \leq 255$$ taken from the stack.
+* $$6F83~-~{UNPACKFIRSTVAR}~(t~n~-~x_1~\dots~x_n)$$, similar to $$UNPACKFIRST~n$$, but with $$0 \leq n \leq 255$$ taken from the stack.
+* $$6F84~-~{EXPLODEVAR}~(t~n~-~x_1~\dots~x_m~m)$$, similar to $$EXPLODE~n$$, but with $$0 \leq n \leq 255$$ taken from the stack.
+* $$6F85~-~{SETINDEXVAR}~(t~x~k~-~t')$$, similar to $$SETINDEX~k$$, but with $$0 \leq k \leq 254$$ taken from the stack.
+* $$6F86~-~{INDEXVARQ}~(t~k~-~x)$$, similar to $$INDEXQ~n$$, but with $$0 \leq k \leq 254$$ taken from the stack.
+* $$6F87~-~{SETINDEXVARQ}~(t~x~k~-~t')$$, similar to $$SETINDEXQ~k$$, but with $$0 \leq k \leq 254$$ taken from the stack.
+* $$6F88~-~{TLEN}~(t~-~n)$$, returns the length of a *Tuple*.
+* $$6F89~-~{QTLEN}~(t~-~n~{ or }~-1)$$, similar to $$TLEN$$, but returns $$-1$$ if $$t$$ is not a *Tuple*.
+* $$6F8A~-~{ISTUPLE}~(t~-~?)$$, returns $$-1$$ or $$0$$ depending on whether $$t$$ is a *Tuple*.
+* $$6F8B~-~{LAST}~(t~-~x)$$, returns the last element $$t|t|$$ of a non-empty *Tuple* $$t$$.
+* $$6F8C~-~{TPUSH}~{or}~{COMMA}~(t~x~-~t')$$, appends a value $$x$$ to a *Tuple* $$t = (x_1, \dots , x_n)$$, but only if the resulting *Tuple* $$t' = (x_1, \dots , x_n, x)$$ is of length at most 255. Otherwise throws a type check exception.
+* $$6F8D~-~{TPOP}~(t~-~t'~x)$$, detaches the last element $$x = x_n$$ from a non-empty *Tuple* $$t = (x_1, \dots, x_n)$$, and returns both the resulting *Tuple* $$t' = (x_1, \dots, x_{n-1})$$ and the original last element $$x$$.
+* $$6FA0~-~{NULLSWAPIF}~(x~-~x~{or}~\bot~x)$$, pushes a *Null* under the topmost *Integer* $$x$$, but only if $$x~\neq~0$$.
+* $$6FA1~-~{NULLSWAPIFNOT}~(x~-~x~{or}~\bot~x)$$, pushes a *Null* under the topmost *Integer* $$x$$, but only if $$x~=~0$$. May be used for stack alignment after quiet primitives such as $$PLDUXQ$$.
+* $$6FA2~-~{NULLROTRIF}~(x~y~-~x~y~{or}~\bot~x~y)$$, pushes a *Null* under the second stack entry from the top, but only if the topmost *Integer* $$y$$ is non-zero.
+* $$6FA3~-~{NULLROTRIFNOT}~(x~y~-~x~y~{or}~\bot~x~y)$$, pushes a *Null* under the second stack entry from the top, but only if the topmost *Integer* $$y$$ is zero. May be used for stack alignment after quiet primitives such as $$LDUXQ$$.
+* $$6FA4~-~{NULLSWAPIF2}~(x~-~x~{or}~\bot~\bot~x)$$, pushes two *Nulls* under the topmost *Integer* $$x$$, but only if $$x~\neq~0$$. Equivalent to $$NULLSWAPIF;~NULLSWAPIF$$.
+* $$6FA5~-~{NULLSWAPIFNOT2}~(x~-~x~{or}~\bot~\bot~x)$$, pushes two *Nulls* under the topmost *Integer* $$x$$, but only if $$x~=~0$$. Equivalent to $$NULLSWAPIFNOT;~NULLSWAPIFNOT$$.
+* $$6FA6~-~{NULLROTRIF2}~(x~y~-~x~y~{or}~\bot~\bot~x~y)$$, pushes two *Nulls* under the second stack entry from the top, but only if the topmost *Integer* $$y$$ is non-zero. Equivalent to $$NULLROTRIF;~NULLROTRIF$$.
+* $$6FA7~-~{NULLROTRIFNOT2}~(x~y~-~x~y~{or}~\bot~\bot~x~y)$$, pushes two *Nulls* under the second stack entry from the top, but only if the topmost *Integer* $$y$$ is zero. Equivalent to $$NULLROTRIFNOT;~NULLROTRIFNOT$$.
+* $$6FB_{ij}~-~{INDEX2}~i,j~(t~-~x)$$, recovers $$x~=~(t_{i+1})_{j+1}$$ for $$0~\leq~i,~j~\leq~3$$. Equivalent to $$INDEX~i;~INDEX~j$$.
+* $$6FB4~-~{CADR}~(t~-~x)$$, recovers $$x~=~(t_2)_1$$.
+* $$6FB5~-~{CDDR}~(t~-~x)$$, recovers $$x=(t_2)_2$$.
+* $$6FE_{ijk}~-~{INDEX3}~i,j,k~(t~-~x)$$, recovers $$x=(t_{i+1})_{j+1,k+1}$$ for $$0\leq~i,~j,~k\leq~3$$. Equivalent to $$INDEX2~i,j;~INDEX~k$$.
+* $$6FD4~-~{CADDR}~(t~-~x)$$, recovers $$x=(t_2)_{2_1}$$.
+* $$6FD5~-~{CDDDR}~(t~-~x)$$, recovers $$x=(t_2)_{2_2}$$.
+* $$7i$$ — $${PUSHINT}~x$$ with $$−5 \leq x \leq 10$$, pushes *integer* $$x$$ into the stack; here $$i$$ equals four lower-order bits of $$x$$ (i.e., $$i = x \mod 16$$).
+* $$70$$ — $${ZERO}$$, $${FALSE}$$, or $${PUSHINT 0}$$, pushes a zero.
+* $$71$$ — $${ONE}$$ or $${PUSHINT 1}$$.
+* $$72$$ — $${TWO}$$ or $${PUSHINT 2}$$.
+* $$7A$$ — $${TEN}$$ or $${PUSHINT 10}$$.
+* $$7F$$ — $${TRUE}$$ or $${PUSHINT -1}$$.
+* $$80xx$$ — $${PUSHINT}~xx$$ with $$-128 \leq xx \leq 127$$.
+* $$81xxxx$$ — $${PUSHINT}~xxxx$$ with $$−2^{15} \leq xxxx < 2^{15}$$, a signed 16-bit big-endian integer.
+* $$81FC18$$ — $${PUSHINT −1000}$$.
+* $$82lxxx$$ — $${PUSHINT}~xxx$$, where 5-bit $$0 \leq l \leq 30$$ determines the length $$n = 8l + 19$$ of signed big-endian integer xxx. The total length of this instruction is $$l + 4$$ bytes or $$n + 13 = 8l + 32$$ bits.
+* $$821005F5E100$$ — $${PUSHINT 108}$$.
+* $$83xx$$ — $${PUSHPOW2}~(xx + 1)$$, (quietly) pushes $$2^{xx+1}$$ for \(0 \leq xx \leq 255\).
+* $$83FF$$ — $${PUSHNAN}$$, pushes $${NaN}$$.
+* $$84xx$$ — $${PUSHPOW2DEC}~(xx + 1)$$, pushes $$2^{xx+1} − 1$$ for \(0 \leq xx \leq 255\).
+* $$85xx$$ — $${PUSHNEGPOW2}~(xx + 1)$$, pushes $$−2^{xx+1}$$ for \(0 \leq xx \leq 255\).
 * $$86$$, $$87$$ — reserved for *integer* constants.
 
 
@@ -189,110 +189,111 @@ The following primitives push into the stack one literal (or unnamed constant) o
 
 Most of the instructions listed below push literal slices, continuations, cells, and cell references, stored as immediate arguments to the instruction. Therefore, if the immediate argument is absent or too short, an "invalid or too short opcode" exception (code 6) is thrown.
 
-* $$88$$ — $$\text{PUSHREF}$$, pushes the first reference of cc.code into the stack as
+* $$88$$ — $${PUSHREF}$$, pushes the first reference of cc.code into the stack as
 a *Cell* (and removes this reference from the current continuation).
-* $$89$$ — $$\text{PUSHREFSLICE}$$, similar to $$\text{PUSHREF}$$, but converts the cell into a
+* $$89$$ — $${PUSHREFSLICE}$$, similar to $${PUSHREF}$$, but converts the cell into a
 *Slice*.
-* $$8A$$ — $$\text{PUSHREFCONT}$$, similar to $$\text{PUSHREFSLICE}$$, but makes a simple ordinary *Continuation* out of the cell.
-* $$8Bxsss$$ — $$\text{PUSHSLICE}~sss$$, pushes the (prefix) subslice of cc.code consisting of its first $$8x + 4$$ bits and no references (i.e., essentially a bitstring), where $$0 \leq x \leq 15$$. A completion tag is assumed, meaning that
+* $$8A$$ — $${PUSHREFCONT}$$, similar to $${PUSHREFSLICE}$$, but makes a simple ordinary *Continuation* out of the cell.
+* $$8Bxsss$$ — $${PUSHSLICE}~sss$$, pushes the (prefix) subslice of cc.code consisting of its first $$8x + 4$$ bits and no references (i.e., essentially a bitstring), where $$0 \leq x \leq 15$$. A completion tag is assumed, meaning that
 all trailing zeroes and the last binary one (if present) are removed from
 this bitstring. If the original bitstring consists only of zeroes, an empty
 slice will be pushed.
-* $$8B08$$ — $$\text{PUSHSLICE}~x8_$$, pushes an empty slice (bitstring ‘’).
-* $$8B04$$ — $$\text{PUSHSLICE}~x4_$$, pushes bitstring $$‘0’$$.
-* $$8B0C$$ — $$\text{PUSHSLICE}~xC_$$, pushes bitstring $$‘1’$$.
-* $$8Crxxssss$$ — $$\text{PUSHSLICE}~ssss$$, pushes the (prefix) subslice of cc.code
+* $$8B08$$ — $${PUSHSLICE}~x8_$$, pushes an empty slice (bitstring ‘’).
+* $$8B04$$ — $${PUSHSLICE}~x4_$$, pushes bitstring $$‘0’$$.
+* $$8B0C$$ — $${PUSHSLICE}~xC_$$, pushes bitstring $$‘1’$$.
+* $$8Crxxssss$$ — $${PUSHSLICE}~ssss$$, pushes the (prefix) subslice of cc.code
 consisting of its first $$1 \leq r + 1 \leq 4$$ references and up to first $$8xx + 1$$
 bits of data, with $$0 \leq xx \leq 31$$. A completion tag is also assumed.
-* $$8C01$$ is equivalent to $$\text{PUSHREFSLICE}$$.
-* $$8Drxxsssss$$ — $$\text{PUSHSLICE}~sssss$$, pushes the subslice of cc.code consisting of $$0 \leq r \leq 4$$ references and up to $$8xx + 6$$ bits of data, with
+* $$8C01$$ is equivalent to $${PUSHREFSLICE}$$.
+* $$8Drxxsssss$$ — $${PUSHSLICE}~sssss$$, pushes the subslice of cc.code consisting of $$0 \leq r \leq 4$$ references and up to $$8xx + 6$$ bits of data, with
 $$0 \leq xx \leq 127$$. A completion tag is assumed.
 * $$8DE_$$ — unused (reserved).
-* $$8F_rxxcccc$$ — $$\text{PUSHCONT}~cccc$$, where cccc is the simple ordinary continuation made from the first $$0 \leq r \leq 3$$ references and the first
+* $$8F_rxxcccc$$ — $${PUSHCONT}~cccc$$, where cccc is the simple ordinary continuation made from the first $$0 \leq r \leq 3$$ references and the first
 $$0 \leq xx \leq 127$$ bytes of cc.code.
-* $$9xccc$$ — $$\text{PUSHCONT}~ccc$$, pushes an x-byte continuation for $$0 \leq x \leq 15$$.
+* $$9xccc$$ — $${PUSHCONT}~ccc$$, pushes an x-byte continuation for $$0 \leq x \leq 15$$.
 
 
 ## A.5 Arithmetic primitives
 
 ### A.5.1. Addition, subtraction, multiplication.
 
-* $$A0$$ — $$\text{ADD}~(x~y~\to~x + y)$$, adds together two integers.
-* $$A1$$ — $$\text{SUB}~(x~y~\to~x - y)$$.
-* $$A2$$ — $$\text{SUBR}~(x~y~\to~y - x)$$, equivalent to $$\text{SWAP}; \text{SUB}$$.
-* $$A3$$ — $$\text{NEGATE}~(x~\to~−x)$$, equivalent to $$\text{MULCONST}~−1$$ or to $$\text{ZERO}; \text{SUBR}$$. Notice that it triggers an integer overflow exception if \( x = -2^{256} \).
-* $$A4$$ — $$\text{INC}~(x~\to~x + 1)$$, equivalent to $$\text{ADDCONST}~1$$.
-* $$A5$$ — $$\text{DEC}~(x~\to~x - 1)$$, equivalent to $$\text{ADDCONST}~−1$$.
-* $$A6cc$$ — $$\text{ADDCONST}~cc~(x~\to~x + cc)$$, \(−128 \leq cc \leq 127\).
-* $$A7cc$$ — $$\text{MULCONST}~cc~(x~\to~x \cdot cc)$$, \(−128 \leq cc \leq 127\).
-* $$A8$$ — $$\text{MUL}~(x~y~\to~xy)$$.
+* $$A0$$ — $${ADD}~(x~y~\to~x + y)$$, adds together two integers.
+* $$A1$$ — $${SUB}~(x~y~\to~x - y)$$.
+* $$A2$$ — $${SUBR}~(x~y~\to~y - x)$$, equivalent to $${SWAP}; {SUB}$$.
+* $$A3$$ — $${NEGATE}~(x~\to~−x)$$, equivalent to $${MULCONST}~−1$$ or to $${ZERO}; {SUBR}$$. Notice that it triggers an integer overflow exception if \( x = -2^{256} \).
+* $$A4$$ — $${INC}~(x~\to~x + 1)$$, equivalent to $${ADDCONST}~1$$.
+* $$A5$$ — $${DEC}~(x~\to~x - 1)$$, equivalent to $${ADDCONST}~−1$$.
+* $$A6cc$$ — $${ADDCONST}~cc~(x~\to~x + cc)$$, \(−128 \leq cc \leq 127\).
+* $$A7cc$$ — $${MULCONST}~cc~(x~\to~x \cdot cc)$$, \(−128 \leq cc \leq 127\).
+* $$A8$$ — $${MUL}~(x~y~\to~xy)$$.
 
 ### A.5.2. Division.
 
-The general encoding of a $$\text{DIV}$$, $$\text{DIVMOD}$$, or $$\text{MOD}$$ operation is $$A9mscdf$$, with
+The general encoding of a $${DIV}$$, $${DIVMOD}$$, or $${MOD}$$ operation is $$A9mscdf$$, with
 an optional pre-multiplication and an optional replacement of the division or
 multiplication by a shift. Variable one- or two-bit fields $$m$$, $$s$$, $$c$$, $$d$$, and $$f$$ are
 as follows:
 
-* $$0~\leq~m~\leq~1$$ — Indicates whether there is pre-multiplication ($$\text{MULDIV}$$ operation and its variants), possibly replaced by a left shift.
+* $$0~\leq~m~\leq~1$$ — Indicates whether there is pre-multiplication ($${MULDIV}$$ operation and its variants), possibly replaced by a left shift.
 * $$0~\leq~s~\leq~2$$ — Indicates whether either the multiplication or the division have been replaced by shifts: $$s~=~0$$—no replacement, $$s~=~1$$—division replaced by a right shift, $$s~=~2$$—multiplication replaced by a left shift (possible only for $$m~=~1$$).
-* $$0~\leq~c~\leq~1$$ — Indicates whether there is a constant one-byte argument $$tt$$ for the shift operator (if $$s~\neq~0$$). For $$s~=~0$$, $$c~=~0$$. If $$c~=~1$$, then $$0~\leq~tt~\leq~255$$, and the shift is performed by $$tt~+~1$$ bits. If $$s~\neq~0$$ and $$c~=~0$$, then the shift amount is provided to the instruction as a top-of-stack $$\text{Integer}$$ in range $$0~\dots~256$$.
+* $$0~\leq~c~\leq~1$$ — Indicates whether there is a constant one-byte argument $$tt$$ for the shift operator (if $$s~\neq~0$$). For $$s~=~0$$, $$c~=~0$$. If $$c~=~1$$, then $$0~\leq~tt~\leq~255$$, and the shift is performed by $$tt~+~1$$ bits. If $$s~\neq~0$$ and $$c~=~0$$, then the shift amount is provided to the instruction as a top-of-stack $${Integer}$$ in range $$0~\dots~256$$.
 * $$1~\leq~d~\leq~3$$ — Indicates which results of division are required: 1—only the quotient, 2—only the remainder, 3—both.
 * $$0~\leq~f~\leq~2$$ — Rounding mode: 0—floor, 1—nearest integer, 2—ceiling [$$\mathbf{1.5.6}$$](README.md/#1.5.6.-division-and-rounding.).
 
 Examples:
 
-* $$A904$$ — $$\text{DIV}~(x~y~\rightarrow~q~:=~b\frac{x}{y}c)$$.
-* $$A905$$ — $$\text{DIVR}~(x~y~\rightarrow~q_0~:=~b\frac{x}{y}~+~\frac{1}{2}c)$$.
-* $$A906$$ — $$\text{DIVC}~(x~y~\rightarrow~q_{00}~:=~d\frac{x}{y}e)$$.
-* $$A908$$ — $$\text{MOD}~(x~y~\rightarrow~r)$$, where $$q~:=~b\frac{x}{y}c$$, $$r~:=~x~\text{mod}~y~:=~x~−~yq$$.
-* $$A90C$$ — $$\text{DIVMOD}~(x~y~\rightarrow~q~r)$$, where $$q~:=~b\frac{x}{y}c$$, $$r~:=~x~−~yq$$.
-* $$A90D$$ — $$\text{DIVMODR}~(x~y~\rightarrow~q_0~r_0)$$, where $$q_0~:=~b\frac{x}{y}~+~\frac{1}{2}c$$, $$r_0~:=~x~−~yq_0$$.
-* $$A90E$$ — $$\text{DIVMODC}~(x~y~\rightarrow~q_{00}~r_{00})$$, where $$q_{00}~:=~d\frac{x}{y}e$$, $$r_{00}~:=~x~−~yq_{00}$$.
-* $$A924$$ — same as $$\text{RSHIFT}$$: $$(x~y~\rightarrow~b\frac{x}{y}c)$$ for $$0~\leq~y~\leq~256$$.
-* $$A934tt$$ — same as $$\text{RSHIFT}~tt~+~1$$: $$(x~\rightarrow~b\frac{x}{y}c)$$.
-* $$A938tt$$ — $$\text{MODPOW2}~tt~+~1$$: $$(x~\rightarrow~x~\text{mod}~2^{tt+1})$$.
-* $$A985$$ — $$\text{MULDIVR}~(x~y~z~\rightarrow~q_0)$$, where $$q_0~=~b\frac{xy}{z}~+~\frac{1}{2}c$$.
-* $$A98C$$ — $$\text{MULDIVMOD}~(x~y~z~\rightarrow~q~r)$$, where $$q~:=~b\frac{x~\cdot~y}{z}c$$, $$r~:=~x~\cdot~y~\text{mod}~z$$ (same as $$*/\text{MOD}$$ in Forth).
-* $$A9A4$$ — $$\text{MULRSHIFT}~(x~y~z~\rightarrow~bxy~\cdot~2^{-z}c)$$ for $$0~\leq~z~\leq~256$$.
-* $$A9A5$$ — $$\text{MULRSHIFTR}~(x~y~z~\rightarrow~bxy~\cdot~2^{-z}~+~\frac{1}{2}c)$$ for $$0~\leq~z~\leq~256$$.
-* $$A9B4tt$$ — $$\text{MULRSHIFT}~tt~+~1~(x~y~\rightarrow~bxy~\cdot~2^{-tt-1}c)$$.
-* $$A9B5tt$$ — $$\text{MULRSHIFTR}~tt~+~1~(x~y~\rightarrow~bxy~\cdot~2^{-tt-1}~+~\frac{1}{2}c)$$.
-* $$A9C4$$ — $$\text{LSHIFTDIV}~(x~y~z~\rightarrow~b2^zx/yc)$$ for $$0~\leq~z~\leq~256$$.
-* $$A9C5$$ — $$\text{LSHIFTDIVR}~(x~y~z~\rightarrow~b2^zx/y~+~\frac{1}{2}c)$$ for $$0~\leq~z~\leq~256$$.
-* $$A9D4tt$$ — $$\text{LSHIFTDIV}~tt~+~1~(x~y~\rightarrow~b2^{tt+1}x/yc)$$.
-* $$A9D5tt$$ — $$\text{LSHIFTDIVR}~tt~+~1~(x~y~\rightarrow~b2^{tt+1}x/y~+~\frac{1}{2}c)$$.
+* $$A904$$ — $${DIV}~(x~y~~q~:=~b\frac{x}{y}c)$$.
+* $$A905$$ — $${DIVR}~(x~y~~q_0~:=~b\frac{x}{y}~+~\frac{1}{2}c)$$.
+* $$A906$$ — $${DIVC}~(x~y~~q_{00}~:=~d\frac{x}{y}e)$$.
+* $$A908$$ — $${MOD}~(x~y~~r)$$, where $$q~:=~b\frac{x}{y}c$$, $$r~:=~x~{mod}~y~:=~x~−~yq$$.
+* $$A90C$$ — $${DIVMOD}~(x~y~~q~r)$$, where $$q~:=~b\frac{x}{y}c$$, $$r~:=~x~−~yq$$.
+* $$A90D$$ — $${DIVMODR}~(x~y~~q_0~r_0)$$, where $$q_0~:=~b\frac{x}{y}~+~\frac{1}{2}c$$, $$r_0~:=~x~−~yq_0$$.
+* $$A90E$$ — $${DIVMODC}~(x~y~~q_{00}~r_{00})$$, where $$q_{00}~:=~d\frac{x}{y}e$$, $$r_{00}~:=~x~−~yq_{00}$$.
+* $$A924$$ — same as $${RSHIFT}$$: $$(x~y~~b\frac{x}{y}c)$$ for $$0~\leq~y~\leq~256$$.
+* $$A934tt$$ — same as $${RSHIFT}~tt~+~1$$: $$(x~~b\frac{x}{y}c)$$.
+* $$A938tt$$ — $${MODPOW2}~tt~+~1$$: $$(x~~x~{mod}~2^{tt+1})$$.
+* $$A985$$ — $${MULDIVR}~(x~y~z~~q_0)$$, where $$q_0~=~b\frac{xy}{z}~+~\frac{1}{2}c$$.
+* $$A98C$$ — $${MULDIVMOD}~(x~y~z~~q~r)$$, where $$q~:=~b\frac{x~\cdot~y}{z}c$$, $$r~:=~x~\cdot~y~{mod}~z$$ (same as $$*/{MOD}$$ in Forth).
+* $$A9A4$$ — $${MULRSHIFT}~(x~y~z~~bxy~\cdot~2^{-z}c)$$ for $$0~\leq~z~\leq~256$$.
+* $$A9A5$$ — $${MULRSHIFTR}~(x~y~z~~bxy~\cdot~2^{-z}~+~\frac{1}{2}c)$$ for $$0~\leq~z~\leq~256$$.
+* $$A9B4tt$$ — $${MULRSHIFT}~tt~+~1~(x~y~~bxy~\cdot~2^{-tt-1}c)$$.
+* $$A9B5tt$$ — $${MULRSHIFTR}~tt~+~1~(x~y~~bxy~\cdot~2^{-tt-1}~+~\frac{1}{2}c)$$.
+* $$A9C4$$ — $${LSHIFTDIV}~(x~y~z~~b2^zx/yc)$$ for $$0~\leq~z~\leq~256$$.
+* $$A9C5$$ — $${LSHIFTDIVR}~(x~y~z~~b2^zx/y~+~\frac{1}{2}c)$$ for $$0~\leq~z~\leq~256$$.
+* $$A9D4tt$$ — $${LSHIFTDIV}~tt~+~1~(x~y~~b2^{tt+1}x/yc)$$.
+* $$A9D5tt$$ — $${LSHIFTDIVR}~tt~+~1~(x~y~~b2^{tt+1}x/y~+~\frac{1}{2}c)$$.
 
-The most useful of these operations are $$\text{DIV}$$, $$\text{DIVMOD}$$, $$\text{MOD}$$, $$\text{DIVR}$$, $$\text{DIVC}$$, 
-$$\text{MODPOW2}~t$$, and $$\text{RSHIFTR}~t$$ (for integer arithmetic); and $$\text{MULDIVMOD}$$, $$\text{MULDIV}$$, 
-$$\text{MULDIVR}$$, $$\text{LSHIFTDIVR}~t$$, and $$\text{MULRSHIFTR}~t$$ (for fixed-point arithmetic).
+The most useful of these operations are $${DIV}$$, $${DIVMOD}$$, $${MOD}$$, $${DIVR}$$, $${DIVC}$$, 
+$${MODPOW2}~t$$, and $${RSHIFTR}~t$$ (for integer arithmetic); and $${MULDIVMOD}$$, $${MULDIV}$$, 
+$${MULDIVR}$$, $${LSHIFTDIVR}~t$$, and $${MULRSHIFTR}~t$$ (for fixed-point arithmetic).
 
 
 ### A.5.3. Shifts, logical operations.
 
-* $$\text{AAcc}$$ — $$\text{LSHIFT}~cc + 1$$ ($$x~\rightarrow~x \cdot 2^{cc+1}$$), $$0 \leq cc \leq 255$$.
-* $$\text{AA00}$$ — $$\text{LSHIFT}~1$$, equivalent to $$\text{MULCONST}~2$$ or to Forth’s $$2^*$$.
-* $$\text{ABcc}$$ — $$\text{RSHIFT}~cc + 1$$ ($$x~\rightarrow~\left\lfloor x \cdot 2^{-cc-1} \right\rfloor$$), $$0 \leq cc \leq 255$$.
-* $$\text{AC}$$ — $$\text{LSHIFT}$$ ($$x~y~\rightarrow~x \cdot 2^y$$), $$0 \leq y \leq 1023$$.
-* $$\text{AD}$$ — $$\text{RSHIFT}$$ ($$x~y~\rightarrow~\left\lfloor x \cdot 2^{-y} \right\rfloor$$), $$0 \leq y \leq 1023$$.
-* $$\text{AE}$$ — $$\text{POW2}$$ ($$y~\rightarrow~2^y$$), $$0 \leq y \leq 1023$$, equivalent to $$\text{ONE}; \text{SWAP}; \text{LSHIFT}$$.
-* $$\text{AF}$$ — reserved.
-* $$\text{B0}$$ — $$\text{AND}$$ ($$x~y~\rightarrow~x\&y$$), bitwise “and” of two signed integers $$x$$ and $$y$$, sign-extended to infinity.
-* $$\text{B1}$$ — $$\text{OR}$$ ($$x~y~\rightarrow~x \vee y$$), bitwise “or” of two integers.
-* $$\text{B2}$$ — $$\text{XOR}$$ ($$x~y~\rightarrow~x \oplus y$$), bitwise “xor” of two integers.
-* $$\text{B3}$$ — $$\text{NOT}$$ ($$x~\rightarrow~x \oplus -1 = -1 - x$$), bitwise “not” of an integer.
-* $$\text{B4cc}$$ — $$\text{FITS}~cc + 1$$ ($$x~\rightarrow~x$$), checks whether $$x$$ is a $$cc + 1$$-bit signed integer for $$0 \leq cc \leq 255$$ (i.e., whether $$-2^{cc} \leq x < 2^{cc}$$). If not, either triggers an integer overflow exception or replaces $$x$$ with a NaN (quiet version).
-* $$\text{B400}$$ — $$\text{FITS}~1$$ or $$\text{CHKBOOL}$$ ($$x~\rightarrow~x$$), checks whether $$x$$ is a “boolean value” (i.e., either 0 or -1).
-* $$\text{B5cc}$$ — $$\text{UFITS}~cc + 1$$ ($$x~\rightarrow~x$$), checks whether $$x$$ is a $$cc + 1$$-bit unsigned integer for $$0 \leq cc \leq 255$$ (i.e., whether $$0 \leq x < 2^{cc+1}$$).
-* $$\text{B500}$$ — $$\text{UFITS}~1$$ or $$\text{CHKBIT}$$, checks whether $$x$$ is a binary digit (i.e., zero or one).
-* $$\text{B600}$$ — $$\text{FITSX}$$ ($$x~c~\rightarrow~x$$), checks whether $$x$$ is a $$c$$-bit signed integer for $$0 \leq c \leq 1023$$.
-* $$\text{B601}$$ — $$\text{UFITSX}$$ ($$x~c~\rightarrow~x$$), checks whether $$x$$ is a $$c$$-bit unsigned integer for $$0 \leq c \leq 1023$$.
-* $$\text{B602}$$ — $$\text{BITSIZE}$$ ($$x~\rightarrow~c$$), computes smallest $$c \geq 0$$ such that $$x$$ fits into a $$c$$-bit signed integer ($$-2^{c-1} \leq c < 2^{c-1}$$).
-* $$\text{B603}$$ — $$\text{UBITSIZE}$$ ($$x~\rightarrow~c$$), computes smallest $$c \geq 0$$ such that $$x$$ fits into a $$c$$-bit unsigned integer ($$0 \leq x < 2^c$$), or throws a range check exception.
-* $$\text{B608}$$ — $$\text{MIN}$$ ($$x~y~\rightarrow~x~\text{or}~y$$), computes the minimum of two integers $$x$$ and $$y$$.
-* $$\text{B609}$$ — $$\text{MAX}$$ ($$x~y~\rightarrow~x~\text{or}~y$$), computes the maximum of two integers $$x$$ and $$y$$.
-* $$\text{B60A}$$ — $$\text{MINMAX}$$ or $$\text{INTSORT2}$$ ($$x~y~\rightarrow~x~y~\text{or}~y~x$$), sorts two integers. Quiet version of this operation returns two NaNs if any of the arguments are NaNs.
-* $$\text{B60B}$$ — $$\text{ABS}$$ ($$x~\rightarrow~|x|$$), computes the absolute value of an integer $$x$$.
+* $${AAcc}$$ — $${LSHIFT}~cc + 1$$ ($$x~~x \cdot 2^{cc+1}$$), $$0 \leq cc \leq 255$$.
+* $${AA00}$$ — $${LSHIFT}~1$$, equivalent to $${MULCONST}~2$$ or to Forth’s $$2^*$$.
+* $${ABcc}$$ — $${RSHIFT}~cc + 1$$ ($$x~~\left\lfloor x \cdot 2^{-cc-1} \right\rfloor$$), $$0 \leq cc \leq 255$$.
+* $${AC}$$ — $${LSHIFT}$$ ($$x~y~~x \cdot 2^y$$), $$0 \leq y \leq 1023$$.
+* $${AD}$$ — $${RSHIFT}$$ ($$x~y~~\left\lfloor x \cdot 2^{-y} \right\rfloor$$), $$0 \leq y \leq 1023$$.
+* $${AE}$$ — $${POW2}$$ ($$y~~2^y$$), $$0 \leq y \leq 1023$$, equivalent to $${ONE}; {SWAP}; {LSHIFT}$$.
+* $${AF}$$ — reserved.
+* $${B0}$$ — $${AND}$$ ($$x~y~~x\&y$$), bitwise “and” of two signed integers $$x$$ and $$y$$, sign-extended to infinity.
+* $${B1}$$ — $${OR}$$ ($$x~y~~x \vee y$$), bitwise “or” of two integers.
+* $${B2}$$ — $${XOR}$$ ($$x~y~~x \oplus y$$), bitwise “xor” of two integers.
+* $${B3}$$ — $${NOT}$$ ($$x~~x \oplus -1 = -1 - x$$), bitwise “not” of an integer.
+* $${B4cc}$$ — $${FITS}~cc + 1$$ ($$x~~x$$), checks whether $$x$$ is a $$cc + 1$$-bit signed integer for $$0 \leq cc \leq 255$$ (i.e., whether $$-2^{cc} \leq x < 2^{cc}$$). If not, either triggers an integer overflow exception or replaces $$x$$ with a NaN (quiet version).
+* $${B400}$$ — $${FITS}~1$$ or $${CHKBOOL}$$ ($$x~~x$$), checks whether $$x$$ is a “boolean value” (i.e., either 0 or -1).
+* $${B5cc}$$ — $${UFITS}~cc + 1$$ ($$x~~x$$), checks whether $$x$$ is a $$cc + 1$$-bit unsigned integer for $$0 \leq cc \leq 255$$ (i.e., whether $$0 \leq x < 2^{cc+1}$$).
+* $${B500}$$ — $${UFITS}~1$$ or $${CHKBIT}$$, checks whether $$x$$ is a binary digit (i.e., zero or one).
+* $${B600}$$ — $${FITSX}$$ ($$x~c~~x$$), checks whether $$x$$ is a $$c$$-bit signed integer for $$0 \leq c \leq 1023$$.
+* $${B601}$$ — $${UFITSX}$$ ($$x~c~~x$$), checks whether $$x$$ is a $$c$$-bit unsigned integer for $$0 \leq c \leq 1023$$.
+* $${B602}$$ — $${BITSIZE}$$ ($$x~~c$$), computes smallest $$c \geq 0$$ such that $$x$$ fits into a $$c$$-bit signed integer ($$-2^{c-1} \leq c < 2^{c-1}$$).
+* $${B603}$$ — $${UBITSIZE}$$ ($$x~~c$$), computes smallest $$c \geq 0$$ such that $$x$$ fits into a $$c$$-bit unsigned integer ($$0 \leq x < 2^c$$), or throws a range check exception.
+* $${B608}$$ — $${MIN}$$ ($$x~y~~x~{or}~y$$), computes the minimum of two integers $$x$$ and $$y$$.
+* $${B609}$$ — $${MAX}$$ ($$x~y~~x~{or}~y$$), computes the maximum of two integers $$x$$ and $$y$$.
+* $${B60A}$$ — $${MINMAX}$$ or $${INTSORT2}$$ ($$x~y~~x~y~{or}~y~x$$), sorts two integers. Quiet version of this operation returns two NaNs if any of the arguments are NaNs.
+* $${B60B}$$ — $${ABS}$$ ($$x~~|x|$$), computes the absolute value of an integer $$x$$.
+
 
 ## A.6 Comparison primitives
 
@@ -302,67 +303,68 @@ All integer comparison primitives return integer -1 ("true") or 0 ("false") to i
 
 Quiet versions of integer comparison primitives are also available, encoded with the aid of the QUIET prefix (B7). If any of the integers being compared are NaNs, the result of a quiet comparison will also be a $$\mathrm{NaN}$$ ("undefined"), instead of a -1 ("yes") or 0 ("no"), thus effectively supporting ternary logic.
 
-* $$\text{B8}$$ — $$\text{SGN}$$ ($$x~\rightarrow~\text{sgn}(x)$$), computes the sign of an integer $$x$$: −1 if $$x < 0$$, 0 if $$x = 0$$, 1 if $$x > 0$$.
-* $$\text{B9}$$ — $$\text{LESS}$$ ($$x~y~\rightarrow~x < y$$), returns −1 if $$x < y$$, 0 otherwise.
-* $$\text{BA}$$ — $$\text{EQUAL}$$ ($$x~y~\rightarrow~x = y$$), returns −1 if $$x = y$$, 0 otherwise.
-* $$\text{BB}$$ — $$\text{LEQ}$$ ($$x~y~\rightarrow~x \leq y$$).
-* $$\text{BC}$$ — $$\text{GREATER}$$ ($$x~y~\rightarrow~x > y$$).
-* $$\text{BD}$$ — $$\text{NEQ}$$ ($$x~y~\rightarrow~x \neq y$$), equivalent to EQUAL; NOT.
-* $$\text{BE}$$ — $$\text{GEQ}$$ ($$x~y~\rightarrow~x \geq y$$), equivalent to LESS; NOT.
-* $$\text{BF}$$ — $$\text{CMP}$$ ($$x~y~\rightarrow~\text{sgn}(x - y)$$), computes the sign of $$x - y$$: −1 if $$x < y$$, 0 if $$x = y$$, 1 if $$x > y$$. No integer overflow can occur here unless $$x$$ or $$y$$ is a NaN.
-* $$\text{C0yy}$$ — $$\text{EQINT}~yy$$ ($$x~\rightarrow~x = yy$$) for $$-2^7 \leq yy < 2^7$$.
-* $$\text{C000}$$ — $$\text{ISZERO}$$, checks whether an integer is zero. Corresponds to Forth’s 0=.
-* $$\text{C1yy}$$ — $$\text{LESSINT}~yy$$ ($$x~\rightarrow~x < yy$$) for $$-2^7 \leq yy < 2^7$$.
-* $$\text{C100}$$ — $$\text{ISNEG}$$, checks whether an integer is negative. Corresponds to Forth’s 0<.
-* $$\text{C101}$$ — $$\text{ISNPOS}$$, checks whether an integer is non-positive.
-* $$\text{C2yy}$$ — $$\text{GTINT}~yy$$ ($$x~\rightarrow~x > yy$$) for $$-2^7 \leq yy < 2^7$$.
-* $$\text{C200}$$ — $$\text{ISPOS}$$, checks whether an integer is positive. Corresponds to Forth’s 0>.
-* $$\text{C2FF}$$ — $$\text{ISNNEG}$$, checks whether an integer is non-negative.
-* $$\text{C3yy}$$ — $$\text{NEQINT}~yy$$ ($$x~\rightarrow~x \neq yy$$) for $$-2^7 \leq yy < 2^7$$.
-* $$\text{C4}$$ — $$\text{ISNAN}$$ ($$x~\rightarrow~x = \text{NaN}$$), checks whether $$x$$ is a NaN.
-* $$\text{C5}$$ — $$\text{CHKNAN}$$ ($$x~\rightarrow~x$$), throws an arithmetic overflow exception if $$x$$ is a NaN.
-* $$\text{C6}$$ — reserved for integer comparison.
+* $${B8}$$ — $${SGN}$$ ($$x~~{sgn}(x)$$), computes the sign of an integer $$x$$: −1 if $$x < 0$$, 0 if $$x = 0$$, 1 if $$x > 0$$.
+* $${B9}$$ — $${LESS}$$ ($$x~y~~x < y$$), returns −1 if $$x < y$$, 0 otherwise.
+* $${BA}$$ — $${EQUAL}$$ ($$x~y~~x = y$$), returns −1 if $$x = y$$, 0 otherwise.
+* $${BB}$$ — $${LEQ}$$ ($$x~y~~x \leq y$$).
+* $${BC}$$ — $${GREATER}$$ ($$x~y~~x > y$$).
+* $${BD}$$ — $${NEQ}$$ ($$x~y~~x \neq y$$), equivalent to EQUAL; NOT.
+* $${BE}$$ — $${GEQ}$$ ($$x~y~~x \geq y$$), equivalent to LESS; NOT.
+* $${BF}$$ — $${CMP}$$ ($$x~y~~{sgn}(x - y)$$), computes the sign of $$x - y$$: −1 if $$x < y$$, 0 if $$x = y$$, 1 if $$x > y$$. No integer overflow can occur here unless $$x$$ or $$y$$ is a NaN.
+* $${C0yy}$$ — $${EQINT}~yy$$ ($$x~~x = yy$$) for $$-2^7 \leq yy < 2^7$$.
+* $${C000}$$ — $${ISZERO}$$, checks whether an integer is zero. Corresponds to Forth’s 0=.
+* $${C1yy}$$ — $${LESSINT}~yy$$ ($$x~~x < yy$$) for $$-2^7 \leq yy < 2^7$$.
+* $${C100}$$ — $${ISNEG}$$, checks whether an integer is negative. Corresponds to Forth’s 0<.
+* $${C101}$$ — $${ISNPOS}$$, checks whether an integer is non-positive.
+* $${C2yy}$$ — $${GTINT}~yy$$ ($$x~~x > yy$$) for $$-2^7 \leq yy < 2^7$$.
+* $${C200}$$ — $${ISPOS}$$, checks whether an integer is positive. Corresponds to Forth’s 0>.
+* $${C2FF}$$ — $${ISNNEG}$$, checks whether an integer is non-negative.
+* $${C3yy}$$ — $${NEQINT}~yy$$ ($$x~~x \neq yy$$) for $$-2^7 \leq yy < 2^7$$.
+* $${C4}$$ — $${ISNAN}$$ ($$x~~x = {NaN}$$), checks whether $$x$$ is a NaN.
+* $${C5}$$ — $${CHKNAN}$$ ($$x~~x$$), throws an arithmetic overflow exception if $$x$$ is a NaN.
+* $${C6}$$ — reserved for integer comparison.
 
 ### A.6.2. Other comparison.
 
 Most of these "other comparison" primitives actually compare the data portions of Slices as bitstrings.
 
-* $$\text{C700}$$ — $$\text{SEMPTY}$$ ($$s~\rightarrow~s = \emptyset$$), checks whether a Slice $$s$$ is empty (i.e., contains no bits of data and no cell references).
-* $$\text{C701}$$ — $$\text{SDEMPTY}$$ ($$s~\rightarrow~s \approx \emptyset$$), checks whether Slice $$s$$ has no bits of data.
-* $$\text{C702}$$ — $$\text{SREMPTY}$$ ($$s~\rightarrow~r(s) = 0$$), checks whether Slice $$s$$ has no references.
-* $$\text{C703}$$ — $$\text{SDFIRST}$$ ($$s~\rightarrow~s_0 = 1$$), checks whether the first bit of Slice $$s$$ is a one.
-* $$\text{C704}$$ — $$\text{SDLEXCMP}$$ ($$s~s_0~\rightarrow~c$$), compares the data of $$s$$ lexicographically with the data of $$s_0$$, returning −1, 0, or 1 depending on the result.
-* $$\text{C705}$$ — $$\text{SDEQ}$$ ($$s~s_0~\rightarrow~s \approx s_0$$), checks whether the data parts of $$s$$ and $$s_0$$ coincide, equivalent to $$\text{SDLEXCMP}$$; $$\text{ISZERO}$$.
-* $$\text{C708}$$ — $$\text{SDPFX}$$ ($$s~s_0~\rightarrow~?$$), checks whether $$s$$ is a prefix of $$s_0$$.
-* $$\text{C709}$$ — $$\text{SDPFXREV}$$ ($$s~s_0~\rightarrow~?$$), checks whether $$s_0$$ is a prefix of $$s$$, equivalent to $$\text{SWAP}$$; $$\text{SDPFX}$$.
-* $$\text{C70A}$$ — $$\text{SDPPFX}$$ ($$s~s_0~\rightarrow~?$$), checks whether $$s$$ is a proper prefix of $$s_0$$ (i.e., a prefix distinct from $$s_0$$).
-* $$\text{C70B}$$ — $$\text{SDPPFXREV}$$ ($$s~s_0~\rightarrow~?$$), checks whether $$s_0$$ is a proper prefix of $$s$$.
+* $${C700}$$ — $${SEMPTY}$$ ($$s~~s = \emptyset$$), checks whether a Slice $$s$$ is empty (i.e., contains no bits of data and no cell references).
+* $${C701}$$ — $${SDEMPTY}$$ ($$s~~s \approx \emptyset$$), checks whether Slice $$s$$ has no bits of data.
+* $${C702}$$ — $${SREMPTY}$$ ($$s~~r(s) = 0$$), checks whether Slice $$s$$ has no references.
+* $${C703}$$ — $${SDFIRST}$$ ($$s~~s_0 = 1$$), checks whether the first bit of Slice $$s$$ is a one.
+* $${C704}$$ — $${SDLEXCMP}$$ ($$s~s_0~~c$$), compares the data of $$s$$ lexicographically with the data of $$s_0$$, returning −1, 0, or 1 depending on the result.
+* $${C705}$$ — $${SDEQ}$$ ($$s~s_0~~s \approx s_0$$), checks whether the data parts of $$s$$ and $$s_0$$ coincide, equivalent to $${SDLEXCMP}$$; $${ISZERO}$$.
+* $${C708}$$ — $${SDPFX}$$ ($$s~s_0~~?$$), checks whether $$s$$ is a prefix of $$s_0$$.
+* $${C709}$$ — $${SDPFXREV}$$ ($$s~s_0~~?$$), checks whether $$s_0$$ is a prefix of $$s$$, equivalent to $${SWAP}$$; $${SDPFX}$$.
+* $${C70A}$$ — $${SDPPFX}$$ ($$s~s_0~~?$$), checks whether $$s$$ is a proper prefix of $$s_0$$ (i.e., a prefix distinct from $$s_0$$).
+* $${C70B}$$ — $${SDPPFXREV}$$ ($$s~s_0~~?$$), checks whether $$s_0$$ is a proper prefix of $$s$$.
+* $${C70C}$$ — $${SDSFX}$$ ($$s~s_0~~?$$), checks whether $$s$$ is a suffix of $$s_0$$.
+* $${C70D}$$ — $${SDSFXREV}$$ ($$s~s_0~~?$$), checks whether $$s_0$$ is a suffix of $$s$$.
+* $${C70E}$$ — $${SDPSFX}$$ ($$s~s_0~~?$$), checks whether $$s$$ is a proper suffix of $$s_0$$.
+* $${C70F}$$ — $${SDPSFXREV}$$ ($$s~s_0~~?$$), checks whether $$s_0$$ is a proper suffix of $$s$$.
+* $${C710}$$ — $${SDCNTLEAD0}$$ ($$s~~n$$), returns the number of leading zeroes in $$s$$.
+* $${C711}$$ — $${SDCNTLEAD1}$$ ($$s~~n$$), returns the number of leading ones in $$s$$.
+* $${C712}$$ — $${SDCNTTRAIL0}$$ ($$s~~n$$), returns the number of trailing zeroes in $$s$$.
+* $${C713}$$ — $${SDCNTTRAIL1}$$ ($$s~~n$$), returns the number of trailing ones in $$s$$.
 
 
 ## A.7. Cell primitives
 
-* C70C - SDSFX $$\left(s s^{\prime}-\right.$$ ?), checks whether $$s$$ is a suffix of $$s^{\prime}$$.
-* C70D - SDSFXREV $$\left(s s^{\prime}-\right.$$ ?), checks whether $$s^{\prime}$$ is a suffix of $$s$$.
-* C70E - SDPSFX $$\left(s s^{\prime}-\right.$$ ?), checks whether $$s$$ is a proper suffix of $$s^{\prime}$$.
-* C70F - SDPSFXREV $$\left(s s^{\prime}-?\right)$$, checks whether $$s^{\prime}$$ is a proper suffix of $$s$$.
-* C710 - SDCNTLEADO $$(s-n)$$, returns the number of leading zeroes in $$s$$.
-* C711 - SDCNTLEAD1 $$(s-n)$$, returns the number of leading ones in $$s$$.
-* C712 - SDCNTTRAILO $$(s-n)$$, returns the number of trailing zeroes in $$s$$.
-* C713 - SDCNTTRAIL1 $$(s-n)$$, returns the number of trailing ones in $$s$$.
-
-The cell primitives are mostly either cell serialization primitives, which work with Builders, or cell deserialization primitives, which work with Slices.
+The cell primitives are mostly either *cell serialization primitives*, which work
+with *Builders*, or *cell deserialization primitives*, which work with *Slices*.
 
 ### A.7.1. Cell serialization primitives.
 
 All these primitives first check whether there is enough space in the Builder, and only then check the range of the value being serialized.
 
-* C8 - NEWC $$(-b)$$, creates a new empty Builder.
-* C9 - ENDC $$(b-c)$$, converts a Builder into an ordinary Cell.
-* CAcc - STI $$c c+1\left(x b-b^{\prime}\right)$$, stores a signed $$c c+$$ 1-bit integer $$x$$ into Builder $$b$$ for $$0 \leq c c \leq 255$$, throws a range check exception if $$x$$ does not fit into $$c c+1$$ bits.
-* $$\mathrm{CBcc}$$ - STU $$c c+1\left(x b-b^{\prime}\right)$$, stores an unsigned $$c c+$$ 1-bit integer $$x$$ into Builder $$b$$. In all other respects it is similar to STI.
-* CC - STREF $$\left(c b-b^{\prime}\right)$$, stores a reference to Cell c into Builder $$b$$.
-* CD - STBREFR or ENDCST $$\left(b b^{\prime \prime}-b\right)$$, equivalent to ENDC; SWAP; STREF.
-* CE - STSLICE $$\left(s b-b^{\prime}\right)$$, stores Slice $$s$$ into Builder $$b$$.
+* $${C8}$$ — $${NEWC}$$ ($$\rightarrow~b$$), creates a new empty Builder.
+* $${C9}$$ — $${ENDC}$$ ($$b~\rightarrow~c$$), converts a Builder into an ordinary Cell.
+* $${CA}_{{cc}}$$ — $${STI}~{cc} + 1$$ ($$x~b~\rightarrow~b_0$$), stores a signed cc + 1-bit integer $$x$$ into Builder $$b$$ for \(0 \leq {cc} \leq 255\), throws a range check exception if $$x$$ does not fit into cc + 1 bits.
+* $${CB}_{{cc}}$$ — $${STU}~{cc} + 1$$ ($$x~b~\rightarrow~b_0$$), stores an unsigned cc + 1-bit integer $$x$$ into Builder $$b$$. In all other respects it is similar to STI.
+* $${CC}$$ — $${STREF}$$ ($$c~b~\rightarrow~b_0$$), stores a reference to Cell $$c$$ into Builder $$b$$.
+* $${CD}$$ — $${STBREFR}$$ or $${ENDCST}$$ ($$b~b_{00}~\rightarrow~b$$), equivalent to ENDC; SWAP; STREF.
+* $${CE}$$ — $${STSLICE}$$ ($$s~b~\rightarrow~b_0$$), stores Slice $$s$$ into Builder $$b$$.
+
 * CF00 - STIX $$\left(x b l-b^{\prime}\right)$$, stores a signed $$l$$-bit integer $$x$$ into $$b$$ for $$0 \leq l \leq 257$$
 * CF01 - STUX $$\left(x b l-b^{\prime}\right)$$, stores an unsigned $$l$$-bit integer $$x$$ into $$b$$ for $$0 \leq l \leq 256$$
 * CF02 - STIXR $$\left(b x l-b^{\prime}\right)$$, similar to STIX, but with arguments in a different order.
@@ -771,11 +773,11 @@ The following primitives accept the new value as a Builder $$b$$ instead of a Sl
 
 ### A.10.7. "Maybe reference" dictionary operations.
 
-The following operations assume that a dictionary is used to store values $$c^{\text {? }}$$ of type $$C_{e l l}$$ ? ("Maybe Cell"), which can be used in particular to store dictionaries as values in other dictionaries. The representation is as follows: if $$c^{\text {? }}$$ is a Cell, it is stored as a value with no data bits and exactly one reference to this $$C$$ ell. If $$c^{?}$$ is $$N u l l$$, then the corresponding key must be absent from the dictionary altogether.
+The following operations assume that a dictionary is used to store values $$c^{ {? }}$$ of type $$C_{e l l}$$ ? ("Maybe Cell"), which can be used in particular to store dictionaries as values in other dictionaries. The representation is as follows: if $$c^{ {? }}$$ is a Cell, it is stored as a value with no data bits and exactly one reference to this $$C$$ ell. If $$c^{?}$$ is $$N u l l$$, then the corresponding key must be absent from the dictionary altogether.
 
 * F469 - DICTGETOPTREF $$\left(k D n-c^{?}\right)$$, a variant of DICTGETREF that returns $$N u l l$$ instead of the value $$c^{?}$$ if the key $$k$$ is absent from dictionary $$D$$.
-* F46A - DICTIGETOPTREF ( $$i D n-c^{\text {? }}$$ ), similar to DICTGETOPTREF, but with the key given by signed $$n$$-bit Integer $$i$$. If the key $$i$$ is out of range, also returns $$N u l l$$.
-* F46B - DICTUGETOPTREF ( $$i D n-c^{\text {? }}$$ ), similar to DICTGETOPTREF, but with the key given by unsigned $$n$$-bit Integer $$i$$.
+* F46A - DICTIGETOPTREF ( $$i D n-c^{ {? }}$$ ), similar to DICTGETOPTREF, but with the key given by signed $$n$$-bit Integer $$i$$. If the key $$i$$ is out of range, also returns $$N u l l$$.
+* F46B - DICTUGETOPTREF ( $$i D n-c^{ {? }}$$ ), similar to DICTGETOPTREF, but with the key given by unsigned $$n$$-bit Integer $$i$$.
 * F46D - DICTSETGETOPTREF $$\left(c^{?} k D n-D^{\prime} \tilde{c}^{?}\right)$$, a variant of both DICTGETOPTREF and DICTSETGETREF that sets the value corresponding to key $$k$$ in dictionary $$D$$ to $$c^{?}$$ (if $$c^{?}$$ is $$N u l l$$, then the key is deleted instead), and returns the old value $$\tilde{c}^{?}$$ (if the key $$k$$ was absent before, returns $$N u l l$$ instead). - F46E - DICTISETGETOPTREF $$\left(c^{?} i D n-D^{\prime} \tilde{c}^{?}\right)$$, similar to primitive DICTSETGETOPTREF, but using signed $$n$$-bit Integer $$i$$ as a key. If $$i$$ does not fit into $$n$$ bits, throws a range checking exception.
 * F46F - DICTUSETGETOPTREF $$\left(c^{?} i D n-D^{\prime} \tilde{c}^{?}\right)$$, similar to primitive DICTSETGETOPTREF, but using unsigned $$n$$-bit Integer $$i$$ as a key.
 
