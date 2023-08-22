@@ -573,69 +573,68 @@ All these primitives first check whether there is enough space in the Builder, a
 
 ### A.8.3. Control flow primitives: loops.
 
-Most of the loop primitives listed below are implemented with the aid of extraordinary continuations, such as ec\_until (cf. 4.1.5), with the loop body and the original current continuation cc stored as the arguments to this extraordinary continuation. Typically a suitable extraordinary continuation is constructed, and then saved into the loop body continuation savelist as c0; after that, the modified loop body continuation is loaded into cc and executed in the usual fashion. All of these loop primitives have $$* \mathrm{BRK}$$ versions, adapted for breaking out of a loop; they additionally set $$c 1$$ to the original current continuation (or original c0 for $$*$$ ENDBRK versions), and save the old c1 into the savelist of the original current continuation (or of the original c0 for $$*$$ ENDBRK versions).
+• $$\text{E4}$$ — $$\text{REPEAT}$$ ($$n~c \to$$), executes continuation $$c$$ $$n$$ times, if integer $$n$$ is non-negative. If $$n \geq 2^{31}$$ or $$n < -2^{31}$$, generates a range check exception. Notice that a $$\text{RET}$$ inside the code of $$c$$ works as a continue, not as a break. One should use either alternative (experimental) loops or alternative $$\text{RETALT}$$ (along with a $$\text{SETEXITALT}$$ before the loop) to break out of a loop.
+• $$\text{E5}$$ — $$\text{REPEATEND}$$ ($$n \to$$), similar to $$\text{REPEAT}$$, but it is applied to the current continuation $$\text{cc}$$.
+• $$\text{E6}$$ — $$\text{UNTIL}$$ ($$c \to$$), executes continuation $$c$$, then pops an integer $$x$$ from the resulting stack. If $$x$$ is zero, performs another iteration of this loop. The actual implementation of this primitive involves an extraordinary continuation $$\text{ec\_until}$$ (cf. 4.1.5) with its arguments set to the body of the loop (continuation $$c$$) and the original current continuation $$\text{cc}$$. This extraordinary continuation is then saved into the savelist of $$c$$ as $$c.c_0$$ and the modified $$c$$ is then executed. The other loop primitives are implemented similarly with the aid of suitable extraordinary continuations.
+• $$\text{E7}$$ — $$\text{UNTILEND}$$ ($\to$), similar to $$\text{UNTIL}$$, but executes the current continuation $$\text{cc}$$ in a loop. When the loop exit condition is satisfied, performs a $$\text{RET}$$.
+• $$\text{E8}$$ — $$\text{WHILE}$$ ($$c_0~c \to$$), executes $$c_0$$ and pops an integer $$x$$ from the resulting stack. If $$x$$ is zero, exists the loop and transfers control to the original $$\text{cc}$$. If $$x$$ is non-zero, executes $$c$$, and then begins a new iteration.
+• $$\text{E9}$$ — $$\text{WHILEEND}$$ ($$c_0 \to$$), similar to $$\text{WHILE}$$, but uses the current continuation $$\text{cc}$$ as the loop body.
+• $$\text{EA}$$ — $$\text{AGAIN}$$ ($$c \to$$), similar to $$\text{REPEAT}$$, but executes $$c$$ infinitely many times. A $$\text{RET}$$ only begins a new iteration of the infinite loop, which can be exited only by an exception, or a $$\text{RETALT}$$ (or an explicit $$\text{JMPX}$$).
+• $$\text{EB}$$ — $$\text{AGAINEND}$$ ($\to$), similar to $$\text{AGAIN}$$, but performed with respect to the current continuation $$\text{cc}$$.
+• $$\text{E314}$$ — $$\text{REPEATBRK}$$ ($$n~c \to$$), similar to $$\text{REPEAT}$$, but also sets $$c_1$$ to the original $$\text{cc}$$ after saving the old value of $$c_1$$ into the savelist of the original $$\text{cc}$$. In this way $$\text{RETALT}$$ could be used to break out of the loop body.
+• $$\text{E315}$$ — $$\text{REPEATENDBRK}$$ ($$n \to$$), similar to $$\text{REPEATEND}$$, but also sets $$c_1$$ to the original $$c_0$$ after saving the old value of $$c_1$$ into the savelist of the original $$c_0$$. Equivalent to $$\text{SAMEALTSAVE};~\text{REPEATEND}$$.
+• $$\text{E316}$$ — $$\text{UNTILBRK}$$ ($$c \to$$), similar to $$\text{UNTIL}$$, but also modifies $$c_1$$ in the same way as $$\text{REPEATBRK}$$.
+• $$\text{E317}$$ — $$\text{UNTILENDBRK}$$ ($\to$), equivalent to $$\text{SAMEALTSAVE};~\text{UNTILEND}$$.
+• $$\text{E318}$$ — $$\text{WHILEBRK}$$ ($$c_0~c \to$$), similar to $$\text{WHILE}$$, but also modifies $$c_1$$ in the same way as $$\text{REPEATBRK}$$.
+• $$\text{E319}$$ — $$\text{WHILEENDBRK}$$ ($$c \to$$), equivalent to $$\text{SAMEALTSAVE};~\text{WHILEEND}$$.
+• $$\text{E31A}$$ — $$\text{AGAINBRK}$$ ($$c \to$$), similar to $$\text{AGAIN}$$, but also modifies $$c_1$$ in the same way as $$\text{REPEATBRK}$$.
+• $$\text{E31B}$$ — $$\text{AGAINENDBRK}$$ ($\to$), equivalent to $$\text{SAMEALTSAVE};~\text{AGAINEND}$$.
 
-* E4 - REPEAT $$(n c-)$$, executes continuation $$c n$$ times, if integer $$n$$ is non-negative. If $$n \geq 2^{31}$$ or $$n<-2^{31}$$, generates a range check exception. Notice that a RET inside the code of $$c$$ works as a continue, not as a break. One should use either alternative (experimental) loops or alternative RETALT (along with a SETEXITALT before the loop) to break out of a loop.
-* E5 - REPEATEND $$(n-)$$, similar to REPEAT, but it is applied to the current continuation cc.
-* E6 - UNTIL $$(c-)$$, executes continuation $$c$$, then pops an integer $$x$$ from the resulting stack. If $$x$$ is zero, performs another iteration of this loop. The actual implementation of this primitive involves an extraordinary continuation ec\_until (cf. 4.1.5) with its arguments set to the body of the loop (continuation $$c$$ ) and the original current continuation cc. This extraordinary continuation is then saved into the savelist of $$c$$ as $$c . c 0$$ and the modified $$c$$ is then executed. The other loop primitives are implemented similarly with the aid of suitable extraordinary continuations.
-* E7 - UNTILEND $$(-)$$, similar to UNTIL, but executes the current continuation cc in a loop. When the loop exit condition is satisfied, performs a RET.
-* E8 - WHILE $$\left(c^{\prime} c-\right)$$, executes $$c^{\prime}$$ and pops an integer $$x$$ from the resulting stack. If $$x$$ is zero, exists the loop and transfers control to the original cc. If $$x$$ is non-zero, executes $$c$$, and then begins a new iteration.
-* E9 - WHILEEND $$\left(c^{\prime}-\right)$$, similar to WHILE, but uses the current continuation cc as the loop body.
-* EA - AGAIN $$(c-)$$, similar to REPEAT, but executes $$c$$ infinitely many times. A RET only begins a new iteration of the infinite loop, which can be exited only by an exception, or a RETALT (or an explicit JMPX).
-* EB - AGAINEND $$(-)$$, similar to AGAIN, but performed with respect to the current continuation cc.
-* E314 - REPEATBRK $$(n c-)$$, similar to REPEAT, but also sets c1 to the original cc after saving the old value of $$c 1$$ into the savelist of the original cc. In this way RETALT could be used to break out of the loop body. - E315 - REPEATENDBRK $$(n-)$$, similar to REPEATEND, but also sets c1 to the original c0 after saving the old value of c1 into the savelist of the original c0. Equivalent to SAMEALTSAVE; REPEATEND.
-* E316 - UNTILBRK $$(c-)$$, similar to UNTIL, but also modifies c1 in the same way as REPEATBRK.
-* E317 - UNTILENDBRK ( - ), equivalent to SAMEALTSAVE; UNTILEND.
-* E318 - WHILEBRK $$\left(c^{\prime} c-\right)$$, similar to WHILE, but also modifies c1 in the same way as REPEATBRK.
-* E319 - WHILEENDBRK $$(c-)$$, equivalent to SAMEALTSAVE; WHILEEND.
-* E31A - AGAINBRK $$(c-)$$, similar to AGAIN, but also modifies c1 in the same way as REPEATBRK.
-* E31B - AGAINENDBRK ( - ), equivalent to SAMEALTSAVE; AGAINEND.
 
 ## A.8.4. Manipulating the stack of continuations.
 
-* ECrn - SETCONTARGS $$r, n\left(x_{1} x_{2} \ldots x_{r} c-c^{\prime}\right)$$, similar to SETCONTARGS $$r$$, but sets $$c$$.nargs to the final size of the stack of $$c^{\prime}$$ plus $$n$$. In other words, transforms $$c$$ into a closure or a partially applied function, with $$0 \leq n \leq 14$$ arguments missing.
-* ECO $$n$$ - SETNUMARGS $$n$$ or SETCONTARGS $$0, n\left(c-c^{\prime}\right)$$, sets $$c$$. nargs to $$n$$ plus the current depth of $$c^{\prime}$$ s stack, where $$0 \leq n \leq 14$$. If $$c$$.nargs is already set to a non-negative value, does nothing.
-* ECrF - SETCONTARGS $$r$$ or SETCONTARGS $$r,-1\left(x_{1} x_{2} \ldots x_{r} c-c^{\prime}\right)$$, pushes $$0 \leq r \leq 15$$ values $$x_{1} \ldots x_{r}$$ into the stack of (a copy of) the continuation $$c$$, starting with $$x_{1}$$. If the final depth of $$c$$ 's stack turns out to be greater than $$c$$.nargs, a stack overflow exception is generated.
-* EDO $$p$$ - RETURNARGS $$p(-)$$, leaves only the top $$0 \leq p \leq 15$$ values in the current stack (somewhat similarly to ONLYTOPX), with all the unused bottom values not discarded, but saved into continuation c0 in the same way as SETCONTARGS does.
-* ED10 - RETURNVARARGS $$(p-)$$, similar to RETURNARGS, but with Integer $$0 \leq p \leq 255$$ taken from the stack. - ED11 - SETCONTVARARGS $$\left(x_{1} x_{2} \ldots x_{r} c r n-c^{\prime}\right)$$, similar to SETCONTARGS, but with $$0 \leq r \leq 255$$ and $$-1 \leq n \leq 255$$ taken from the stack.
-* ED12 - SETNUMVARARGS $$\left(c n-c^{\prime}\right)$$, where $$-1 \leq n \leq 255$$. If $$n=-1$$, this operation does nothing $$\left(c^{\prime}=c\right)$$. Otherwise its action is similar to SETNUMARGS $$n$$, but with $$n$$ taken from the stack.
+• $$\text{EC}_{rn}$$ — $$\text{SETCONTARGS}~r,n$$ ($$x_1~x_2~\dots~x_r~c \to c_0$$), similar to $$\text{SETCONTARGS}~r$$, but sets $$c.nargs$$ to the final size of the stack of $$c_0$$ plus $$n$$. In other words, transforms $$c$$ into a closure or a partially applied function, with $$0 \leq n \leq 14$$ arguments missing.
+• $$\text{EC}_{0n}$$ — $$\text{SETNUMARGS}~n$$ or $$\text{SETCONTARGS}~0,n$$ ($$c \to c_0$$), sets $$c.nargs$$ to $$n$$ plus the current depth of $$c$$'s stack, where $$0 \leq n \leq 14$$. If $$c.nargs$$ is already set to a non-negative value, does nothing.
+• $$\text{EC}_{rF}$$ — $$\text{SETCONTARGS}~r$$ or $$\text{SETCONTARGS}~r,-1$$ ($$x_1~x_2~\dots~x_r~c \to c_0$$), pushes $$0 \leq r \leq 15$$ values $$x_1~\dots~x_r$$ into the stack of (a copy of) the continuation $$c$$, starting with $$x_1$$. If the final depth of $$c$$'s stack turns out to be greater than $$c.nargs$$, a stack overflow exception is generated.
+• $$\text{ED}_{0p}$$ — $$\text{RETURNARGS}~p$$ ($\to$), leaves only the top $$0 \leq p \leq 15$$ values in the current stack (somewhat similarly to $$\text{ONLYTOPX}$$), with all the unused bottom values not discarded, but saved into continuation $$c_0$$ in the same way as $$\text{SETCONTARGS}$$ does.
+• $$\text{ED}_{10}$$ — $$\text{RETURNVARARGS}$$ ($$p \to$$), similar to $$\text{RETURNARGS}$$, but with Integer $$0 \leq p \leq 255$$ taken from the stack.
+• $$\text{ED}_{11}$$ — $$\text{SETCONTVARARGS}$$ ($$x_1~x_2~\dots~x_r~c~r~n \to c_0$$), similar to $$\text{SETCONTARGS}$$, but with $$0 \leq r \leq 255$$ and $$−1 \leq n \leq 255$$ taken from the stack.
+• $$\text{ED}_{12}$$ — $$\text{SETNUMVARARGS}$$ ($$c~n \to c_0$$), where $$−1 \leq n \leq 255$$. If $$n = −1$$, this operation does nothing ($$c_0 = c$$). Otherwise its action is similar to $$\text{SETNUMARGS}~n$$, but with $$n$$ taken from the stack.
+
 
 ### A.8.5. Creating simple continuations and closures.
 
-* ED1E - BLESS $$(s-c)$$, transforms a Slice $$s$$ into a simple ordinary continuation $$c$$, with $$c$$.code $$=s$$ and an empty stack and savelist.
-* ED1F - BLESSVARARGS $$\left(x_{1} \ldots x_{r} s r n-c\right)$$, equivalent to ROT; BLESS; ROTREV; SETCONTVARARGS.
-* EErn - BLESSARGS $$r, n\left(x_{1} \ldots x_{r} s-c\right)$$, where $$0 \leq r \leq 15,-1 \leq$$ $$n \leq 14$$, equivalent to BLESS; SETCONTARGS $$r, n$$. The value of $$n$$ is represented inside the instruction by the 4-bit integer $$n \bmod 16$$.
-* EEO $$n$$ - BLESSNUMARGS $$n$$ or BLESSARGS $$0, n(s-c)$$, also transforms a Slice $$s$$ into a Continuation $$c$$, but sets c.nargs to $$0 \leq n \leq 14$$.
+• $$\text{ED}_{1E}$$ — $$\text{BLESS}$$ ($$s \to c$$), transforms a Slice $$s$$ into a simple ordinary continuation $$c$$, with $$c.code = s$$ and an empty stack and savelist.
+• $$\text{ED}_{1F}$$ — $$\text{BLESSVARARGS}$$ ($$x_1~\dots~x_r~s~r~n \to c$$), equivalent to $$\text{ROT}$$; $$\text{BLESS}$$; $$\text{ROTREV}$$; $$\text{SETCONTVARARGS}$$.
+• $$\text{EE}_{rn}$$ — $$\text{BLESSARGS}~r,~n$$ ($$x_1~\dots~x_r~s \to c$$), where $$0 \leq r \leq 15$$, $$−1 \leq n \leq 14$$, equivalent to $$\text{BLESS}$$; $$\text{SETCONTARGS}~r,~n$$. The value of $$n$$ is represented inside the instruction by the 4-bit integer $$n \mod 16$$.
+• $$\text{EE}_{0n}$$ — $$\text{BLESSNUMARGS}~n$$ or $$\text{BLESSARGS}~0,n$$ ($$s \to c$$), also transforms a Slice $$s$$ into a Continuation $$c$$, but sets $$c.nargs$$ to $$0 \leq n \leq 14$$.
 
 ### A.8.6. Operations with continuation savelists and control registers.
 
-* ED4 $$i$$ - PUSH $$\mathrm{c}(i)$$ or PUSHCTR $$\mathrm{c}(i)(-x)$$, pushes the current value of control register $$\mathrm{c}(i)$$. If the control register is not supported in the current codepage, or if it does not have a value, an exception is triggered.
-* ED44 - PUSH c4 or PUSHR00T, pushes the "global data root" cell reference, thus enabling access to persistent smart-contract data.
-* ED5 $$i$$ - POP $$\mathrm{c}(i)$$ or POPCTR $$\mathrm{c}(i)(x-)$$, pops a value $$x$$ from the stack and stores it into control register $$c(i)$$, if supported in the current codepage. Notice that if a control register accepts only values of a specific type, a type-checking exception may occur.
-* ED54 - POP c4 or POPROOT, sets the "global data root" cell reference, thus allowing modification of persistent smart-contract data.
-* ED6 $$i$$ - SETCONT $$\mathrm{c}(i)$$ or SETCONTCTR $$\mathrm{c}(i)\left(x c-c^{\prime}\right)$$, stores $$x$$ into the savelist of continuation $$c$$ as $$c(i)$$, and returns the resulting continuation $$c^{\prime}$$. Almost all operations with continuations may be expressed in terms of SETCONTCTR, POPCTR, and PUSHCTR.
-* ED7i - SETRETCTR c $$(i)(x-)$$, equivalent to PUSH c0; SETCONTCTR $$\mathrm{c}(i) ;$$ POP c0.
-* ED8i - SETALTCTR c $$(i)(x-)$$, equivalent to PUSH c1; SETCONTCTR $$\mathrm{c}(i) ;$$ POP c0.
-* ED9 $$i$$ - POPSAVE $$\mathrm{c}(i)$$ or POPCTRSAVE $$\mathrm{c}(i)(x-)$$, similar to POP $$\mathrm{c}(i)$$, but also saves the old value of $$c(i)$$ into continuation co. Equivalent (up to exceptions) to SAVECTR $$\mathrm{c}(i)$$; POP $$\mathrm{c}(i)$$.
-* EDA $$i$$ - SAVE $$c(i)$$ or SAVECTR $$c(i)(-)$$, saves the current value of $$c(i)$$ into the savelist of continuation c0. If an entry for $$c(i)$$ is already present in the savelist of c0, nothing is done. Equivalent to PUSH $$c(i)$$; SETRETCTR $$c(i)$$.
-* EDBi - SAVEALT $$\mathrm{c}(i)$$ or SAVEALTCTR $$\mathrm{c}(i)(-)$$, similar to SAVE $$\mathrm{c}(i)$$, but saves the current value of $$c(i)$$ into the savelist of $$c 1$$, not $$c 0$$.
-* EDC $$i$$ - SAVEBOTH $$c(i)$$ or SAVEBOTHCTR $$c(i)(-)$$, equivalent to DUP; SAVE $$\mathrm{c}(i)$$; SAVEALT $$\mathrm{c}(i)$$.
-* EDEO - PUSHCTRX $$(i-x)$$, similar to PUSHCTR $$\mathrm{c}(i)$$, but with $$i, 0 \leq i \leq$$ 255 , taken from the stack. Notice that this primitive is one of the few "exotic" primitives, which are not polymorphic like stack manipulation primitives, and at the same time do not have well-defined types of parameters and return values, because the type of $$x$$ depends on $$i$$.
-* EDE1 - POPCTRX $$(x i-)$$, similar to POPCTR $$\mathrm{c}(i)$$, but with $$0 \leq i \leq 255$$ from the stack.
-* EDE2 - SETCONTCTRX $$\left(x c i-c^{\prime}\right)$$, similar to SETCONTCTR $$c(i)$$, but with $$0 \leq i \leq 255$$ from the stack.
-* EDFO - COMPOS or BOOLAND $$\left(c c^{\prime}-c^{\prime \prime}\right)$$, computes the composition $$c \circ_{0} c^{\prime}$$, which has the meaning of "perform $$c$$, and, if successful, perform $$c^{\prime}$$ " (if $$c$$ is a boolean circuit) or simply "perform $$c$$, then $$c$$ ". Equivalent to SWAP; SETCONT cO.
-* EDF1 - COMPOSALT or BOOLOR $$\left(c c^{\prime}-c^{\prime \prime}\right)$$, computes the alternative composition $$c \circ_{1} c^{\prime}$$, which has the meaning of "perform $$c$$, and, if not successful, perform $$c^{\prime \prime \prime}$$ (if $$c$$ is a boolean circuit). Equivalent to SWAP; SETCONT c1.
-* EDF2 - COMPOSBOTH $$\left(c c^{\prime}-c^{\prime \prime}\right)$$, computes $$\left(c \circ_{0} c^{\prime}\right) \circ_{1} c^{\prime}$$, which has the meaning of "compute boolean circuit $$c$$, then compute $$c^{\prime}$$, regardless of the result of $$c$$ ".
-* EDF3 - ATEXIT $$(c-)$$, sets $$c 0 \leftarrow c \circ_{0} c 0$$. In other words, $$c$$ will be executed before exiting current subroutine.
-* EDF4 - ATEXITALT $$(c-)$$, sets $$c 1 \leftarrow c \circ_{1} c 1$$. In other words, $$c$$ will be executed before exiting current subroutine by its alternative return path.
-* EDF5 - SETEXITALT $$(c-)$$, sets $$c 1 \leftarrow\left(c \circ_{0} c 0\right) \circ_{1} c 1$$. In this way, a subsequent RETALT will first execute $$c$$, then transfer control to the original c0. This can be used, for instance, to exit from nested loops.
-* EDF6 - THENRET $$\left(c-c^{\prime}\right)$$, computes $$c^{\prime}:=c \circ_{0}$$ c0
-* EDF7 - THENRETALT $$\left(c-c^{\prime}\right)$$, computes $$c^{\prime}:=c \circ_{0} c 1$$
-* EDF8 - INVERT ( - ), interchanges c0 and c1.
-* EDF9 - BOOLEVAL $$(c-?)$$, performs cc $$\leftarrow\left(c \circ_{0}\left((\mathrm{PUSH}-1) \circ_{0} \mathrm{cc}\right)\right) \circ_{1}$$ $$\left((\right.$$ PUSH 0$$\left.) \circ_{0} \mathrm{Cc}\right)$$. If $$c$$ represents a boolean circuit, the net effect is to evaluate it and push either -1 or 0 into the stack before continuing.
-* EDFA - SAMEALT $$(-)$$, sets $$c_{1}:=c_{0}$$. Equivalent to PUSH c0;POP c1.
-* EDFB - SAMEALTSAVE $$(-)$$, sets $$c_{1}:=c_{0}$$, but first saves the old value of $$c_{1}$$ into the savelist of $$c_{0}$$. Equivalent to SAVE $$c 1$$; SAMEALT.
-* EErn - BLESSARGS $$r, n\left(x_{1} \ldots x_{r} s-c\right)$$, described in [$$\mathbf{A.8.4}$$](a-instructions-and-opcodes.md#a.8.4.-manipulating-the-stack-of-continuations.).
+• $${ED4i}$$~—~PUSH~c(i)~or~PUSHCTR~c(i)~(–~x)$$, pushes the current value of control register $$c(i)$$. If the control register is not supported in the current codepage, or if it does not have a value, an exception is triggered.
+• $${ED44}$$~—~PUSH~c4~or~PUSHROOT$$, pushes the “global data root” cell reference, thus enabling access to persistent smart-contract data.
+• $${ED5i}$$~—~POP~c(i)~or~POPCTR~c(i)~(x~–)$$, pops a value $$x$$ from the stack and stores it into control register $$c(i)$$, if supported in the current codepage. Notice that if a control register accepts only values of a specific type, a type-checking exception may occur.
+• $${ED54}$$~—~POP~c4~or~POPROOT$$, sets the “global data root” cell reference, thus allowing modification of persistent smart-contract data.
+• $${ED6i}$$~—~SETCONT~c(i)~or~SETCONTCTR~c(i)~(x~c~–~c_0)$$, stores $$x$$ into the savelist of continuation $$c$$ as $$c(i)$$, and returns the resulting continuation $$c_0$$. Almost all operations with continuations may be expressed in terms of $$SETCONTCTR$$, $$POPCTR$$, and $$PUSHCTR$$.
+• $${ED7i}$$~—~SETRETCTR~c(i)~(x~–)$$, equivalent to $$PUSH~c0$$; $$SETCONTCTR~c(i)$$; $$POP~c0$$.
+• $${ED8i}$$~—~SETALTCTR~c(i)~(x~–)$$, equivalent to $$PUSH~c1$$; $$SETCONTCTR~c(i)$$; $$POP~c0$$.
+• $${ED9i}$$~—~POPSAVE~c(i)~or~POPCTRSAVE~c(i)~(x~–)$$, similar to $$POP~c(i)$$, but also saves the old value of $$c(i)$$ into continuation $$c0$$. Equivalent (up to exceptions) to $$SAVECTR~c(i)$$; $$POP~c(i)$$.
+• $${EDAi}$$~—~SAVE~c(i)~or~SAVECTR~c(i)~(–)$$, saves the current value of $$c(i)$$ into the savelist of continuation $$c0$$. If an entry for $$c(i)$$ is already present in the savelist of $$c0$$, nothing is done. Equivalent to $$PUSH~c(i)$$; $$SETRETCTR~c(i)$$.
+• $${EDBi}$$~—~SAVEALT~c(i)~or~SAVEALTCTR~c(i)~(–)$$, similar to $$SAVE~c(i)$$, but saves the current value of $$c(i)$$ into the savelist of $$c1$$, not $$c0$$.
+• $${EDCi}$$~—~SAVEBOTH~c(i)~or~SAVEBOTHCTR~c(i)~(–)$$, equivalent to $$DUP$$; $$SAVE~c(i)$$; $$SAVEALT~c(i)$$.
+• $${EDE0}$$~—~PUSHCTRX~(i~–~x)$$, similar to $$PUSHCTR~c(i)$$, but with $$i$$, $$0 \leq i \leq 255$$, taken from the stack. Notice that this primitive is one of the few “exotic” primitives, which are not polymorphic like stack manipulation primitives, and at the same time do not have well-defined types of parameters and return values, because the type of $$x$$ depends on $$i$$.
+• $${EDE1}$$~—~POPCTRX~(x~i~–)$$, similar to $$POPCTR~c(i)$$, but with $$0 \leq i \leq 255$$ from the stack.
+• $${EDE2}$$~—~SETCONTCTRX~(x~c~i~–~c_0)$$, similar to $$SETCONTCTR~c(i)$$, but with $$0 \leq i \leq 255$$ from the stack.
+• $${EDF0}$$~—~COMPOS~or~BOOLAND~(c~c0~–~c_{00})$$, computes the composition $$c \circ_0 c_0$$, which has the meaning of “perform $$c$$, and, if successful, perform $$c_0$$” (if $$c$$ is a boolean circuit) or simply “perform $$c$$, then $$c_0$$”. Equivalent to $$SWAP$$; $$SETCONT~c0$$.
+• $${EDF1}$$~—~COMPOSALT~or~BOOLOR~(c~c0~–~c_{00})$$, computes the alternative composition $$c \circ_1 c_0$$, which has the meaning of “perform $$c$$, and, if not successful, perform $$c_0$$” (if $$c$$ is a boolean circuit). Equivalent to $$SWAP$$; $$SETCONT~c1$$.
+• $${EDF2}$$~—~COMPOSBOTH~(c~c0~–~c_{00})$$, computes $$(c \circ_0 c_0) \circ_1 c_0$$, which has the meaning of “compute boolean circuit $$c$$, then compute $$c_0$$, regardless of the result of $$c$$”.
+• $${EDF3}$$~—~ATEXIT~(c~–)$$, sets $$c0 \leftarrow c \circ_0 c0$$. In other words, $$c$$ will be executed before exiting current subroutine.
+• $${EDF4}$$~—~ATEXITALT~(c~–)$$, sets $$c1 \leftarrow c \circ_1 c1$$. In other words, $$c$$ will be executed before exiting current subroutine by its alternative return path.
+• $${EDF5}$$~—~SETEXITALT~(c~–)$$, sets $$c1 \leftarrow (c \circ_0 c0) \circ_1 c1$$. In this way, a subsequent RETALT will first execute $$c$$, then transfer control to the original $$c0$$. This can be used, for instance, to exit from nested loops.
+• $${EDF6}$$~—~THENRET~(c~–~c_0)$$, computes $$c_0 := c \circ_0 c0$$
+• $${EDF7}$$~—~THENRETALT~(c~–~c_0)$$, computes $$c_0 := c \circ_0 c1$$
+• $${EDF8}$$~—~INVERT~(–)$$, interchanges $$c0$$ and $$c1$$.
+• $${EDF9}$$~—~BOOLEVAL~(c~–~?)$$, performs $$cc \leftarrow$$ 
 
 ### A.8.7. Dictionary subroutine calls and jumps.
 
