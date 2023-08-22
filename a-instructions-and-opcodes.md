@@ -204,86 +204,95 @@ slice will be pushed.
 * $$8Crxxssss$$ — $$\text{PUSHSLICE}~ssss$$, pushes the (prefix) subslice of cc.code
 consisting of its first $$1 \leq r + 1 \leq 4$$ references and up to first $$8xx + 1$$
 bits of data, with $$0 \leq xx \leq 31$$. A completion tag is also assumed.
+* $$8C01$$ is equivalent to $$\text{PUSHREFSLICE}$$.
+* $$8Drxxsssss$$ — $$\text{PUSHSLICE}~sssss$$, pushes the subslice of cc.code consisting of $$0 \leq r \leq 4$$ references and up to $$8xx + 6$$ bits of data, with
+$$0 \leq xx \leq 127$$. A completion tag is assumed.
+* $$8DE_$$ — unused (reserved).
+* $$8F_rxxcccc$$ — $$\text{PUSHCONT}~cccc$$, where cccc is the simple ordinary continuation made from the first $$0 \leq r \leq 3$$ references and the first
+$$0 \leq xx \leq 127$$ bytes of cc.code.
+* $$9xccc$$ — $$\text{PUSHCONT}~ccc$$, pushes an x-byte continuation for $$0 \leq x \leq 15$$.
 
 
 ## A.5 Arithmetic primitives
 
 ### A.5.1. Addition, subtraction, multiplication.
 
-* $$\mathrm{AO}-\mathrm{ADD}(x y-x+y)$$, adds together two integers.
-* $$\mathrm{A} 1-\operatorname{SUB}(x y-x-y)$$.
-* A2 - $$\operatorname{SUBR}(x y-y-x)$$, equivalent to SWAP; SUB.
-* A3 - NEGATE $$(x--x)$$, equivalent to MULCONST -1 or to ZERO; SUBR. Notice that it triggers an integer overflow exception if $$x=-2^{256}$$.
-* A4 - INC $$(x-x+1)$$, equivalent to ADDCONST 1.
-* A5 - DEC $$(x-x-1)$$, equivalent to ADDCONST -1 .
-* A6cc-ADDCONST $$c c(x-x+c c),-128 \leq c c \leq 127$$.
-* A7cc- MULCONST $$c c(x-x \cdot c c),-128 \leq c c \leq 127$$
-* A8 - MUL $$(x y-x y)$$.
+* $$A0$$ — $$\text{ADD}~(x~y~\to~x + y)$$, adds together two integers.
+* $$A1$$ — $$\text{SUB}~(x~y~\to~x - y)$$.
+* $$A2$$ — $$\text{SUBR}~(x~y~\to~y - x)$$, equivalent to $$\text{SWAP}; \text{SUB}$$.
+* $$A3$$ — $$\text{NEGATE}~(x~\to~−x)$$, equivalent to $$\text{MULCONST}~−1$$ or to $$\text{ZERO}; \text{SUBR}$$. Notice that it triggers an integer overflow exception if \( x = -2^{256} \).
+* $$A4$$ — $$\text{INC}~(x~\to~x + 1)$$, equivalent to $$\text{ADDCONST}~1$$.
+* $$A5$$ — $$\text{DEC}~(x~\to~x - 1)$$, equivalent to $$\text{ADDCONST}~−1$$.
+* $$A6cc$$ — $$\text{ADDCONST}~cc~(x~\to~x + cc)$$, \(−128 \leq cc \leq 127\).
+* $$A7cc$$ — $$\text{MULCONST}~cc~(x~\to~x \cdot cc)$$, \(−128 \leq cc \leq 127\).
+* $$A8$$ — $$\text{MUL}~(x~y~\to~xy)$$.
 
 ### A.5.2. Division.
 
-The general encoding of a DIV, DIVMOD, or MOD operation is A9mscdf, with an optional pre-multiplication and an optional replacement of the division or multiplication by a shift. Variable one- or two-bit fields $$m, s, c, d$$, and $$f$$ are as follows: - $$0 \leq m \leq 1$$ - Indicates whether there is pre-multiplication (MULDIV operation and its variants), possibly replaced by a left shift.
+The general encoding of a $$\text{DIV}$$, $$\text{DIVMOD}$$, or $$\text{MOD}$$ operation is $$A9mscdf$$, with
+an optional pre-multiplication and an optional replacement of the division or
+multiplication by a shift. Variable one- or two-bit fields $$m$$, $$s$$, $$c$$, $$d$$, and $$f$$ are
+as follows:
 
-* $$0 \leq s \leq 2$$ - Indicates whether either the multiplication or the division have been replaced by shifts: $$s=0$$-no replacement, $$s=1$$-division replaced by a right shift, $$s=2$$-multiplication replaced by a left shift (possible only for $$m=1$$ ).
-* $$0 \leq c \leq 1$$ - Indicates whether there is a constant one-byte argument $$$t t$$$ for the shift operator (if $$s \neq 0$$ ). For $$s=0, c=0$$. If $$c=1$$, then $$0 \leq t t \leq 255$$, and the shift is performed by $$$t t+1$$ bits. If $$s \neq 0$$ and $$c=0$$, then the shift amount is provided to the instruction as a top-of-stack Integer in range $$0 \ldots 256$$.
-* $$1 \leq d \leq 3$$ - Indicates which results of division are required: 1-only the quotient, 2 -only the remainder, 3-both.
-* $$0 \leq f \leq 2$$ - Rounding mode: 0-floor, 1-nearest integer, 2-ceiling (cf. [$$\mathbf{1.5.6}$$](./))
+* $$0~\leq~m~\leq~1$$ — Indicates whether there is pre-multiplication ($$\text{MULDIV}$$ operation and its variants), possibly replaced by a left shift.
+* $$0~\leq~s~\leq~2$$ — Indicates whether either the multiplication or the division have been replaced by shifts: $$s~=~0$$—no replacement, $$s~=~1$$—division replaced by a right shift, $$s~=~2$$—multiplication replaced by a left shift (possible only for $$m~=~1$$).
+* $$0~\leq~c~\leq~1$$ — Indicates whether there is a constant one-byte argument $$tt$$ for the shift operator (if $$s~\neq~0$$). For $$s~=~0$$, $$c~=~0$$. If $$c~=~1$$, then $$0~\leq~tt~\leq~255$$, and the shift is performed by $$tt~+~1$$ bits. If $$s~\neq~0$$ and $$c~=~0$$, then the shift amount is provided to the instruction as a top-of-stack $$\text{Integer}$$ in range $$0~\dots~256$$.
+* $$1~\leq~d~\leq~3$$ — Indicates which results of division are required: 1—only the quotient, 2—only the remainder, 3—both.
+* $$0~\leq~f~\leq~2$$ — Rounding mode: 0—floor, 1—nearest integer, 2—ceiling [$$\mathbf{1.5.6}$$](README.md/#1.5.6.-division-and-rounding.).
 
 Examples:
 
-* A904 - DIV $$(x y-q:=\lfloor x / y\rfloor)$$.
-* A905- DIVR $$\left(x y-q^{\prime}:=\lfloor x / y+1 / 2\rfloor\right)$$.
-* A906 - DIVC $$\left(x y-q^{\prime \prime}:=\lceil x / y\rceil\right)$$.
-* A908 - MOD $$(x y-r)$$, where $$q:=\lfloor x / y\rfloor, r:=x \bmod y:=x-y q$$.
-* A90C - DIVMOD $$(x y-q r)$$, where $$q:=\lfloor x / y\rfloor, r:=x-y q$$.
-* A90D - DIVMODR $$\left(x y-q^{\prime} r^{\prime}\right)$$, where $$q^{\prime}:=\lfloor x / y+1 / 2\rfloor, r^{\prime}:=x-y q^{\prime}$$.
-* A90E - DIVMODC $$\left(x y-q^{\prime \prime} r^{\prime \prime}\right)$$, where $$q^{\prime \prime}:=\lceil x / y\rceil, r^{\prime \prime}:=x-y q^{\prime \prime}$$.
-* A924 - same as RSHIFT: $$\left(x y-\left\lfloor x \cdot 2^{-y}\right\rfloor\right)$$ for $$0 \leq y \leq 256$$.
-* A934tt - same as RSHIFT $$$t t+1:\left(x-\left\lfloor x \cdot 2^{-t t-1}\right\rfloor\right)$$.
-* A938tt - MODPOW2 $$$t t+1:\left(x-x \bmod 2^{t t+1}\right)$$.
-* A985 - MULDIVR $$\left(x y z-q^{\prime}\right)$$, where $$q^{\prime}=\lfloor x y / z+1 / 2\rfloor$$. - A98C - MULDIVMOD $$(x y z-q r)$$, where $$q:=\lfloor x \cdot y / z\rfloor, r:=x \cdot y \bmod z$$ (same as $$* /$$ MOD in Forth).
-* A9A4 - MULRSHIFT $$\left(x y z-\left\lfloor x y \cdot 2^{-z}\right\rfloor\right)$$ for $$0 \leq z \leq 256$$.
-* A9A5 - MULRSHIFTR $$\left(x y z-\left\lfloor x y \cdot 2^{-z}+1 / 2\right\rfloor\right)$$ for $$0 \leq z \leq 256$$.
-* A9B4tt - MULRSHIFT $$$t t+1\left(x y-\left\lfloor x y \cdot 2^{-t t-1}\right\rfloor\right)$$.
-* A9B5tt - MULRSHIFTR $$$t t+1\left(x y-\left\lfloor x y \cdot 2^{-t t-1}+1 / 2\right\rfloor\right)$$.
-* A9C4 - LSHIFTDIV $$\left(x y z-\left\lfloor 2^{z} x / y\right\rfloor\right)$$ for $$0 \leq z \leq 256$$.
-* A9C5 - LSHIFTDIVR $$\left(x y z-\left\lfloor 2^{z} x / y+1 / 2\right\rfloor\right)$$ for $$0 \leq z \leq 256$$.
-* A9D4tt - LSHIFTDIV $$$t t+1\left(x y-\left\lfloor 2^{t t+1} x / y\right\rfloor\right)$$.
-* A9D5tt - LSHIFTDIVR $$$t t+1\left(x y-\left\lfloor 2^{t t+1} x / y+1 / 2\right\rfloor\right)$$.
+* $$A904$$ — $$\text{DIV}~(x~y~\rightarrow~q~:=~b\frac{x}{y}c)$$.
+* $$A905$$ — $$\text{DIVR}~(x~y~\rightarrow~q_0~:=~b\frac{x}{y}~+~\frac{1}{2}c)$$.
+* $$A906$$ — $$\text{DIVC}~(x~y~\rightarrow~q_{00}~:=~d\frac{x}{y}e)$$.
+* $$A908$$ — $$\text{MOD}~(x~y~\rightarrow~r)$$, where $$q~:=~b\frac{x}{y}c$$, $$r~:=~x~\text{mod}~y~:=~x~−~yq$$.
+* $$A90C$$ — $$\text{DIVMOD}~(x~y~\rightarrow~q~r)$$, where $$q~:=~b\frac{x}{y}c$$, $$r~:=~x~−~yq$$.
+* $$A90D$$ — $$\text{DIVMODR}~(x~y~\rightarrow~q_0~r_0)$$, where $$q_0~:=~b\frac{x}{y}~+~\frac{1}{2}c$$, $$r_0~:=~x~−~yq_0$$.
+* $$A90E$$ — $$\text{DIVMODC}~(x~y~\rightarrow~q_{00}~r_{00})$$, where $$q_{00}~:=~d\frac{x}{y}e$$, $$r_{00}~:=~x~−~yq_{00}$$.
+* $$A924$$ — same as $$\text{RSHIFT}$$: $$(x~y~\rightarrow~b\frac{x}{y}c)$$ for $$0~\leq~y~\leq~256$$.
+* $$A934tt$$ — same as $$\text{RSHIFT}~tt~+~1$$: $$(x~\rightarrow~b\frac{x}{y}c)$$.
+* $$A938tt$$ — $$\text{MODPOW2}~tt~+~1$$: $$(x~\rightarrow~x~\text{mod}~2^{tt+1})$$.
+* $$A985$$ — $$\text{MULDIVR}~(x~y~z~\rightarrow~q_0)$$, where $$q_0~=~b\frac{xy}{z}~+~\frac{1}{2}c$$.
+* $$A98C$$ — $$\text{MULDIVMOD}~(x~y~z~\rightarrow~q~r)$$, where $$q~:=~b\frac{x~\cdot~y}{z}c$$, $$r~:=~x~\cdot~y~\text{mod}~z$$ (same as $$*/\text{MOD}$$ in Forth).
+* $$A9A4$$ — $$\text{MULRSHIFT}~(x~y~z~\rightarrow~bxy~\cdot~2^{-z}c)$$ for $$0~\leq~z~\leq~256$$.
+* $$A9A5$$ — $$\text{MULRSHIFTR}~(x~y~z~\rightarrow~bxy~\cdot~2^{-z}~+~\frac{1}{2}c)$$ for $$0~\leq~z~\leq~256$$.
+* $$A9B4tt$$ — $$\text{MULRSHIFT}~tt~+~1~(x~y~\rightarrow~bxy~\cdot~2^{-tt-1}c)$$.
+* $$A9B5tt$$ — $$\text{MULRSHIFTR}~tt~+~1~(x~y~\rightarrow~bxy~\cdot~2^{-tt-1}~+~\frac{1}{2}c)$$.
+* $$A9C4$$ — $$\text{LSHIFTDIV}~(x~y~z~\rightarrow~b2^zx/yc)$$ for $$0~\leq~z~\leq~256$$.
+* $$A9C5$$ — $$\text{LSHIFTDIVR}~(x~y~z~\rightarrow~b2^zx/y~+~\frac{1}{2}c)$$ for $$0~\leq~z~\leq~256$$.
+* $$A9D4tt$$ — $$\text{LSHIFTDIV}~tt~+~1~(x~y~\rightarrow~b2^{tt+1}x/yc)$$.
+* $$A9D5tt$$ — $$\text{LSHIFTDIVR}~tt~+~1~(x~y~\rightarrow~b2^{tt+1}x/y~+~\frac{1}{2}c)$$.
 
-The most useful of these operations are DIV, DIVMOD, MOD, DIVR, DIVC, MODPOW2 $$$t$$$, and RSHIFTR $$$t$$$ (for integer arithmetic); and MULDIVMOD, MULDIV, MULDIVR, LSHIFTDIVR $$$t$$$, and MULRSHIFTR $$$t$$$ (for fixed-point arithmetic).
+The most useful of these operations are $$\text{DIV}$$, $$\text{DIVMOD}$$, $$\text{MOD}$$, $$\text{DIVR}$$, $$\text{DIVC}$$, 
+$$\text{MODPOW2}~t$$, and $$\text{RSHIFTR}~t$$ (for integer arithmetic); and $$\text{MULDIVMOD}$$, $$\text{MULDIV}$$, 
+$$\text{MULDIVR}$$, $$\text{LSHIFTDIVR}~t$$, and $$\text{MULRSHIFTR}~t$$ (for fixed-point arithmetic).
+
 
 ### A.5.3. Shifts, logical operations.
 
-* AAcc-LSHIFT $$c c+1\left(x-x \cdot 2^{c c+1}\right), 0 \leq c c \leq 255$$.
-* AAO0 - LSHIFT 1, equivalent to MULCONST 2 or to Forth's 2\*.
-* $$\mathrm{ABcc}-\mathrm{RSHIFT} c c+1\left(x-\left\lfloor x \cdot 2^{-c c-1}\right\rfloor\right), 0 \leq c c \leq 255$$.
-* AC - LSHIFT $$\left(x y-x \cdot 2^{y}\right), 0 \leq y \leq 1023$$.
-* $$\mathrm{AD}-\mathrm{RSHIFT}\left(x y-\left\lfloor x \cdot 2^{-y}\right\rfloor\right), 0 \leq y \leq 1023$$.
-* AE - POW2 $$\left(y-2^{y}\right), 0 \leq y \leq 1023$$, equivalent to ONE; SWAP; LSHIFT.
-* $$\mathrm{AF}$$ - reserved.
-* BO - AND $$(x y-x \& y)$$, bitwise "and" of two signed integers $$x$$ and $$y$$, sign-extended to infinity.
-* B1 - OR $$(x y-x \vee y)$$, bitwise "or" of two integers.
-* B2 - XOR $$(x y-x \oplus y)$$, bitwise "xor" of two integers.
-* B3 - NOT $$(x-x \oplus-1=-1-x)$$, bitwise "not" of an integer.
-* B4cc - FITS $$c c+1(x-x)$$, checks whether $$x$$ is a $$c c+1$$-bit signed integer for $$0 \leq c c \leq 255$$ (i.e., whether $$-2^{c c} \leq x<2^{c c}$$ ). If not, either triggers an integer overflow exception, or replaces $$x$$ with a NaN (quiet version).
-* B400 - FITS 1 or CHKBOOL $$(x-x)$$, checks whether $$x$$ is a "boolean value" (i.e., either 0 or -1 ).
-* B5cc-UFITS $$c c+1(x-x)$$, checks whether $$x$$ is a $$c c+1$$-bit unsigned integer for $$0 \leq c c \leq 255$$ (i.e., whether $$0 \leq x<2^{c c+1}$$ )
-* B500 - UFITS 1 or CHKBIT, checks whether $$x$$ is a binary digit (i.e., zero or one).
-* B600 - FITSX $$(x c-x)$$, checks whether $$x$$ is a $$c$$-bit signed integer for $$0 \leq c \leq 1023$$
-* B601 - UFITSX $$(x c-x)$$, checks whether $$x$$ is a $$c$$-bit unsigned integer for $$0 \leq c \leq 1023$$
-* B602 - BITSIZE $$(x-c)$$, computes smallest $$c \geq 0$$ such that $$x$$ fits into a $$c$$-bit signed integer $$\left(-2^{c-1} \leq c<2^{c-1}\right)$$.
-* B603 - UBITSIZE $$(x-c)$$, computes smallest $$c \geq 0$$ such that $$x$$ fits into a $$c$$-bit unsigned integer $$\left(0 \leq x<2^{c}\right)$$, or throws a range check exception.
-* B608 - MIN $$(x y-x$$ or $$y$$ ), computes the minimum of two integers $$x$$ and $$y$$.
-* B609 - MAX $$(x y-x$$ or $$y)$$, computes the maximum of two integers $$x$$ and $$y$$.
-* B60A - MINMAX or INTSORT2 $$(x y-x y$$ or $$y x)$$, sorts two integers. Quiet version of this operation returns two NaNs if any of the arguments are NaNs.
-* $$\mathrm{B} 60 \mathrm{~B}-\operatorname{ABS}(x-|x|)$$, computes the absolute value of an integer $$x$$. A.5.4. Quiet arithmetic primitives. We opted to make all arithmetic operations "non-quiet" (signaling) by default, and create their quiet counterparts by means of a prefix. Such an encoding is definitely sub-optimal. It is not yet clear whether it should be done in this way, or in the opposite way by making all arithmetic operations quiet by default, or whether quiet and non-quiet operations should be given opcodes of equal length; this can only be settled by practice.
-* B7xx - QUIET prefix, transforming any arithmetic operation into its "quiet" variant, indicated by prefixing a $$Q$$ to its mnemonic. Such operations return NaNs instead of throwing integer overflow exceptions if the results do not fit in Integers, or if one of their arguments is a NaN. Notice that this does not extend to shift amounts and other parameters that must be within a small range (e.g., 0-1023). Also notice that this does not disable type-checking exceptions if a value of a type other than Integer is supplied.
-* B7AO - QADD $$(x y-x+y)$$, always works if $$x$$ and $$y$$ are Integers, but returns a $$\mathrm{NaN}$$ if the addition cannot be performed.
-* B7A904 - QDIV $$(x y-\lfloor x / y\rfloor)$$, returns a NaN if $$y=0$$, or if $$y=-1$$ and $$x=-2^{256}$$, or if either of $$x$$ or $$y$$ is a NaN.
-* B7BO - QAND $$(x y-x \& y)$$, bitwise "and" (similar to AND), but returns a NaN if either $$x$$ or $$y$$ is a NaN instead of throwing an integer overflow exception. However, if one of the arguments is zero, and the other is a $$\mathrm{NaN}$$, the result is zero.
-* B7B1 - QOR $$(x y-x \vee y)$$, bitwise "or". If $$x=-1$$ or $$y=-1$$, the result is always -1 , even if the other argument is a $$\mathrm{NaN}$$.
-* B7B507 - QUFITS $$8\left(x-x^{\prime}\right)$$, checks whether $$x$$ is an unsigned byte (i.e., whether $$0 \leq x<2^{8}$$ ), and replaces $$x$$ with a $$\mathrm{NaN}$$ if this is not the case; leaves $$x$$ intact otherwise (i.e., if $$x$$ is an unsigned byte).
+• $$\text{AAcc}$$ — $$\text{LSHIFT}~cc + 1$$ ($$x~\rightarrow~x \cdot 2^{cc+1}$$), $$0 \leq cc \leq 255$$.
+• $$\text{AA00}$$ — $$\text{LSHIFT}~1$$, equivalent to $$\text{MULCONST}~2$$ or to Forth’s $$2^*$$.
+• $$\text{ABcc}$$ — $$\text{RSHIFT}~cc + 1$$ ($$x~\rightarrow~\left\lfloor x \cdot 2^{-cc-1} \right\rfloor$$), $$0 \leq cc \leq 255$$.
+• $$\text{AC}$$ — $$\text{LSHIFT}$$ ($$x~y~\rightarrow~x \cdot 2^y$$), $$0 \leq y \leq 1023$$.
+• $$\text{AD}$$ — $$\text{RSHIFT}$$ ($$x~y~\rightarrow~\left\lfloor x \cdot 2^{-y} \right\rfloor$$), $$0 \leq y \leq 1023$$.
+• $$\text{AE}$$ — $$\text{POW2}$$ ($$y~\rightarrow~2^y$$), $$0 \leq y \leq 1023$$, equivalent to $$\text{ONE}; \text{SWAP}; \text{LSHIFT}$$.
+• $$\text{AF}$$ — reserved.
+• $$\text{B0}$$ — $$\text{AND}$$ ($$x~y~\rightarrow~x\&y$$), bitwise “and” of two signed integers $$x$$ and $$y$$, sign-extended to infinity.
+• $$\text{B1}$$ — $$\text{OR}$$ ($$x~y~\rightarrow~x \vee y$$), bitwise “or” of two integers.
+• $$\text{B2}$$ — $$\text{XOR}$$ ($$x~y~\rightarrow~x \oplus y$$), bitwise “xor” of two integers.
+• $$\text{B3}$$ — $$\text{NOT}$$ ($$x~\rightarrow~x \oplus -1 = -1 - x$$), bitwise “not” of an integer.
+• $$\text{B4cc}$$ — $$\text{FITS}~cc + 1$$ ($$x~\rightarrow~x$$), checks whether $$x$$ is a $$cc + 1$$-bit signed integer for $$0 \leq cc \leq 255$$ (i.e., whether $$-2^{cc} \leq x < 2^{cc}$$). If not, either triggers an integer overflow exception or replaces $$x$$ with a NaN (quiet version).
+• $$\text{B400}$$ — $$\text{FITS}~1$$ or $$\text{CHKBOOL}$$ ($$x~\rightarrow~x$$), checks whether $$x$$ is a “boolean value” (i.e., either 0 or -1).
+• $$\text{B5cc}$$ — $$\text{UFITS}~cc + 1$$ ($$x~\rightarrow~x$$), checks whether $$x$$ is a $$cc + 1$$-bit unsigned integer for $$0 \leq cc \leq 255$$ (i.e., whether $$0 \leq x < 2^{cc+1}$$).
+• $$\text{B500}$$ — $$\text{UFITS}~1$$ or $$\text{CHKBIT}$$, checks whether $$x$$ is a binary digit (i.e., zero or one).
+• $$\text{B600}$$ — $$\text{FITSX}$$ ($$x~c~\rightarrow~x$$), checks whether $$x$$ is a $$c$$-bit signed integer for $$0 \leq c \leq 1023$$.
+• $$\text{B601}$$ — $$\text{UFITSX}$$ ($$x~c~\rightarrow~x$$), checks whether $$x$$ is a $$c$$-bit unsigned integer for $$0 \leq c \leq 1023$$.
+• $$\text{B602}$$ — $$\text{BITSIZE}$$ ($$x~\rightarrow~c$$), computes smallest $$c \geq 0$$ such that $$x$$ fits into a $$c$$-bit signed integer ($$-2^{c-1} \leq c < 2^{c-1}$$).
+• $$\text{B603}$$ — $$\text{UBITSIZE}$$ ($$x~\rightarrow~c$$), computes smallest $$c \geq 0$$ such that $$x$$ fits into a $$c$$-bit unsigned integer ($$0 \leq x < 2^c$$), or throws a range check exception.
+• $$\text{B608}$$ — $$\text{MIN}$$ ($$x~y~\rightarrow~x~\text{or}~y$$), computes the minimum of two integers $$x$$ and $$y$$.
+• $$\text{B609}$$ — $$\text{MAX}$$ ($$x~y~\rightarrow~x~\text{or}~y$$), computes the maximum of two integers $$x$$ and $$y$$.
+• $$\text{B60A}$$ — $$\text{MINMAX}$$ or $$\text{INTSORT2}$$ ($$x~y~\rightarrow~x~y~\text{or}~y~x$$), sorts two integers. Quiet version of this operation returns two NaNs if any of the arguments are NaNs.
+• $$\text{B60B}$$ — $$\text{ABS}$$ ($$x~\rightarrow~|x|$$), computes the absolute value of an integer $$x$$.
 
 ## A.6 Comparison primitives
 
@@ -293,40 +302,42 @@ All integer comparison primitives return integer -1 ("true") or 0 ("false") to i
 
 Quiet versions of integer comparison primitives are also available, encoded with the aid of the QUIET prefix (B7). If any of the integers being compared are NaNs, the result of a quiet comparison will also be a $$\mathrm{NaN}$$ ("undefined"), instead of a -1 ("yes") or 0 ("no"), thus effectively supporting ternary logic.
 
-* B8 - SGN $$(x-\operatorname{sgn}(x))$$, computes the sign of an integer $$x:-1$$ if $$x<0$$, 0 if $$x=0,1$$ if $$x>0$$.
-* B9 - LESS $$(x y-x<y)$$, returns -1 if $$x<y, 0$$ otherwise.
-* BA - EQUAL $$(x y-x=y)$$, returns -1 if $$x=y, 0$$ otherwise.
-* $$\mathrm{BB}-\mathrm{LEQ}(x y-x \leq y)$$.
-* $$\mathrm{BC}-\operatorname{GREATER}(x y-x>y)$$.
-* $$\mathrm{BD}-\mathrm{NEQ}(x y-x \neq y)$$, equivalent to EQUAL; NOT.
-* $$\mathrm{BE}-\mathrm{GEQ}(x y-x \geq y)$$, equivalent to LESS; NOT.
-* $$\mathrm{BF}-\operatorname{CMP}(x y-\operatorname{sgn}(x-y))$$, computes the sign of $$x-y:-1$$ if $$x<y$$, 0 if $$x=y, 1$$ if $$x>y$$. No integer overflow can occur here unless $$x$$ or $$y$$ is a $$\mathrm{NaN}$$.
-* COyy-EQINT $$y y(x-x=y y)$$ for $$-2^{7} \leq y y<2^{7}$$.
-* COOO - ISZERO, checks whether an integer is zero. Corresponds to Forth's $$0=$$.
-* C1yy-LESSINT $$y y(x-x<y y)$$ for $$-2^{7} \leq y y<2^{7}$$.
-* C100 - ISNEG, checks whether an integer is negative. Corresponds to Forth's $$0<$$.
-* C101 - ISNPOS, checks whether an integer is non-positive.
-* C2yy-GTINT $$y y(x-x>y y)$$ for $$-2^{7} \leq y y<2^{7}$$.
-* C200 - ISPOS, checks whether an integer is positive. Corresponds to Forth's 0>. - $$\mathrm{C} 2 \mathrm{FF}$$ - ISNNEG, checks whether an integer is non-negative.
-* C3yy-NEQINT $$y y(x-x \neq y y)$$ for $$-2^{7} \leq y y<2^{7}$$.
-* C4 - ISNAN $$(x-x=\mathrm{NaN})$$, checks whether $$x$$ is a NaN.
-* C5-CHKNAN $$(x-x)$$, throws an arithmetic overflow exception if $$x$$ is a $$\mathrm{NaN}$$.
-* C6 - reserved for integer comparison.
+• $$\text{B8}$$ — $$\text{SGN}$$ ($$x~\rightarrow~\text{sgn}(x)$$), computes the sign of an integer $$x$$: −1 if $$x < 0$$, 0 if $$x = 0$$, 1 if $$x > 0$$.
+• $$\text{B9}$$ — $$\text{LESS}$$ ($$x~y~\rightarrow~x < y$$), returns −1 if $$x < y$$, 0 otherwise.
+• $$\text{BA}$$ — $$\text{EQUAL}$$ ($$x~y~\rightarrow~x = y$$), returns −1 if $$x = y$$, 0 otherwise.
+• $$\text{BB}$$ — $$\text{LEQ}$$ ($$x~y~\rightarrow~x \leq y$$).
+• $$\text{BC}$$ — $$\text{GREATER}$$ ($$x~y~\rightarrow~x > y$$).
+• $$\text{BD}$$ — $$\text{NEQ}$$ ($$x~y~\rightarrow~x \neq y$$), equivalent to EQUAL; NOT.
+• $$\text{BE}$$ — $$\text{GEQ}$$ ($$x~y~\rightarrow~x \geq y$$), equivalent to LESS; NOT.
+• $$\text{BF}$$ — $$\text{CMP}$$ ($$x~y~\rightarrow~\text{sgn}(x - y)$$), computes the sign of $$x - y$$: −1 if $$x < y$$, 0 if $$x = y$$, 1 if $$x > y$$. No integer overflow can occur here unless $$x$$ or $$y$$ is a NaN.
+• $$\text{C0yy}$$ — $$\text{EQINT}~yy$$ ($$x~\rightarrow~x = yy$$) for $$-2^7 \leq yy < 2^7$$.
+• $$\text{C000}$$ — $$\text{ISZERO}$$, checks whether an integer is zero. Corresponds to Forth’s 0=.
+• $$\text{C1yy}$$ — $$\text{LESSINT}~yy$$ ($$x~\rightarrow~x < yy$$) for $$-2^7 \leq yy < 2^7$$.
+• $$\text{C100}$$ — $$\text{ISNEG}$$, checks whether an integer is negative. Corresponds to Forth’s 0<.
+• $$\text{C101}$$ — $$\text{ISNPOS}$$, checks whether an integer is non-positive.
+• $$\text{C2yy}$$ — $$\text{GTINT}~yy$$ ($$x~\rightarrow~x > yy$$) for $$-2^7 \leq yy < 2^7$$.
+• $$\text{C200}$$ — $$\text{ISPOS}$$, checks whether an integer is positive. Corresponds to Forth’s 0>.
+• $$\text{C2FF}$$ — $$\text{ISNNEG}$$, checks whether an integer is non-negative.
+• $$\text{C3yy}$$ — $$\text{NEQINT}~yy$$ ($$x~\rightarrow~x \neq yy$$) for $$-2^7 \leq yy < 2^7$$.
+• $$\text{C4}$$ — $$\text{ISNAN}$$ ($$x~\rightarrow~x = \text{NaN}$$), checks whether $$x$$ is a NaN.
+• $$\text{C5}$$ — $$\text{CHKNAN}$$ ($$x~\rightarrow~x$$), throws an arithmetic overflow exception if $$x$$ is a NaN.
+• $$\text{C6}$$ — reserved for integer comparison.
 
 ### A.6.2. Other comparison.
 
 Most of these "other comparison" primitives actually compare the data portions of Slices as bitstrings.
 
-* C700 - SEMPTY $$(s-s=\emptyset)$$, checks whether a Slice $$s$$ is empty (i.e., contains no bits of data and no cell references).
-* C701 - SDEMPTY $$(s-s \approx \emptyset)$$, checks whether Slice $$s$$ has no bits of data.
-* C702 - SREMPTY $$(s-r(s)=0)$$, checks whether Slice s has no references.
-* C703 - SDFIRST $$\left(s-s_{0}=1\right)$$, checks whether the first bit of Slice $$s$$ is a one.
-* C704 - SDLEXCMP $$\left(s s^{\prime}-c\right)$$, compares the data of $$s$$ lexicographically with the data of $$s^{\prime}$$, returning $$-1,0$$, or 1 depending on the result.
-* C705 - SDEQ $$\left(s s^{\prime}-s \approx s^{\prime}\right)$$, checks whether the data parts of $$s$$ and $$s^{\prime}$$ coincide, equivalent to SDLEXCMP; ISZERO.
-* C708- $$\operatorname{SDPFX}\left(s s^{\prime}-?\right)$$, checks whether $$s$$ is a prefix of $$s^{\prime}$$.
-* C709-SDPFXREV $$\left(s s^{\prime}-\right.$$ ?), checks whether $$s^{\prime}$$ is a prefix of $$s$$, equivalent to SWAP; SDPFX.
-* C70A - SDPPFX $$\left(s s^{\prime}-\right.$$ ?), checks whether $$s$$ is a proper prefix of $$s^{\prime}$$ (i.e., a prefix distinct from $$\left.s^{\prime}\right)$$.
-* C70B - SDPPFXREV $$\left(s s^{\prime}-\right.$$ ?), checks whether $$s^{\prime}$$ is a proper prefix of $$s$$.
+• $$\text{C700}$$ — $$\text{SEMPTY}$$ ($$s~\rightarrow~s = \emptyset$$), checks whether a Slice $$s$$ is empty (i.e., contains no bits of data and no cell references).
+• $$\text{C701}$$ — $$\text{SDEMPTY}$$ ($$s~\rightarrow~s \approx \emptyset$$), checks whether Slice $$s$$ has no bits of data.
+• $$\text{C702}$$ — $$\text{SREMPTY}$$ ($$s~\rightarrow~r(s) = 0$$), checks whether Slice $$s$$ has no references.
+• $$\text{C703}$$ — $$\text{SDFIRST}$$ ($$s~\rightarrow~s_0 = 1$$), checks whether the first bit of Slice $$s$$ is a one.
+• $$\text{C704}$$ — $$\text{SDLEXCMP}$$ ($$s~s_0~\rightarrow~c$$), compares the data of $$s$$ lexicographically with the data of $$s_0$$, returning −1, 0, or 1 depending on the result.
+• $$\text{C705}$$ — $$\text{SDEQ}$$ ($$s~s_0~\rightarrow~s \approx s_0$$), checks whether the data parts of $$s$$ and $$s_0$$ coincide, equivalent to $$\text{SDLEXCMP}$$; $$\text{ISZERO}$$.
+• $$\text{C708}$$ — $$\text{SDPFX}$$ ($$s~s_0~\rightarrow~?$$), checks whether $$s$$ is a prefix of $$s_0$$.
+• $$\text{C709}$$ — $$\text{SDPFXREV}$$ ($$s~s_0~\rightarrow~?$$), checks whether $$s_0$$ is a prefix of $$s$$, equivalent to $$\text{SWAP}$$; $$\text{SDPFX}$$.
+• $$\text{C70A}$$ — $$\text{SDPPFX}$$ ($$s~s_0~\rightarrow~?$$), checks whether $$s$$ is a proper prefix of $$s_0$$ (i.e., a prefix distinct from $$s_0$$).
+• $$\text{C70B}$$ — $$\text{SDPPFXREV}$$ ($$s~s_0~\rightarrow~?$$), checks whether $$s_0$$ is a proper prefix of $$s$$.
+
 
 ## A.7. Cell primitives
 

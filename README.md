@@ -176,7 +176,7 @@ TVM also has a primitive MODPOW $$2 n$$, which reduces the integer at the top of
 
 ### 1.5.5. Integer is 257-bit, not 256-bit.
 
-One can understand now why TVM's Integer is (signed) 257-bit, not 256-bit. The reason is that it is the smallest integer type containing both signed 256-bit integers and unsigned 256-bit integers, which does not require automatic reinterpreting of the same 256-bit string depending on the operation used (cf. [$$\mathbf{1.5.1}$$](./#1.5.1.-absence-of-automatic-conversion-of-integers.)).
+One can understand now why TVM's Integer is (signed) 257-bit, not 256-bit. The reason is that it is the smallest integer type containing both signed 256-bit integers and unsigned 256-bit integers, which does not require automatic reinterpreting of the same 256-bit string depending on the operation used (cf. [$$\mathbf{1.5.1}$$](#1.5.1.-absence-of-automatic-conversion-of-integers.)).
 
 ### 1.5.6. Division and rounding.
 
