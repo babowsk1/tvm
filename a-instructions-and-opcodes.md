@@ -270,29 +270,29 @@ $$\text{MULDIVR}$$, $$\text{LSHIFTDIVR}~t$$, and $$\text{MULRSHIFTR}~t$$ (for fi
 
 ### A.5.3. Shifts, logical operations.
 
-• $$\text{AAcc}$$ — $$\text{LSHIFT}~cc + 1$$ ($$x~\rightarrow~x \cdot 2^{cc+1}$$), $$0 \leq cc \leq 255$$.
-• $$\text{AA00}$$ — $$\text{LSHIFT}~1$$, equivalent to $$\text{MULCONST}~2$$ or to Forth’s $$2^*$$.
-• $$\text{ABcc}$$ — $$\text{RSHIFT}~cc + 1$$ ($$x~\rightarrow~\left\lfloor x \cdot 2^{-cc-1} \right\rfloor$$), $$0 \leq cc \leq 255$$.
-• $$\text{AC}$$ — $$\text{LSHIFT}$$ ($$x~y~\rightarrow~x \cdot 2^y$$), $$0 \leq y \leq 1023$$.
-• $$\text{AD}$$ — $$\text{RSHIFT}$$ ($$x~y~\rightarrow~\left\lfloor x \cdot 2^{-y} \right\rfloor$$), $$0 \leq y \leq 1023$$.
-• $$\text{AE}$$ — $$\text{POW2}$$ ($$y~\rightarrow~2^y$$), $$0 \leq y \leq 1023$$, equivalent to $$\text{ONE}; \text{SWAP}; \text{LSHIFT}$$.
-• $$\text{AF}$$ — reserved.
-• $$\text{B0}$$ — $$\text{AND}$$ ($$x~y~\rightarrow~x\&y$$), bitwise “and” of two signed integers $$x$$ and $$y$$, sign-extended to infinity.
-• $$\text{B1}$$ — $$\text{OR}$$ ($$x~y~\rightarrow~x \vee y$$), bitwise “or” of two integers.
-• $$\text{B2}$$ — $$\text{XOR}$$ ($$x~y~\rightarrow~x \oplus y$$), bitwise “xor” of two integers.
-• $$\text{B3}$$ — $$\text{NOT}$$ ($$x~\rightarrow~x \oplus -1 = -1 - x$$), bitwise “not” of an integer.
-• $$\text{B4cc}$$ — $$\text{FITS}~cc + 1$$ ($$x~\rightarrow~x$$), checks whether $$x$$ is a $$cc + 1$$-bit signed integer for $$0 \leq cc \leq 255$$ (i.e., whether $$-2^{cc} \leq x < 2^{cc}$$). If not, either triggers an integer overflow exception or replaces $$x$$ with a NaN (quiet version).
-• $$\text{B400}$$ — $$\text{FITS}~1$$ or $$\text{CHKBOOL}$$ ($$x~\rightarrow~x$$), checks whether $$x$$ is a “boolean value” (i.e., either 0 or -1).
-• $$\text{B5cc}$$ — $$\text{UFITS}~cc + 1$$ ($$x~\rightarrow~x$$), checks whether $$x$$ is a $$cc + 1$$-bit unsigned integer for $$0 \leq cc \leq 255$$ (i.e., whether $$0 \leq x < 2^{cc+1}$$).
-• $$\text{B500}$$ — $$\text{UFITS}~1$$ or $$\text{CHKBIT}$$, checks whether $$x$$ is a binary digit (i.e., zero or one).
-• $$\text{B600}$$ — $$\text{FITSX}$$ ($$x~c~\rightarrow~x$$), checks whether $$x$$ is a $$c$$-bit signed integer for $$0 \leq c \leq 1023$$.
-• $$\text{B601}$$ — $$\text{UFITSX}$$ ($$x~c~\rightarrow~x$$), checks whether $$x$$ is a $$c$$-bit unsigned integer for $$0 \leq c \leq 1023$$.
-• $$\text{B602}$$ — $$\text{BITSIZE}$$ ($$x~\rightarrow~c$$), computes smallest $$c \geq 0$$ such that $$x$$ fits into a $$c$$-bit signed integer ($$-2^{c-1} \leq c < 2^{c-1}$$).
-• $$\text{B603}$$ — $$\text{UBITSIZE}$$ ($$x~\rightarrow~c$$), computes smallest $$c \geq 0$$ such that $$x$$ fits into a $$c$$-bit unsigned integer ($$0 \leq x < 2^c$$), or throws a range check exception.
-• $$\text{B608}$$ — $$\text{MIN}$$ ($$x~y~\rightarrow~x~\text{or}~y$$), computes the minimum of two integers $$x$$ and $$y$$.
-• $$\text{B609}$$ — $$\text{MAX}$$ ($$x~y~\rightarrow~x~\text{or}~y$$), computes the maximum of two integers $$x$$ and $$y$$.
-• $$\text{B60A}$$ — $$\text{MINMAX}$$ or $$\text{INTSORT2}$$ ($$x~y~\rightarrow~x~y~\text{or}~y~x$$), sorts two integers. Quiet version of this operation returns two NaNs if any of the arguments are NaNs.
-• $$\text{B60B}$$ — $$\text{ABS}$$ ($$x~\rightarrow~|x|$$), computes the absolute value of an integer $$x$$.
+* $$\text{AAcc}$$ — $$\text{LSHIFT}~cc + 1$$ ($$x~\rightarrow~x \cdot 2^{cc+1}$$), $$0 \leq cc \leq 255$$.
+* $$\text{AA00}$$ — $$\text{LSHIFT}~1$$, equivalent to $$\text{MULCONST}~2$$ or to Forth’s $$2^*$$.
+* $$\text{ABcc}$$ — $$\text{RSHIFT}~cc + 1$$ ($$x~\rightarrow~\left\lfloor x \cdot 2^{-cc-1} \right\rfloor$$), $$0 \leq cc \leq 255$$.
+* $$\text{AC}$$ — $$\text{LSHIFT}$$ ($$x~y~\rightarrow~x \cdot 2^y$$), $$0 \leq y \leq 1023$$.
+* $$\text{AD}$$ — $$\text{RSHIFT}$$ ($$x~y~\rightarrow~\left\lfloor x \cdot 2^{-y} \right\rfloor$$), $$0 \leq y \leq 1023$$.
+* $$\text{AE}$$ — $$\text{POW2}$$ ($$y~\rightarrow~2^y$$), $$0 \leq y \leq 1023$$, equivalent to $$\text{ONE}; \text{SWAP}; \text{LSHIFT}$$.
+* $$\text{AF}$$ — reserved.
+* $$\text{B0}$$ — $$\text{AND}$$ ($$x~y~\rightarrow~x\&y$$), bitwise “and” of two signed integers $$x$$ and $$y$$, sign-extended to infinity.
+* $$\text{B1}$$ — $$\text{OR}$$ ($$x~y~\rightarrow~x \vee y$$), bitwise “or” of two integers.
+* $$\text{B2}$$ — $$\text{XOR}$$ ($$x~y~\rightarrow~x \oplus y$$), bitwise “xor” of two integers.
+* $$\text{B3}$$ — $$\text{NOT}$$ ($$x~\rightarrow~x \oplus -1 = -1 - x$$), bitwise “not” of an integer.
+* $$\text{B4cc}$$ — $$\text{FITS}~cc + 1$$ ($$x~\rightarrow~x$$), checks whether $$x$$ is a $$cc + 1$$-bit signed integer for $$0 \leq cc \leq 255$$ (i.e., whether $$-2^{cc} \leq x < 2^{cc}$$). If not, either triggers an integer overflow exception or replaces $$x$$ with a NaN (quiet version).
+* $$\text{B400}$$ — $$\text{FITS}~1$$ or $$\text{CHKBOOL}$$ ($$x~\rightarrow~x$$), checks whether $$x$$ is a “boolean value” (i.e., either 0 or -1).
+* $$\text{B5cc}$$ — $$\text{UFITS}~cc + 1$$ ($$x~\rightarrow~x$$), checks whether $$x$$ is a $$cc + 1$$-bit unsigned integer for $$0 \leq cc \leq 255$$ (i.e., whether $$0 \leq x < 2^{cc+1}$$).
+* $$\text{B500}$$ — $$\text{UFITS}~1$$ or $$\text{CHKBIT}$$, checks whether $$x$$ is a binary digit (i.e., zero or one).
+* $$\text{B600}$$ — $$\text{FITSX}$$ ($$x~c~\rightarrow~x$$), checks whether $$x$$ is a $$c$$-bit signed integer for $$0 \leq c \leq 1023$$.
+* $$\text{B601}$$ — $$\text{UFITSX}$$ ($$x~c~\rightarrow~x$$), checks whether $$x$$ is a $$c$$-bit unsigned integer for $$0 \leq c \leq 1023$$.
+* $$\text{B602}$$ — $$\text{BITSIZE}$$ ($$x~\rightarrow~c$$), computes smallest $$c \geq 0$$ such that $$x$$ fits into a $$c$$-bit signed integer ($$-2^{c-1} \leq c < 2^{c-1}$$).
+* $$\text{B603}$$ — $$\text{UBITSIZE}$$ ($$x~\rightarrow~c$$), computes smallest $$c \geq 0$$ such that $$x$$ fits into a $$c$$-bit unsigned integer ($$0 \leq x < 2^c$$), or throws a range check exception.
+* $$\text{B608}$$ — $$\text{MIN}$$ ($$x~y~\rightarrow~x~\text{or}~y$$), computes the minimum of two integers $$x$$ and $$y$$.
+* $$\text{B609}$$ — $$\text{MAX}$$ ($$x~y~\rightarrow~x~\text{or}~y$$), computes the maximum of two integers $$x$$ and $$y$$.
+* $$\text{B60A}$$ — $$\text{MINMAX}$$ or $$\text{INTSORT2}$$ ($$x~y~\rightarrow~x~y~\text{or}~y~x$$), sorts two integers. Quiet version of this operation returns two NaNs if any of the arguments are NaNs.
+* $$\text{B60B}$$ — $$\text{ABS}$$ ($$x~\rightarrow~|x|$$), computes the absolute value of an integer $$x$$.
 
 ## A.6 Comparison primitives
 
@@ -302,41 +302,41 @@ All integer comparison primitives return integer -1 ("true") or 0 ("false") to i
 
 Quiet versions of integer comparison primitives are also available, encoded with the aid of the QUIET prefix (B7). If any of the integers being compared are NaNs, the result of a quiet comparison will also be a $$\mathrm{NaN}$$ ("undefined"), instead of a -1 ("yes") or 0 ("no"), thus effectively supporting ternary logic.
 
-• $$\text{B8}$$ — $$\text{SGN}$$ ($$x~\rightarrow~\text{sgn}(x)$$), computes the sign of an integer $$x$$: −1 if $$x < 0$$, 0 if $$x = 0$$, 1 if $$x > 0$$.
-• $$\text{B9}$$ — $$\text{LESS}$$ ($$x~y~\rightarrow~x < y$$), returns −1 if $$x < y$$, 0 otherwise.
-• $$\text{BA}$$ — $$\text{EQUAL}$$ ($$x~y~\rightarrow~x = y$$), returns −1 if $$x = y$$, 0 otherwise.
-• $$\text{BB}$$ — $$\text{LEQ}$$ ($$x~y~\rightarrow~x \leq y$$).
-• $$\text{BC}$$ — $$\text{GREATER}$$ ($$x~y~\rightarrow~x > y$$).
-• $$\text{BD}$$ — $$\text{NEQ}$$ ($$x~y~\rightarrow~x \neq y$$), equivalent to EQUAL; NOT.
-• $$\text{BE}$$ — $$\text{GEQ}$$ ($$x~y~\rightarrow~x \geq y$$), equivalent to LESS; NOT.
-• $$\text{BF}$$ — $$\text{CMP}$$ ($$x~y~\rightarrow~\text{sgn}(x - y)$$), computes the sign of $$x - y$$: −1 if $$x < y$$, 0 if $$x = y$$, 1 if $$x > y$$. No integer overflow can occur here unless $$x$$ or $$y$$ is a NaN.
-• $$\text{C0yy}$$ — $$\text{EQINT}~yy$$ ($$x~\rightarrow~x = yy$$) for $$-2^7 \leq yy < 2^7$$.
-• $$\text{C000}$$ — $$\text{ISZERO}$$, checks whether an integer is zero. Corresponds to Forth’s 0=.
-• $$\text{C1yy}$$ — $$\text{LESSINT}~yy$$ ($$x~\rightarrow~x < yy$$) for $$-2^7 \leq yy < 2^7$$.
-• $$\text{C100}$$ — $$\text{ISNEG}$$, checks whether an integer is negative. Corresponds to Forth’s 0<.
-• $$\text{C101}$$ — $$\text{ISNPOS}$$, checks whether an integer is non-positive.
-• $$\text{C2yy}$$ — $$\text{GTINT}~yy$$ ($$x~\rightarrow~x > yy$$) for $$-2^7 \leq yy < 2^7$$.
-• $$\text{C200}$$ — $$\text{ISPOS}$$, checks whether an integer is positive. Corresponds to Forth’s 0>.
-• $$\text{C2FF}$$ — $$\text{ISNNEG}$$, checks whether an integer is non-negative.
-• $$\text{C3yy}$$ — $$\text{NEQINT}~yy$$ ($$x~\rightarrow~x \neq yy$$) for $$-2^7 \leq yy < 2^7$$.
-• $$\text{C4}$$ — $$\text{ISNAN}$$ ($$x~\rightarrow~x = \text{NaN}$$), checks whether $$x$$ is a NaN.
-• $$\text{C5}$$ — $$\text{CHKNAN}$$ ($$x~\rightarrow~x$$), throws an arithmetic overflow exception if $$x$$ is a NaN.
-• $$\text{C6}$$ — reserved for integer comparison.
+* $$\text{B8}$$ — $$\text{SGN}$$ ($$x~\rightarrow~\text{sgn}(x)$$), computes the sign of an integer $$x$$: −1 if $$x < 0$$, 0 if $$x = 0$$, 1 if $$x > 0$$.
+* $$\text{B9}$$ — $$\text{LESS}$$ ($$x~y~\rightarrow~x < y$$), returns −1 if $$x < y$$, 0 otherwise.
+* $$\text{BA}$$ — $$\text{EQUAL}$$ ($$x~y~\rightarrow~x = y$$), returns −1 if $$x = y$$, 0 otherwise.
+* $$\text{BB}$$ — $$\text{LEQ}$$ ($$x~y~\rightarrow~x \leq y$$).
+* $$\text{BC}$$ — $$\text{GREATER}$$ ($$x~y~\rightarrow~x > y$$).
+* $$\text{BD}$$ — $$\text{NEQ}$$ ($$x~y~\rightarrow~x \neq y$$), equivalent to EQUAL; NOT.
+* $$\text{BE}$$ — $$\text{GEQ}$$ ($$x~y~\rightarrow~x \geq y$$), equivalent to LESS; NOT.
+* $$\text{BF}$$ — $$\text{CMP}$$ ($$x~y~\rightarrow~\text{sgn}(x - y)$$), computes the sign of $$x - y$$: −1 if $$x < y$$, 0 if $$x = y$$, 1 if $$x > y$$. No integer overflow can occur here unless $$x$$ or $$y$$ is a NaN.
+* $$\text{C0yy}$$ — $$\text{EQINT}~yy$$ ($$x~\rightarrow~x = yy$$) for $$-2^7 \leq yy < 2^7$$.
+* $$\text{C000}$$ — $$\text{ISZERO}$$, checks whether an integer is zero. Corresponds to Forth’s 0=.
+* $$\text{C1yy}$$ — $$\text{LESSINT}~yy$$ ($$x~\rightarrow~x < yy$$) for $$-2^7 \leq yy < 2^7$$.
+* $$\text{C100}$$ — $$\text{ISNEG}$$, checks whether an integer is negative. Corresponds to Forth’s 0<.
+* $$\text{C101}$$ — $$\text{ISNPOS}$$, checks whether an integer is non-positive.
+* $$\text{C2yy}$$ — $$\text{GTINT}~yy$$ ($$x~\rightarrow~x > yy$$) for $$-2^7 \leq yy < 2^7$$.
+* $$\text{C200}$$ — $$\text{ISPOS}$$, checks whether an integer is positive. Corresponds to Forth’s 0>.
+* $$\text{C2FF}$$ — $$\text{ISNNEG}$$, checks whether an integer is non-negative.
+* $$\text{C3yy}$$ — $$\text{NEQINT}~yy$$ ($$x~\rightarrow~x \neq yy$$) for $$-2^7 \leq yy < 2^7$$.
+* $$\text{C4}$$ — $$\text{ISNAN}$$ ($$x~\rightarrow~x = \text{NaN}$$), checks whether $$x$$ is a NaN.
+* $$\text{C5}$$ — $$\text{CHKNAN}$$ ($$x~\rightarrow~x$$), throws an arithmetic overflow exception if $$x$$ is a NaN.
+* $$\text{C6}$$ — reserved for integer comparison.
 
 ### A.6.2. Other comparison.
 
 Most of these "other comparison" primitives actually compare the data portions of Slices as bitstrings.
 
-• $$\text{C700}$$ — $$\text{SEMPTY}$$ ($$s~\rightarrow~s = \emptyset$$), checks whether a Slice $$s$$ is empty (i.e., contains no bits of data and no cell references).
-• $$\text{C701}$$ — $$\text{SDEMPTY}$$ ($$s~\rightarrow~s \approx \emptyset$$), checks whether Slice $$s$$ has no bits of data.
-• $$\text{C702}$$ — $$\text{SREMPTY}$$ ($$s~\rightarrow~r(s) = 0$$), checks whether Slice $$s$$ has no references.
-• $$\text{C703}$$ — $$\text{SDFIRST}$$ ($$s~\rightarrow~s_0 = 1$$), checks whether the first bit of Slice $$s$$ is a one.
-• $$\text{C704}$$ — $$\text{SDLEXCMP}$$ ($$s~s_0~\rightarrow~c$$), compares the data of $$s$$ lexicographically with the data of $$s_0$$, returning −1, 0, or 1 depending on the result.
-• $$\text{C705}$$ — $$\text{SDEQ}$$ ($$s~s_0~\rightarrow~s \approx s_0$$), checks whether the data parts of $$s$$ and $$s_0$$ coincide, equivalent to $$\text{SDLEXCMP}$$; $$\text{ISZERO}$$.
-• $$\text{C708}$$ — $$\text{SDPFX}$$ ($$s~s_0~\rightarrow~?$$), checks whether $$s$$ is a prefix of $$s_0$$.
-• $$\text{C709}$$ — $$\text{SDPFXREV}$$ ($$s~s_0~\rightarrow~?$$), checks whether $$s_0$$ is a prefix of $$s$$, equivalent to $$\text{SWAP}$$; $$\text{SDPFX}$$.
-• $$\text{C70A}$$ — $$\text{SDPPFX}$$ ($$s~s_0~\rightarrow~?$$), checks whether $$s$$ is a proper prefix of $$s_0$$ (i.e., a prefix distinct from $$s_0$$).
-• $$\text{C70B}$$ — $$\text{SDPPFXREV}$$ ($$s~s_0~\rightarrow~?$$), checks whether $$s_0$$ is a proper prefix of $$s$$.
+* $$\text{C700}$$ — $$\text{SEMPTY}$$ ($$s~\rightarrow~s = \emptyset$$), checks whether a Slice $$s$$ is empty (i.e., contains no bits of data and no cell references).
+* $$\text{C701}$$ — $$\text{SDEMPTY}$$ ($$s~\rightarrow~s \approx \emptyset$$), checks whether Slice $$s$$ has no bits of data.
+* $$\text{C702}$$ — $$\text{SREMPTY}$$ ($$s~\rightarrow~r(s) = 0$$), checks whether Slice $$s$$ has no references.
+* $$\text{C703}$$ — $$\text{SDFIRST}$$ ($$s~\rightarrow~s_0 = 1$$), checks whether the first bit of Slice $$s$$ is a one.
+* $$\text{C704}$$ — $$\text{SDLEXCMP}$$ ($$s~s_0~\rightarrow~c$$), compares the data of $$s$$ lexicographically with the data of $$s_0$$, returning −1, 0, or 1 depending on the result.
+* $$\text{C705}$$ — $$\text{SDEQ}$$ ($$s~s_0~\rightarrow~s \approx s_0$$), checks whether the data parts of $$s$$ and $$s_0$$ coincide, equivalent to $$\text{SDLEXCMP}$$; $$\text{ISZERO}$$.
+* $$\text{C708}$$ — $$\text{SDPFX}$$ ($$s~s_0~\rightarrow~?$$), checks whether $$s$$ is a prefix of $$s_0$$.
+* $$\text{C709}$$ — $$\text{SDPFXREV}$$ ($$s~s_0~\rightarrow~?$$), checks whether $$s_0$$ is a prefix of $$s$$, equivalent to $$\text{SWAP}$$; $$\text{SDPFX}$$.
+* $$\text{C70A}$$ — $$\text{SDPPFX}$$ ($$s~s_0~\rightarrow~?$$), checks whether $$s$$ is a proper prefix of $$s_0$$ (i.e., a prefix distinct from $$s_0$$).
+* $$\text{C70B}$$ — $$\text{SDPPFXREV}$$ ($$s~s_0~\rightarrow~?$$), checks whether $$s_0$$ is a proper prefix of $$s$$.
 
 
 ## A.7. Cell primitives
