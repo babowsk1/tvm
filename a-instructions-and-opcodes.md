@@ -611,62 +611,62 @@ All these primitives first check whether there is enough space in the Builder, a
 
 ### A.8.6. Operations with continuation savelists and control registers.
 
-* $${ED4i}$$~—~PUSH~c(i)~or~PUSHCTR~c(i)~(–~x)$$, pushes the current value of control register $$c(i)$$. If the control register is not supported in the current codepage, or if it does not have a value, an exception is triggered.
-* $${ED44}$$~—~PUSH~c4~or~PUSHROOT$$, pushes the “global data root” cell reference, thus enabling access to persistent smart-contract data.
-* $${ED5i}$$~—~POP~c(i)~or~POPCTR~c(i)~(x~–)$$, pops a value $$x$$ from the stack and stores it into control register $$c(i)$$, if supported in the current codepage. Notice that if a control register accepts only values of a specific type, a type-checking exception may occur.
-* $${ED54}$$~—~POP~c4~or~POPROOT$$, sets the “global data root” cell reference, thus allowing modification of persistent smart-contract data.
-* $${ED6i}$$~—~SETCONT~c(i)~or~SETCONTCTR~c(i)~(x~c~–~c_0)$$, stores $$x$$ into the savelist of continuation $$c$$ as $$c(i)$$, and returns the resulting continuation $$c_0$$. Almost all operations with continuations may be expressed in terms of $$SETCONTCTR$$, $$POPCTR$$, and $$PUSHCTR$$.
-* $${ED7i}$$~—~SETRETCTR~c(i)~(x~–)$$, equivalent to $$PUSH~c0$$; $$SETCONTCTR~c(i)$$; $$POP~c0$$.
-* $${ED8i}$$~—~SETALTCTR~c(i)~(x~–)$$, equivalent to $$PUSH~c1$$; $$SETCONTCTR~c(i)$$; $$POP~c0$$.
-* $${ED9i}$$~—~POPSAVE~c(i)~or~POPCTRSAVE~c(i)~(x~–)$$, similar to $$POP~c(i)$$, but also saves the old value of $$c(i)$$ into continuation $$c0$$. Equivalent (up to exceptions) to $$SAVECTR~c(i)$$; $$POP~c(i)$$.
-* $${EDAi}$$~—~SAVE~c(i)~or~SAVECTR~c(i)~(–)$$, saves the current value of $$c(i)$$ into the savelist of continuation $$c0$$. If an entry for $$c(i)$$ is already present in the savelist of $$c0$$, nothing is done. Equivalent to $$PUSH~c(i)$$; $$SETRETCTR~c(i)$$.
-* $${EDBi}$$~—~SAVEALT~c(i)~or~SAVEALTCTR~c(i)~(–)$$, similar to $$SAVE~c(i)$$, but saves the current value of $$c(i)$$ into the savelist of $$c1$$, not $$c0$$.
-* $${EDCi}$$~—~SAVEBOTH~c(i)~or~SAVEBOTHCTR~c(i)~(–)$$, equivalent to $$DUP$$; $$SAVE~c(i)$$; $$SAVEALT~c(i)$$.
-* $${EDE0}$$~—~PUSHCTRX~(i~–~x)$$, similar to $$PUSHCTR~c(i)$$, but with $$i$$, $$0 \leq i \leq 255$$, taken from the stack. Notice that this primitive is one of the few “exotic” primitives, which are not polymorphic like stack manipulation primitives, and at the same time do not have well-defined types of parameters and return values, because the type of $$x$$ depends on $$i$$.
-* $${EDE1}$$~—~POPCTRX~(x~i~–)$$, similar to $$POPCTR~c(i)$$, but with $$0 \leq i \leq 255$$ from the stack.
-* $${EDE2}$$~—~SETCONTCTRX~(x~c~i~–~c_0)$$, similar to $$SETCONTCTR~c(i)$$, but with $$0 \leq i \leq 255$$ from the stack.
-* $${EDF0}$$~—~COMPOS~or~BOOLAND~(c~c0~–~c_{00})$$, computes the composition $$c \circ_0 c_0$$, which has the meaning of “perform $$c$$, and, if successful, perform $$c_0$$” (if $$c$$ is a boolean circuit) or simply “perform $$c$$, then $$c_0$$”. Equivalent to $$SWAP$$; $$SETCONT~c0$$.
-* $${EDF1}$$~—~COMPOSALT~or~BOOLOR~(c~c0~–~c_{00})$$, computes the alternative composition $$c \circ_1 c_0$$, which has the meaning of “perform $$c$$, and, if not successful, perform $$c_0$$” (if $$c$$ is a boolean circuit). Equivalent to $$SWAP$$; $$SETCONT~c1$$.
-* $${EDF2}$$~—~COMPOSBOTH~(c~c0~–~c_{00})$$, computes $$(c \circ_0 c_0) \circ_1 c_0$$, which has the meaning of “compute boolean circuit $$c$$, then compute $$c_0$$, regardless of the result of $$c$$”.
-* $${EDF3}$$~—~ATEXIT~(c~–)$$, sets $$c0 \leftarrow c \circ_0 c0$$. In other words, $$c$$ will be executed before exiting current subroutine.
-* $${EDF4}$$~—~ATEXITALT~(c~–)$$, sets $$c1 \leftarrow c \circ_1 c1$$. In other words, $$c$$ will be executed before exiting current subroutine by its alternative return path.
-* $${EDF5}$$~—~SETEXITALT~(c~–)$$, sets $$c1 \leftarrow (c \circ_0 c0) \circ_1 c1$$. In this way, a subsequent RETALT will first execute $$c$$, then transfer control to the original $$c0$$. This can be used, for instance, to exit from nested loops.
-* $${EDF6}$$~—~THENRET~(c~–~c_0)$$, computes $$c_0 := c \circ_0 c0$$
-* $${EDF7}$$~—~THENRETALT~(c~–~c_0)$$, computes $$c_0 := c \circ_0 c1$$
-* $${EDF8}$$~—~INVERT~(–)$$, interchanges $$c0$$ and $$c1$$.
-* $${EDF9}$$~—~BOOLEVAL~(c~–~?)$$, performs $$cc \leftarrow$$ 
+* $${ED4i}~—~PUSH~c(i)~or~PUSHCTR~c(i)~(–~x)$$, pushes the current value of control register $$c(i)$$. If the control register is not supported in the current codepage, or if it does not have a value, an exception is triggered.
+* $${ED44}~—~PUSH~c4~or~PUSHROOT$$, pushes the “global data root” cell reference, thus enabling access to persistent smart-contract data.
+* $${ED5i}~—~POP~c(i)~or~POPCTR~c(i)~(x~–)$$, pops a value $$x$$ from the stack and stores it into control register $$c(i)$$, if supported in the current codepage. Notice that if a control register accepts only values of a specific type, a type-checking exception may occur.
+* $${ED54}~—~POP~c4~or~POPROOT$$, sets the “global data root” cell reference, thus allowing modification of persistent smart-contract data.
+* $${ED6i}~—~SETCONT~c(i)~or~SETCONTCTR~c(i)~(x~c~–~c_0)$$, stores $$x$$ into the savelist of continuation $$c$$ as $$c(i)$$, and returns the resulting continuation $$c_0$$. Almost all operations with continuations may be expressed in terms of $$SETCONTCTR$$, $$POPCTR$$, and $$PUSHCTR$$.
+* $${ED7i}~—~SETRETCTR~c(i)~(x~–)$$, equivalent to $$PUSH~c0$$; $$SETCONTCTR~c(i)$$; $$POP~c0$$.
+* $${ED8i}~—~SETALTCTR~c(i)~(x~–)$$, equivalent to $$PUSH~c1$$; $$SETCONTCTR~c(i)$$; $$POP~c0$$.
+* $${ED9i}~—~POPSAVE~c(i)~or~POPCTRSAVE~c(i)~(x~–)$$, similar to $$POP~c(i)$$, but also saves the old value of $$c(i)$$ into continuation $$c0$$. Equivalent (up to exceptions) to $$SAVECTR~c(i)$$; $$POP~c(i)$$.
+* $${EDAi}~—~SAVE~c(i)~or~SAVECTR~c(i)~(–)$$, saves the current value of $$c(i)$$ into the savelist of continuation $$c0$$. If an entry for $$c(i)$$ is already present in the savelist of $$c0$$, nothing is done. Equivalent to $$PUSH~c(i)$$; $$SETRETCTR~c(i)$$.
+* $${EDBi}~—~SAVEALT~c(i)~or~SAVEALTCTR~c(i)~(–)$$, similar to $$SAVE~c(i)$$, but saves the current value of $$c(i)$$ into the savelist of $$c1$$, not $$c0$$.
+* $${EDCi}~—~SAVEBOTH~c(i)~or~SAVEBOTHCTR~c(i)~(–)$$, equivalent to $$DUP$$; $$SAVE~c(i)$$; $$SAVEALT~c(i)$$.
+* $${EDE0}~—~PUSHCTRX~(i~–~x)$$, similar to $$PUSHCTR~c(i)$$, but with $$i$$, $$0 \leq i \leq 255$$, taken from the stack. Notice that this primitive is one of the few “exotic” primitives, which are not polymorphic like stack manipulation primitives, and at the same time do not have well-defined types of parameters and return values, because the type of $$x$$ depends on $$i$$.
+* $${EDE1}~—~POPCTRX~(x~i~–)$$, similar to $$POPCTR~c(i)$$, but with $$0 \leq i \leq 255$$ from the stack.
+* $${EDE2}~—~SETCONTCTRX~(x~c~i~–~c_0)$$, similar to $$SETCONTCTR~c(i)$$, but with $$0 \leq i \leq 255$$ from the stack.
+* $${EDF0}~—~COMPOS~or~BOOLAND~(c~c0~–~c_{00})$$, computes the composition $$c \circ_0 c_0$$, which has the meaning of “perform $$c$$, and, if successful, perform $$c_0$$” (if $$c$$ is a boolean circuit) or simply “perform $$c$$, then $$c_0$$”. Equivalent to $$SWAP$$; $$SETCONT~c0$$.
+* $${EDF1}~—~COMPOSALT~or~BOOLOR~(c~c0~–~c_{00})$$, computes the alternative composition $$c \circ_1 c_0$$, which has the meaning of “perform $$c$$, and, if not successful, perform $$c_0$$” (if $$c$$ is a boolean circuit). Equivalent to $$SWAP$$; $$SETCONT~c1$$.
+* $${EDF2}~—~COMPOSBOTH~(c~c0~–~c_{00})$$, computes $$(c \circ_0 c_0) \circ_1 c_0$$, which has the meaning of “compute boolean circuit $$c$$, then compute $$c_0$$, regardless of the result of $$c$$”.
+* $${EDF3}~—~ATEXIT~(c~–)$$, sets $$c0 \leftarrow c \circ_0 c0$$. In other words, $$c$$ will be executed before exiting current subroutine.
+* $${EDF4}~—~ATEXITALT~(c~–)$$, sets $$c1 \leftarrow c \circ_1 c1$$. In other words, $$c$$ will be executed before exiting current subroutine by its alternative return path.
+* $${EDF5}~—~SETEXITALT~(c~–)$$, sets $$c1 \leftarrow (c \circ_0 c0) \circ_1 c1$$. In this way, a subsequent RETALT will first execute $$c$$, then transfer control to the original $$c0$$. This can be used, for instance, to exit from nested loops.
+* $${EDF6}~—~THENRET~(c~–~c_0)$$, computes $$c_0 := c \circ_0 c0$$
+* $${EDF7}~—~THENRETALT~(c~–~c_0)$$, computes $$c_0 := c \circ_0 c1$$
+* $${EDF8}~—~INVERT~(–)$$, interchanges $$c0$$ and $$c1$$.
+* $${EDF9}~—~BOOLEVAL~(c~–~?)$$, performs $$cc \leftarrow$$ 
 
 ### A.8.7. Dictionary subroutine calls and jumps.
 
-* $${F0n}$$~—~CALL~n~or~CALLDICT~n~(–~n)$$, calls the continuation in $$c3$$, pushing integer $$0 \leq n \leq 255$$ into its stack as an argument. Approximately equivalent to $$PUSHINT~n$$; $$PUSH~c3$$; $$EXECUTE$$.
-* $${F12_n}$$~—~CALL~n~for~0 \leq n < 2^{14}~(–~n)$$, an encoding of CALL n for larger values of n.
-* $${F16_n}$$~—~JMP~n~or~JMPDICT~n~(–~n)$$, jumps to the continuation in $$c3$$, pushing integer $$0 \leq n < 2^{14}$$ as its argument. Approximately equivalent to $$PUSHINT~n$$; $$PUSH~c3$$; $$JMPX$$.
-* $${F1A_n}$$~—~PREPARE~n~or~PREPAREDICT~n~(–~n~c)$$, equivalent to $$PUSHINT~n$$; $$PUSH~c3$$, for $$0 \leq n < 2^{14}$$. In this way, CALL n is approximately equivalent to PREPARE n; EXECUTE, and JMP n is approximately equivalent to PREPARE n; JMPX.
+* $${F0n}~—~CALL~n~or~CALLDICT~n~(–~n)$$, calls the continuation in $$c3$$, pushing integer $$0 \leq n \leq 255$$ into its stack as an argument. Approximately equivalent to $$PUSHINT~n$$; $$PUSH~c3$$; $$EXECUTE$$.
+* $${F12_n}~—~CALL~n~for~0 \leq n < 2^{14}~(–~n)$$, an encoding of CALL n for larger values of n.
+* $${F16_n}~—~JMP~n~or~JMPDICT~n~(–~n)$$, jumps to the continuation in $$c3$$, pushing integer $$0 \leq n < 2^{14}$$ as its argument. Approximately equivalent to $$PUSHINT~n$$; $$PUSH~c3$$; $$JMPX$$.
+* $${F1A_n}~—~PREPARE~n~or~PREPAREDICT~n~(–~n~c)$$, equivalent to $$PUSHINT~n$$; $$PUSH~c3$$, for $$0 \leq n < 2^{14}$$. In this way, CALL n is approximately equivalent to PREPARE n; EXECUTE, and JMP n is approximately equivalent to PREPARE n; JMPX.
 
 ## A.9 Exception generating and handling primitives
 
 ### A.9.1. Throwing exceptions.
 
-* $${F22_nn}$$~—~THROW~nn~(–~0~nn)$$, throws exception $$0 \leq nn \leq 63$$ with parameter zero. In other words, it transfers control to the continuation in $$c2$$, pushing 0 and $$nn$$ into its stack, and discarding the old stack altogether.
-* $${F26_nn}$$~—~THROWIF~nn~(f~–)$$, throws exception $$0 \leq nn \leq 63$$ with parameter zero only if integer $$f \neq 0$$.
-* $${F2A_nn}$$~—~THROWIFNOT~nn~(f~–)$$, throws exception $$0 \leq nn \leq 63$$ with parameter zero only if integer $$f = 0$$.
-* $${F2C4_nn}$$~—~THROW~nn~for~0 \leq nn < 2^{11}$$, an encoding of THROW $$nn$$ for larger values of $$nn$$.
-* $${F2CC_nn}$$~—~THROWARG~nn~(x~–~x~nn)$$, throws exception $$0 \leq nn < 2^{11}$$ with parameter $$x$$, by copying $$x$$ and $$nn$$ into the stack of $$c2$$ and transferring control to $$c2$$.
-* $${F2D4_nn}$$~—~THROWIF~nn~(f~–)~for~0 \leq nn < 2^{11}$$.
-* $${F2DC_nn}$$~—~THROWARGIF~nn~(x~f~–)$$, throws exception $$0 \leq nn < 2^{11}$$ with parameter $$x$$ only if integer $$f \neq 0$$.
-* $${F2E4_nn}$$~—~THROWIFNOT~nn~(f~–)~for~0 \leq nn < 2^{11}$$.
-* $${F2EC_nn}$$~—~THROWARGIFNOT~nn~(x~f~–)$$, throws exception $$0 \leq nn < 2^{11}$$ with parameter $$x$$ only if integer $$f = 0$$.
-* $${F2F0}$$~—~THROWANY~(n~–~0~n)$$, throws exception $$0 \leq n < 2^{16}$$ with parameter zero. Approximately equivalent to $$PUSHINT~0$$; $$SWAP$$; $$THROWARGANY$$.
-* $${F2F1}$$~—~THROWARGANY~(x~n~–~x~n)$$, throws exception $$0 \leq n < 2^{16}$$ with parameter $$x$$, transferring control to the continuation in $$c2$$. Approximately equivalent to $$PUSH~c2$$; $$JMPXARGS~2$$.
-* $${F2F2}$$~—~THROWANYIF~(n~f~–)$$, throws exception $$0 \leq n < 2^{16}$$ with parameter zero only if $$f \neq 0$$.
-* $${F2F3}$$~—~THROWARGANYIF~(x~n~f~–)$$, throws exception $$0 \leq n < 2^{16}$$ with parameter $$x$$ only if $$f \neq 0$$.
-* $${F2F4}$$~—~THROWANYIFNOT~(n~f~–)$$, throws exception $$0 \leq n < 2^{16}$$ with parameter zero only if $$f = 0$$.
-* $${F2F5}$$~—~THROWARGANYIFNOT~(x~n~f~–)$$, throws exception $$0 \leq n < 2^{16}$$ with parameter $$x$$ only if $$f = 0$$.
+* $${F22_nn}~—~THROW~nn~(–~0~nn)$$, throws exception $$0 \leq nn \leq 63$$ with parameter zero. In other words, it transfers control to the continuation in $$c2$$, pushing 0 and $$nn$$ into its stack, and discarding the old stack altogether.
+* $${F26_nn}~—~THROWIF~nn~(f~–)$$, throws exception $$0 \leq nn \leq 63$$ with parameter zero only if integer $$f \neq 0$$.
+* $${F2A_nn}~—~THROWIFNOT~nn~(f~–)$$, throws exception $$0 \leq nn \leq 63$$ with parameter zero only if integer $$f = 0$$.
+* $${F2C4_nn}~—~THROW~nn~for~0 \leq nn < 2^{11}$$, an encoding of THROW $$nn$$ for larger values of $$nn$$.
+* $${F2CC_nn}~—~THROWARG~nn~(x~–~x~nn)$$, throws exception $$0 \leq nn < 2^{11}$$ with parameter $$x$$, by copying $$x$$ and $$nn$$ into the stack of $$c2$$ and transferring control to $$c2$$.
+* $${F2D4_nn}~—~THROWIF~nn~(f~–)~for~0 \leq nn < 2^{11}$$.
+* $${F2DC_nn}~—~THROWARGIF~nn~(x~f~–)$$, throws exception $$0 \leq nn < 2^{11}$$ with parameter $$x$$ only if integer $$f \neq 0$$.
+* $${F2E4_nn}~—~THROWIFNOT~nn~(f~–)~for~0 \leq nn < 2^{11}$$.
+* $${F2EC_nn}~—~THROWARGIFNOT~nn~(x~f~–)$$, throws exception $$0 \leq nn < 2^{11}$$ with parameter $$x$$ only if integer $$f = 0$$.
+* $${F2F0}~—~THROWANY~(n~–~0~n)$$, throws exception $$0 \leq n < 2^{16}$$ with parameter zero. Approximately equivalent to $$PUSHINT~0$$; $$SWAP$$; $$THROWARGANY$$.
+* $${F2F1}~—~THROWARGANY~(x~n~–~x~n)$$, throws exception $$0 \leq n < 2^{16}$$ with parameter $$x$$, transferring control to the continuation in $$c2$$. Approximately equivalent to $$PUSH~c2$$; $$JMPXARGS~2$$.
+* $${F2F2}~—~THROWANYIF~(n~f~–)$$, throws exception $$0 \leq n < 2^{16}$$ with parameter zero only if $$f \neq 0$$.
+* $${F2F3}~—~THROWARGANYIF~(x~n~f~–)$$, throws exception $$0 \leq n < 2^{16}$$ with parameter $$x$$ only if $$f \neq 0$$.
+* $${F2F4}~—~THROWANYIFNOT~(n~f~–)$$, throws exception $$0 \leq n < 2^{16}$$ with parameter zero only if $$f = 0$$.
+* $${F2F5}~—~THROWARGANYIFNOT~(x~n~f~–)$$, throws exception $$0 \leq n < 2^{16}$$ with parameter $$x$$ only if $$f = 0$$.
 
 ### A.9.2. Catching and handling exceptions.
 
-* $${F2FF}$$~—~TRY~(c~c0~–)$$, sets $$c2$$ to $$c_0$$, first saving the old value of $$c2$$ both into the savelist of $$c_0$$ and into the savelist of the current continuation, which is stored into $$c.c0$$ and $$c_0.c0$$. Then runs $$c$$ similarly to EXECUTE.
-* $${F3pr}$$~—~TRYARGS~p,r~(c~c0~–)$$, similar to TRY, but with $$CALLARGS~p,r$$ internally used instead of EXECUTE.
+* $${F2FF}~—~TRY~(c~c0~–)$$, sets $$c2$$ to $$c_0$$, first saving the old value of $$c2$$ both into the savelist of $$c_0$$ and into the savelist of the current continuation, which is stored into $$c.c0$$ and $$c_0.c0$$. Then runs $$c$$ similarly to EXECUTE.
+* $${F3pr}~—~TRYARGS~p,r~(c~c0~–)$$, similar to TRY, but with $$CALLARGS~p,r$$ internally used instead of EXECUTE.
 
 ## A.10 Dictionary manipulation primitives
 
@@ -683,116 +683,116 @@ Opcodes starting with F4 and F5 are reserved for dictionary operations.
 
 ### A.10.1. Dictionary creation.
 
-* $${6D}$$~—~NEWDICT~(–~D)$$, returns a new empty dictionary. It is an alternative mnemonics for $$PUSHNULL$$.
-* $${6E}$$~—~DICTEMPTY~(D~–~?)$$, checks whether dictionary $$D$$ is empty, and returns −1 or 0 accordingly.
+* $${6D}~—~NEWDICT~(–~D)$$, returns a new empty dictionary. It is an alternative mnemonics for $$PUSHNULL$$.
+* $${6E}~—~DICTEMPTY~(D~–~?)$$, checks whether dictionary $$D$$ is empty, and returns −1 or 0 accordingly.
 
 ### A.10.2. Dictionary serialization and deserialization.
 
-* $${CE}$$~—~ST_DICTS~(s~b~–~b_0)$$, stores a Slice-represented dictionary $$s$$ into Builder $$b$$. It is actually a synonym for $$STSLICE$$.
-* $${F400}$$~—~ST_DICT~or~STOPTREF~(D~b~–~b_0)$$, stores dictionary $$D$$ into Builder $$b$$, returning the resulting Builder $$b_0$$. In other words, if $$D$$ is a cell, performs $$STONE$$ and $$STREF$$; if $$D$$ is Null, performs $$NIP$$ and $$STZERO$$; otherwise throws a type checking exception.
-* $${F401}$$~—~SKIPDICT~or~SKIPOPTREF~(s~–~s_0)$$, equivalent to $$LDDICT$$; $$NIP$$.
-* $${F402}$$~—~LDDICTS~(s~–~s_0~s_{00})$$, loads (parses) a (Slice-represented) dictionary $$s_0$$ from Slice $$s$$, and returns the remainder of $$s$$ as $$s_{00}$$. This is a “split function” for all $$HashmapE(n, X)$$ dictionary types.
-* $${F403}$$~—~PLDDICTS~(s~–~s_0)$$, preloads a (Slice-represented) dictionary $$s_0$$ from Slice $$s$$. Approximately equivalent to $$LDDICTS$$; $$DROP$$.
-* $${F404}$$~—~LDDICT~or~LDOPTREF~(s~–~D~s_0)$$, loads (parses) a dictionary $$D$$ from Slice $$s$$, and returns the remainder of $$s$$ as $$s_0$$. May be applied to dictionaries or to values of arbitrary $$(ˆY )?$$ types.
-* $${F405}$$~—~PLDDICT~or~PLDOPTREF~(s~–~D)$$, preloads a dictionary $$D$$ from Slice $$s$$. Approximately equivalent to $$LDDICT$$; $$DROP$$.
-* $${F406}$$~—~LDDICTQ~(s~–~D~s_0~−1~or~s~0)$$, a quiet version of $$LDDICT$$.
-* $${F407}$$~—~PLDDICTQ~(s~–~D~−1~or~0)$$, a quiet version of $$PLDDICT$$.
+* $${CE}~—~ST_DICTS~(s~b~–~b_0)$$, stores a Slice-represented dictionary $$s$$ into Builder $$b$$. It is actually a synonym for $$STSLICE$$.
+* $${F400}~—~ST_DICT~or~STOPTREF~(D~b~–~b_0)$$, stores dictionary $$D$$ into Builder $$b$$, returning the resulting Builder $$b_0$$. In other words, if $$D$$ is a cell, performs $$STONE$$ and $$STREF$$; if $$D$$ is Null, performs $$NIP$$ and $$STZERO$$; otherwise throws a type checking exception.
+* $${F401}~—~SKIPDICT~or~SKIPOPTREF~(s~–~s_0)$$, equivalent to $$LDDICT$$; $$NIP$$.
+* $${F402}~—~LDDICTS~(s~–~s_0~s_{00})$$, loads (parses) a (Slice-represented) dictionary $$s_0$$ from Slice $$s$$, and returns the remainder of $$s$$ as $$s_{00}$$. This is a “split function” for all $$HashmapE(n, X)$$ dictionary types.
+* $${F403}~—~PLDDICTS~(s~–~s_0)$$, preloads a (Slice-represented) dictionary $$s_0$$ from Slice $$s$$. Approximately equivalent to $$LDDICTS$$; $$DROP$$.
+* $${F404}~—~LDDICT~or~LDOPTREF~(s~–~D~s_0)$$, loads (parses) a dictionary $$D$$ from Slice $$s$$, and returns the remainder of $$s$$ as $$s_0$$. May be applied to dictionaries or to values of arbitrary $$(ˆY )?$$ types.
+* $${F405}~—~PLDDICT~or~PLDOPTREF~(s~–~D)$$, preloads a dictionary $$D$$ from Slice $$s$$. Approximately equivalent to $$LDDICT$$; $$DROP$$.
+* $${F406}~—~LDDICTQ~(s~–~D~s_0~−1~or~s~0)$$, a quiet version of $$LDDICT$$.
+* $${F407}~—~PLDDICTQ~(s~–~D~−1~or~0)$$, a quiet version of $$PLDDICT$$.
 
 ### A.10.3. GET dictionary operations.
 
-* $${F40A}$$~—~DICTGET~(k~D~n~–~x~−1~or~0)$$, looks up key $$k$$ (represented by a Slice, the first $$0 \leq n \leq 1023$$ data bits of which are used as a key) in dictionary $$D$$ of type $$HashmapE(n, X)$$ with $$n$$-bit keys. On success, returns the value found as a Slice $$x$$.
-* $${F40B}$$~—~DICTGETREF~(k~D~n~–~c~−1~or~0)$$, similar to $$DICTGET$$, but with a $$LDREF; ENDS$$ applied to $$x$$ on success. This operation is useful for dictionaries of type $$HashmapE(n, ˆY )$$.
-* $${F40C}$$~—~DICTIGET~(i~D~n~–~x~−1~or~0)$$, similar to $$DICTGET$$, but with a signed (big-endian) $$n$$-bit Integer $$i$$ as a key. If $$i$$ does not fit into $$n$$ bits, returns 0. If $$i$$ is a NaN, throws an integer overflow exception.
-* $${F40D}$$~—~DICTIGETREF~(i~D~n~–~c~−1~or~0)$$, combines $$DICTIGET$$ with DICTGETREF: it uses signed $$n$$-bit Integer $$i$$ as a key and returns a Cell instead of a Slice on success.
-* $${F40E}$$~—~DICTUGET~(i~D~n~–~x~−1~or~0)$$, similar to $$DICTIGET$$, but with unsigned (big-endian) $$n$$-bit Integer $$i$$ used as a key.
-* $${F40F}$$~—~DICTUGETREF~(i~D~n~–~c~−1~or~0)$$, similar to $$DICTIGETREF$$, but with an unsigned $$n$$-bit Integer key $$i$$.
+* $${F40A}~—~DICTGET~(k~D~n~–~x~−1~or~0)$$, looks up key $$k$$ (represented by a Slice, the first $$0 \leq n \leq 1023$$ data bits of which are used as a key) in dictionary $$D$$ of type $$HashmapE(n, X)$$ with $$n$$-bit keys. On success, returns the value found as a Slice $$x$$.
+* $${F40B}~—~DICTGETREF~(k~D~n~–~c~−1~or~0)$$, similar to $$DICTGET$$, but with a $$LDREF; ENDS$$ applied to $$x$$ on success. This operation is useful for dictionaries of type $$HashmapE(n, ˆY )$$.
+* $${F40C}~—~DICTIGET~(i~D~n~–~x~−1~or~0)$$, similar to $$DICTGET$$, but with a signed (big-endian) $$n$$-bit Integer $$i$$ as a key. If $$i$$ does not fit into $$n$$ bits, returns 0. If $$i$$ is a NaN, throws an integer overflow exception.
+* $${F40D}~—~DICTIGETREF~(i~D~n~–~c~−1~or~0)$$, combines $$DICTIGET$$ with DICTGETREF: it uses signed $$n$$-bit Integer $$i$$ as a key and returns a Cell instead of a Slice on success.
+* $${F40E}~—~DICTUGET~(i~D~n~–~x~−1~or~0)$$, similar to $$DICTIGET$$, but with unsigned (big-endian) $$n$$-bit Integer $$i$$ used as a key.
+* $${F40F}~—~DICTUGETREF~(i~D~n~–~c~−1~or~0)$$, similar to $$DICTIGETREF$$, but with an unsigned $$n$$-bit Integer key $$i$$.
 
 ### A.10.4. Set/RePlace/ADD dictionary operations.
 
 The mnemonics of the following dictionary primitives are constructed in a systematic fashion according to the regular expression DICT\[, I, U] (SET, REPLACE, ADD) \[GET]\[REF] depending on the type of the key used (a Slice or a signed or unsigned Integer), the dictionary operation to be performed, and the way the values are accepted and returned (as Cells or as Slices). Therefore, we provide a detailed description only for some primitives, assuming that this information is sufficient for the reader to understand the precise action of the remaining primitives.
 
-* $${F412}$$~—~DICTSET~(x~k~D~n~–~D_0)$$, sets the value associated with $$n$$-bit key $$k$$ (represented by a Slice as in $$DICTGET$$) in dictionary $$D$$ (also represented by a Slice) to value $$x$$ (again a Slice), and returns the resulting dictionary as $$D_0$$.
-* $${F413}$$~—~DICTSETREF~(c~k~D~n~–~D_0)$$, similar to $$DICTSET$$, but with the value set to a reference to Cell $$c$$.
-* $${F414}$$~—~DICTISET~(x~i~D~n~–~D_0)$$, similar to $$DICTSET$$, but with the key represented by a (big-endian) signed $$n$$-bit integer $$i$$. If $$i$$ does not fit into $$n$$ bits, a range check exception is generated.
-* $${F415}$$~—~DICTISETREF~(c~i~D~n~–~D_0)$$, similar to $$DICTSETREF$$, but with the key a signed $$n$$-bit integer as in $$DICTISET.
-* $${F416}$$~—~DICTUSET~(x~i~D~n~–~D_0)$$, similar to DICTISET, but with $$i$$ an unsigned $$n$$-bit integer.
-* $${F417}$$~—~DICTUSETREF~(c~i~D~n~–~D_0)$$, similar to DICTISETREF, but with $$i$$ unsigned.
-* $${F41A}$$~—~DICTSETGET~(x~k~D~n~–~D_0~y~−1~or~D_0~0)$$, combines $$DICTSET$$ with $$DICTGET$$: it sets the value corresponding to key $$k$$ to $$x$$, but also returns the old value $$y$$ associated with the key in question, if present.
-* $${F41B}$$~—~DICTSETGETREF~(c~k~D~n~–~D_0~c_0~−1~or~D_0~0)$$, combines $$DICTSETREF$$ with DICTGETREF similarly to $$DICTSETGET$$.
-* $${F41C}$$~—~DICTISETGET~(x~i~D~n~–~D_0~y~−1~or~D_0~0)$$, similar to $$DICTSETGET$$, but with the key represented by a big-endian signed $$n$$-bit Integer $$i$$.
-* $${F41D}$$~—~DICTISETGETREF~(c~i~D~n~–~D_0~c_0~−1~or~D_0~0)$$, a version of $$DICTSETGETREF$$ with signed Integer $$i$$ as a key.
-* $${F41E}$$~—~DICTUSETGET~(x~i~D~n~–~D_0~y~−1~or~D_0~0)$$, similar to $$DICTISETGET$$, but with $$i$$ an unsigned $$n$$-bit integer.
-* $${F41F}$$~—~DICTUSETGETREF~(c~i~D~n~–~D_0~c_0~−1~or~D_0~0)$$.
-* $${F422}$$~—~DICTREPLACE~(x~k~D~n~–~D_0~−1~or~D~0)$$, a Replace operation, which is similar to $$DICTSET$$, but sets the value of key $$k$$ in dictionary $$D$$ to $$x$$ only if the key $$k$$ was already present in $$D$$.
-* $${F423}$$~—~DICTREPLACEREF~(c~k~D~n~–~D_0~−1~or~D~0)$$, a Replace counterpart of $$DICTSETREF$$.
-* $${F424}$$~—~DICTIREPLACE~(x~i~D~n~–~D_0~−1~or~D~0)$$, a version of $$DICTREPLACE$$ with signed $$n$$-bit Integer $$i$$ used as a key.
-* $${F425}$$~—~DICTIREPLACEREF~(c~i~D~n~–~D_0~−1~or~D~0)$$.
-* $${F426}$$~—~DICTUREPLACE~(x~i~D~n~–~D_0~−1~or~D~0)$$.
-* $${F427}$$~—~DICTUREPLACEREF~(c~i~D~n~–~D_0~−1~or~D~0)$$.
-* $${F42A}$$~—~DICTREPLACEGET~(x~k~D~n~–~D_0~y~−1~or~D~0)$$, a Replace counterpart of $$DICTSETGET$$: on success, also returns the old value associated with the key in question.
-* $${F42B}$$~—~DICTREPLACEGETREF~(c~k~D~n~–~D_0~c_0~−1~or~D~0)$$.
-* $${F42C}$$~—~DICTIREPLACEGET~(x~i~D~n~–~D_0~y~−1~or~D~0)$$.
-* $${F42D}$$~—~DICTIREPLACEGETREF~(c~i~D~n~–~D_0~c_0~−1~or~D_0~0)$$.
-* $${F42E}$$~—~DICTUREPLACEGET~(x~i~D~n~–~D_0~y~−1~or~D_0~0)$$.
-* $${F42F}$$~—~DICTUREPLACEGETREF~(c~i~D~n~–~D_0~c_0~−1~or~D_0~0)$$.
-* $${F432}$$~—~DICTADD~(x~k~D~n~–~D_0~−1~or~D~0)$$, an Add counterpart of $$DICTSET$$: sets the value associated with key $$k$$ in dictionary $$D$$ to $$x$$, but only if it is not already present in $$D$$.
-* $${F433}$$~—~DICTADDREF~(c~k~D~n~–~D_0~−1~or~D~0)$$.
-* $${F434}$$~—~DICTIADD~(x~i~D~n~–~D_0~−1~or~D~0)$$.
-* $${F435}$$~—~DICTIADDREF~(c~i~D~n~–~D_0~−1~or~D~0)$$.
-* $${F436}$$~—~DICTUADD~(x~i~D~n~–~D_0~−1~or~D~0)$$.
-* $${F437}$$~—~DICTUADDREF~(c~i~D~n~–~D_0~−1~or~D~0)$$.
-* $${F43A}$$~—~DICTADDGET~(x~k~D~n~–~D_0~−1~or~D~y~0)$$, an Add counterpart of $$DICTSETGET$$: sets the value associated with key $$k$$ in dictionary $$D$$ to $$x$$, but only if key $$k$$ is not already present in $$D$$. Otherwise, just returns the old value $$y$$ without changing the dictionary.
-* $${F43B}$$~—~DICTADDGETREF~(c~k~D~n~–~D_0~−1~or~D~c_0~0)$$, an Add counterpart of $$DICTSETGETREF$$.
-* $${F43C}$$~—~DICTIADDGET~(x~i~D~n~–~D_0~−1~or~D~y~0)$$.
-* $${F43D}$$~—~DICTIADDGETREF~(c~i~D~n~–~D_0~−1~or~D~c_0~0)$$.
-* $${F43E}$$~—~DICTUADDGET~(x~i~D~n~–~D_0~−1~or~D~y~0)$$.
-* $${F43F}$$~—~DICTUADDGETREF~(c~i~D~n~–~D_0~−1~or~D~c_0~0)$$.
+* $${F412}~—~DICTSET~(x~k~D~n~–~D_0)$$, sets the value associated with $$n$$-bit key $$k$$ (represented by a Slice as in $$DICTGET$$) in dictionary $$D$$ (also represented by a Slice) to value $$x$$ (again a Slice), and returns the resulting dictionary as $$D_0$$.
+* $${F413}~—~DICTSETREF~(c~k~D~n~–~D_0)$$, similar to $$DICTSET$$, but with the value set to a reference to Cell $$c$$.
+* $${F414}~—~DICTISET~(x~i~D~n~–~D_0)$$, similar to $$DICTSET$$, but with the key represented by a (big-endian) signed $$n$$-bit integer $$i$$. If $$i$$ does not fit into $$n$$ bits, a range check exception is generated.
+* $${F415}~—~DICTISETREF~(c~i~D~n~–~D_0)$$, similar to $$DICTSETREF$$, but with the key a signed $$n$$-bit integer as in $$DICTISET.
+* $${F416}~—~DICTUSET~(x~i~D~n~–~D_0)$$, similar to DICTISET, but with $$i$$ an unsigned $$n$$-bit integer.
+* $${F417}~—~DICTUSETREF~(c~i~D~n~–~D_0)$$, similar to DICTISETREF, but with $$i$$ unsigned.
+* $${F41A}~—~DICTSETGET~(x~k~D~n~–~D_0~y~−1~or~D_0~0)$$, combines $$DICTSET$$ with $$DICTGET$$: it sets the value corresponding to key $$k$$ to $$x$$, but also returns the old value $$y$$ associated with the key in question, if present.
+* $${F41B}~—~DICTSETGETREF~(c~k~D~n~–~D_0~c_0~−1~or~D_0~0)$$, combines $$DICTSETREF$$ with DICTGETREF similarly to $$DICTSETGET$$.
+* $${F41C}~—~DICTISETGET~(x~i~D~n~–~D_0~y~−1~or~D_0~0)$$, similar to $$DICTSETGET$$, but with the key represented by a big-endian signed $$n$$-bit Integer $$i$$.
+* $${F41D}~—~DICTISETGETREF~(c~i~D~n~–~D_0~c_0~−1~or~D_0~0)$$, a version of $$DICTSETGETREF$$ with signed Integer $$i$$ as a key.
+* $${F41E}~—~DICTUSETGET~(x~i~D~n~–~D_0~y~−1~or~D_0~0)$$, similar to $$DICTISETGET$$, but with $$i$$ an unsigned $$n$$-bit integer.
+* $${F41F}~—~DICTUSETGETREF~(c~i~D~n~–~D_0~c_0~−1~or~D_0~0)$$.
+* $${F422}~—~DICTREPLACE~(x~k~D~n~–~D_0~−1~or~D~0)$$, a Replace operation, which is similar to $$DICTSET$$, but sets the value of key $$k$$ in dictionary $$D$$ to $$x$$ only if the key $$k$$ was already present in $$D$$.
+* $${F423}~—~DICTREPLACEREF~(c~k~D~n~–~D_0~−1~or~D~0)$$, a Replace counterpart of $$DICTSETREF$$.
+* $${F424}~—~DICTIREPLACE~(x~i~D~n~–~D_0~−1~or~D~0)$$, a version of $$DICTREPLACE$$ with signed $$n$$-bit Integer $$i$$ used as a key.
+* $${F425}~—~DICTIREPLACEREF~(c~i~D~n~–~D_0~−1~or~D~0)$$.
+* $${F426}~—~DICTUREPLACE~(x~i~D~n~–~D_0~−1~or~D~0)$$.
+* $${F427}~—~DICTUREPLACEREF~(c~i~D~n~–~D_0~−1~or~D~0)$$.
+* $${F42A}~—~DICTREPLACEGET~(x~k~D~n~–~D_0~y~−1~or~D~0)$$, a Replace counterpart of $$DICTSETGET$$: on success, also returns the old value associated with the key in question.
+* $${F42B}~—~DICTREPLACEGETREF~(c~k~D~n~–~D_0~c_0~−1~or~D~0)$$.
+* $${F42C}~—~DICTIREPLACEGET~(x~i~D~n~–~D_0~y~−1~or~D~0)$$.
+* $${F42D}~—~DICTIREPLACEGETREF~(c~i~D~n~–~D_0~c_0~−1~or~D_0~0)$$.
+* $${F42E}~—~DICTUREPLACEGET~(x~i~D~n~–~D_0~y~−1~or~D_0~0)$$.
+* $${F42F}~—~DICTUREPLACEGETREF~(c~i~D~n~–~D_0~c_0~−1~or~D_0~0)$$.
+* $${F432}~—~DICTADD~(x~k~D~n~–~D_0~−1~or~D~0)$$, an Add counterpart of $$DICTSET$$: sets the value associated with key $$k$$ in dictionary $$D$$ to $$x$$, but only if it is not already present in $$D$$.
+* $${F433}~—~DICTADDREF~(c~k~D~n~–~D_0~−1~or~D~0)$$.
+* $${F434}~—~DICTIADD~(x~i~D~n~–~D_0~−1~or~D~0)$$.
+* $${F435}~—~DICTIADDREF~(c~i~D~n~–~D_0~−1~or~D~0)$$.
+* $${F436}~—~DICTUADD~(x~i~D~n~–~D_0~−1~or~D~0)$$.
+* $${F437}~—~DICTUADDREF~(c~i~D~n~–~D_0~−1~or~D~0)$$.
+* $${F43A}~—~DICTADDGET~(x~k~D~n~–~D_0~−1~or~D~y~0)$$, an Add counterpart of $$DICTSETGET$$: sets the value associated with key $$k$$ in dictionary $$D$$ to $$x$$, but only if key $$k$$ is not already present in $$D$$. Otherwise, just returns the old value $$y$$ without changing the dictionary.
+* $${F43B}~—~DICTADDGETREF~(c~k~D~n~–~D_0~−1~or~D~c_0~0)$$, an Add counterpart of $$DICTSETGETREF$$.
+* $${F43C}~—~DICTIADDGET~(x~i~D~n~–~D_0~−1~or~D~y~0)$$.
+* $${F43D}~—~DICTIADDGETREF~(c~i~D~n~–~D_0~−1~or~D~c_0~0)$$.
+* $${F43E}~—~DICTUADDGET~(x~i~D~n~–~D_0~−1~or~D~y~0)$$.
+* $${F43F}~—~DICTUADDGETREF~(c~i~D~n~–~D_0~−1~or~D~c_0~0)$$.
 
 ### A.10.5. Builder-accepting variants of SET dictionary operations.
 
 The following primitives accept the new value as a Builder $$b$$ instead of a Slice $$x$$, which often is more convenient if the value needs to be serialized from several components computed in the stack. (This is reflected by appending a B to the mnemonics of the corresponding SET primitives that work with Slices.) The net effect is roughly equivalent to converting $$b$$ into a Slice by ENDC; CTOS and executing the corresponding primitive listed in [$$\mathbf{A.10.4}$$](a-instructions-and-opcodes.md#a.10.4.-set-replace-add-dictionary-operations.)
 
-* $${F441}$$~—~DICTSETB~(b~k~D~n~–~D_0)$$.
-* $${F442}$$~—~DICTISETB~(b~i~D~n~–~D_0)$$.
-* $${F443}$$~—~DICTUSETB~(b~i~D~n~–~D_0)$$.
-* $${F445}$$~—~DICTSETGETB~(b~k~D~n~–~D_0~y~−1~or~D_0~0)$$.
-* $${F446}$$~—~DICTISETGETB~(b~i~D~n~–~D_0~y~−1~or~D_0~0)$$.
-* $${F447}$$~—~DICTUSETGETB~(b~i~D~n~–~D_0~y~−1~or~D_0~0)$$.
-* $${F449}$$~—~DICTREPLACEB~(b~k~D~n~–~D_0~−1~or~D~0)$$.
-* $${F44A}$$~—~DICTIREPLACEB~(b~i~D~n~–~D_0~−1~or~D~0)$$.
-* $${F44B}$$~—~DICTUREPLACEB~(b~i~D~n~–~D_0~−1~or~D~0)$$.
-* $${F44D}$$~—~DICTREPLACEGETB~(b~k~D~n~–~D_0~y~−1~or~D~0)$$.
-* $${F44E}$$~—~DICTIREPLACEGETB~(b~i~D~n~–~D_0~y~−1~or~D~0)$$.
-* $${F44F}$$~—~DICTUREPLACEGETB~(b~i~D~n~–~D_0~y~−1~or~D~0)$$.
-* $${F451}$$~—~DICTADDB~(b~k~D~n~–~D_0~−1~or~D~0)$$.
-* $${F452}$$~—~DICTIADDB~(b~i~D~n~–~D_0~−1~or~D~0)$$.
-* $${F453}$$~—~DICTUADDB~(b~i~D~n~–~D_0~−1~or~D~0)$$.
-* $${F455}$$~—~DICTADDGETB~(b~k~D~n~–~D_0~−1~or~D~y~0)$$.
-* $${F456}$$~—~DICTIADDGETB~(b~i~D~n~–~D_0~−1~or~D~y~0)$$.
-* $${F457}$$~—~DICTUADDGETB~(b~i~D~n~–~D_0~−1~or~D~y~0)$$.
+* $${F441}~—~DICTSETB~(b~k~D~n~–~D_0)$$.
+* $${F442}~—~DICTISETB~(b~i~D~n~–~D_0)$$.
+* $${F443}~—~DICTUSETB~(b~i~D~n~–~D_0)$$.
+* $${F445}~—~DICTSETGETB~(b~k~D~n~–~D_0~y~−1~or~D_0~0)$$.
+* $${F446}~—~DICTISETGETB~(b~i~D~n~–~D_0~y~−1~or~D_0~0)$$.
+* $${F447}~—~DICTUSETGETB~(b~i~D~n~–~D_0~y~−1~or~D_0~0)$$.
+* $${F449}~—~DICTREPLACEB~(b~k~D~n~–~D_0~−1~or~D~0)$$.
+* $${F44A}~—~DICTIREPLACEB~(b~i~D~n~–~D_0~−1~or~D~0)$$.
+* $${F44B}~—~DICTUREPLACEB~(b~i~D~n~–~D_0~−1~or~D~0)$$.
+* $${F44D}~—~DICTREPLACEGETB~(b~k~D~n~–~D_0~y~−1~or~D~0)$$.
+* $${F44E}~—~DICTIREPLACEGETB~(b~i~D~n~–~D_0~y~−1~or~D~0)$$.
+* $${F44F}~—~DICTUREPLACEGETB~(b~i~D~n~–~D_0~y~−1~or~D~0)$$.
+* $${F451}~—~DICTADDB~(b~k~D~n~–~D_0~−1~or~D~0)$$.
+* $${F452}~—~DICTIADDB~(b~i~D~n~–~D_0~−1~or~D~0)$$.
+* $${F453}~—~DICTUADDB~(b~i~D~n~–~D_0~−1~or~D~0)$$.
+* $${F455}~—~DICTADDGETB~(b~k~D~n~–~D_0~−1~or~D~y~0)$$.
+* $${F456}~—~DICTIADDGETB~(b~i~D~n~–~D_0~−1~or~D~y~0)$$.
+* $${F457}~—~DICTUADDGETB~(b~i~D~n~–~D_0~−1~or~D~y~0)$$.
 
 ### A.10.6. DeLETE dictionary operations.
 
-* $${F459}$$~—~DICTDEL~(k~D~n~–~D_0~−1~or~D~0)$$, deletes n-bit key, represented by a Slice $$k$$, from dictionary $$D$$. If the key is present, returns the modified dictionary $$D_0$$ and the success flag −1. Otherwise, returns the original dictionary $$D$$ and 0.
-* $${F45A}$$~—~DICTIDEL~(i~D~n~–~D_0~?)$$, a version of DICTDEL with the key represented by a signed n-bit Integer $$i$$. If $$i$$ does not fit into n bits, simply returns $$D~0$$ (“key not found, dictionary unmodified”).
-* $${F45B}$$~—~DICTUDEL~(i~D~n~–~D_0~?)$$, similar to DICTIDEL, but with $$i$$ an unsigned n-bit integer.
-* $${F462}$$~—~DICTDELGET~(k~D~n~–~D_0~x~−1~or~D~0)$$, deletes n-bit key, represented by a Slice $$k$$, from dictionary $$D$$. If the key is present, returns the modified dictionary $$D_0$$, the original value $$x$$ associated with the key $$k$$ (represented by a Slice), and the success flag −1. Otherwise, returns the original dictionary $$D$$ and 0.
-* $${F463}$$~—~DICTDELGETREF~(k~D~n~–~D_0~c~−1~or~D~0)$$, similar to $$DICTDELGET$$, but with LDREF; ENDS applied to $$x$$ on success, so that the value returned $$c$$ is a Cell.
-* $${F464}$$~—~DICTIDELGET~(i~D~n~–~D_0~x~−1~or~D~0)$$, a variant of primitive $$DICTDELGET$$ with signed n-bit integer $$i$$ as a key.
-* $${F465}$$~—~DICTIDELGETREF~(i~D~n~–~D_0~c~−1~or~D~0)$$, a variant of primitive $$DICTIDELGET$$ returning a Cell instead of a Slice.
-* $${F466}$$~—~DICTUDELGET~(i~D~n~–~D_0~x~−1~or~D~0)$$, a variant of primitive $$DICTDELGET$$ with unsigned n-bit integer $$i$$ as a key.
-* $${F467}$$~—~DICTUDELGETREF~(i~D~n~–~D_0~c~−1~or~D~0)$$, a variant of primitive $$DICTUDELGET$$ returning a Cell instead of a Slice.
+* $${F459}~—~DICTDEL~(k~D~n~–~D_0~−1~or~D~0)$$, deletes n-bit key, represented by a Slice $$k$$, from dictionary $$D$$. If the key is present, returns the modified dictionary $$D_0$$ and the success flag −1. Otherwise, returns the original dictionary $$D$$ and 0.
+* $${F45A}~—~DICTIDEL~(i~D~n~–~D_0~?)$$, a version of DICTDEL with the key represented by a signed n-bit Integer $$i$$. If $$i$$ does not fit into n bits, simply returns $$D~0$$ (“key not found, dictionary unmodified”).
+* $${F45B}~—~DICTUDEL~(i~D~n~–~D_0~?)$$, similar to DICTIDEL, but with $$i$$ an unsigned n-bit integer.
+* $${F462}~—~DICTDELGET~(k~D~n~–~D_0~x~−1~or~D~0)$$, deletes n-bit key, represented by a Slice $$k$$, from dictionary $$D$$. If the key is present, returns the modified dictionary $$D_0$$, the original value $$x$$ associated with the key $$k$$ (represented by a Slice), and the success flag −1. Otherwise, returns the original dictionary $$D$$ and 0.
+* $${F463}~—~DICTDELGETREF~(k~D~n~–~D_0~c~−1~or~D~0)$$, similar to $$DICTDELGET$$, but with LDREF; ENDS applied to $$x$$ on success, so that the value returned $$c$$ is a Cell.
+* $${F464}~—~DICTIDELGET~(i~D~n~–~D_0~x~−1~or~D~0)$$, a variant of primitive $$DICTDELGET$$ with signed n-bit integer $$i$$ as a key.
+* $${F465}~—~DICTIDELGETREF~(i~D~n~–~D_0~c~−1~or~D~0)$$, a variant of primitive $$DICTIDELGET$$ returning a Cell instead of a Slice.
+* $${F466}~—~DICTUDELGET~(i~D~n~–~D_0~x~−1~or~D~0)$$, a variant of primitive $$DICTDELGET$$ with unsigned n-bit integer $$i$$ as a key.
+* $${F467}~—~DICTUDELGETREF~(i~D~n~–~D_0~c~−1~or~D~0)$$, a variant of primitive $$DICTUDELGET$$ returning a Cell instead of a Slice.
 
 ### A.10.7. "Maybe reference" dictionary operations.
 
 The following operations assume that a dictionary is used to store values $$c^{\text {? }}$$ of type $$C_{e l l}$$ ? ("Maybe Cell"), which can be used in particular to store dictionaries as values in other dictionaries. The representation is as follows: if $$c^{\text {? }}$$ is a Cell, it is stored as a value with no data bits and exactly one reference to this $$C$$ ell. If $$c^{?}$$ is $$N u l l$$, then the corresponding key must be absent from the dictionary altogether.
 
-* $${F469}$$~—~DICTGETOPTREF~(k~D~n~–~c?)$$, a variant of $$DICTGETREF$$ that returns Null instead of the value $$c?$$ if the key $$k$$ is absent from dictionary $$D$$.
-* $${F46A}$$~—~DICTIGETOPTREF~(i~D~n~–~c?)$$, similar to $$DICTGETOPTREF$$, but with the key given by signed n-bit Integer $$i$$. If the key $$i$$ is out of range, also returns Null.
-* $${F46B}$$~—~DICTUGETOPTREF~(i~D~n~–~c?)$$, similar to $$DICTGETOPTREF$$, but with the key given by unsigned n-bit Integer $$i$$.
-* $${F46D}$$~—~DICTSETGETOPTREF~(c?~k~D~n~–~D_0~c˜?)$$, a variant of both $$DICTGETOPTREF$$ and $$DICTSETGETREF$$ that sets the value corresponding to key $$k$$ in dictionary $$D$$ to $$c?$$ (if $$c?$$ is Null, then the key is deleted instead), and returns the old value $$c˜?$$ (if the key $$k$$ was absent before, returns Null instead).
-* $${F46E}$$~—~DICTISETGETOPTREF~(c?~i~D~n~–~D_0~c˜?)$$, similar to primitive $$DICTSETGETOPTREF$$, but using signed n-bit Integer $$i$$ as a key. If $$i$$ does not fit into n bits, throws a range checking exception.
-* $${F46F}$$~—~DICTUSETGETOPTREF~(c?~i~D~n~–~D_0~c˜?)$$, similar to primitive $$DICTSETGETOPTREF$$, but using unsigned n-bit Integer $$i$$ as a key.
+* $${F469}~—~DICTGETOPTREF~(k~D~n~–~c?)$$, a variant of $$DICTGETREF$$ that returns Null instead of the value $$c?$$ if the key $$k$$ is absent from dictionary $$D$$.
+* $${F46A}~—~DICTIGETOPTREF~(i~D~n~–~c?)$$, similar to $$DICTGETOPTREF$$, but with the key given by signed n-bit Integer $$i$$. If the key $$i$$ is out of range, also returns Null.
+* $${F46B}~—~DICTUGETOPTREF~(i~D~n~–~c?)$$, similar to $$DICTGETOPTREF$$, but with the key given by unsigned n-bit Integer $$i$$.
+* $${F46D}~—~DICTSETGETOPTREF~(c?~k~D~n~–~D_0~c˜?)$$, a variant of both $$DICTGETOPTREF$$ and $$DICTSETGETREF$$ that sets the value corresponding to key $$k$$ in dictionary $$D$$ to $$c?$$ (if $$c?$$ is Null, then the key is deleted instead), and returns the old value $$c˜?$$ (if the key $$k$$ was absent before, returns Null instead).
+* $${F46E}~—~DICTISETGETOPTREF~(c?~i~D~n~–~D_0~c˜?)$$, similar to primitive $$DICTSETGETOPTREF$$, but using signed n-bit Integer $$i$$ as a key. If $$i$$ does not fit into n bits, throws a range checking exception.
+* $${F46F}~—~DICTUSETGETOPTREF~(c?~i~D~n~–~D_0~c˜?)$$, similar to primitive $$DICTSETGETOPTREF$$, but using unsigned n-bit Integer $$i$$ as a key.
 
 ### A.10.8. Prefix code dictionary operations.
 
@@ -800,80 +800,80 @@ These are some basic operations for constructing prefix code dictionaries (cf. [
 
 Some GET operations for prefix code dictionaries may be found in [$$\mathbf{A.10.11}$$](a-instructions-and-opcodes.md#a.10.11.-special-get-dictionary-and-prefix-code-dictionary-operations-and-constant-dictionaries.) Other prefix code dictionary operations include:
 
-* $${F470}$$~—~PFXDICTSET~(x~k~D~n~–~D_0~−1~or~D~0)$$.
-* $${F471}$$~—~PFXDICTREPLACE~(x~k~D~n~–~D_0~−1~or~D~0)$$.
-* $${F472}$$~—~PFXDICTADD~(x~k~D~n~–~D_0~−1~or~D~0)$$.
-* $${F473}$$~—~PFXDICTDEL~(k~D~n~–~D_0~−1~or~D~0)$$.
+* $${F470}~—~PFXDICTSET~(x~k~D~n~–~D_0~−1~or~D~0)$$.
+* $${F471}~—~PFXDICTREPLACE~(x~k~D~n~–~D_0~−1~or~D~0)$$.
+* $${F472}~—~PFXDICTADD~(x~k~D~n~–~D_0~−1~or~D~0)$$.
+* $${F473}~—~PFXDICTDEL~(k~D~n~–~D_0~−1~or~D~0)$$.
 
 These primitives are completely similar to their non-prefix code counterparts $$DICTSET$$ etc (cf. [$$\mathbf{A.10.4}$$](a-instructions-and-opcodes.md#a.10.4.-set-replace-add-dictionary-operations.)), with the obvious difference that even a SET may fail in a prefix code dictionary, so a success flag must be returned by $$PFXDICTSET$$ as well.
 
 ### A.10.9. Variants of GetNext and GetPreV operations.
 
-* $${F474}$$~—~DICTGETNEXT~(k~D~n~–~x_0~k_0~−1~or~0)$$, computes the minimal key $$k_0$$ in dictionary $$D$$ that is lexicographically greater than $$k$$, and returns $$k_0$$ (represented by a Slice) along with associated value $$x_0$$ (also represented by a Slice).
-* $${F475}$$~—~DICTGETNEXTEQ~(k~D~n~–~x_0~k_0~−1~or~0)$$, similar to $$DICTGETNEXT$$, but computes the minimal key $$k_0$$ that is lexicographically greater than or equal to $$k$$.
-* $${F476}$$~—~DICTGETPREV~(k~D~n~–~x_0~k_0~−1~or~0)$$, similar to $$DICTGETNEXT$$, but computes the maximal key $$k_0$$ lexicographically smaller than $$k$$.
-* $${F477}$$~—~DICTGETPREVEQ~(k~D~n~–~x_0~k_0~−1~or~0)$$, similar to DICTGETPREV, but computes the maximal key $$k_0$$ lexicographically smaller than or equal to $$k$$.
-* $${F478}$$~—~DICTIGETNEXT~(i~D~n~–~x_0~i_0~−1~or~0)$$, similar to $$DICTGETNEXT$$, but interprets all keys in dictionary $$D$$ as big-endian signed n-bit integers, and computes the minimal key $$i_0$$ that is larger than Integer $$i$$ (which does not necessarily fit into n bits).
-* $${F479}$$~—~DICTIGETNEXTEQ~(i~D~n~–~x_0~i_0~−1~or~0)$$.
-* $${F47A}$$~—~DICTIGETPREV~(i~D~n~–~x_0~i_0~−1~or~0)$$.
-* $${F47B}$$~—~DICTIGETPREVEQ~(i~D~n~–~x_0~i_0~−1~or~0)$$.
-* $${F47C}$$~—~DICTUGETNEXT~(i~D~n~–~x_0~i_0~−1~or~0)$$, similar to $$DICTGETNEXT$$, but interprets all keys in dictionary $$D$$ as big-endian unsigned n-bit integers, and computes the minimal key $$i_0$$ that is larger than Integer $$i$$ (which does not necessarily fit into n bits, and is not necessarily non-negative).
-* $${F47D}$$~—~DICTUGETNEXTEQ~(i~D~n~–~x_0~i_0~−1~or~0)$$.
-* $${F47E}$$~—~DICTUGETPREV~(i~D~n~–~x_0~i_0~−1~or~0)$$.
-* $${F47F}$$~—~DICTUGETPREVEQ~(i~D~n~–~x_0~i_0~−1~or~0)$$.
+* $${F474}~—~DICTGETNEXT~(k~D~n~–~x_0~k_0~−1~or~0)$$, computes the minimal key $$k_0$$ in dictionary $$D$$ that is lexicographically greater than $$k$$, and returns $$k_0$$ (represented by a Slice) along with associated value $$x_0$$ (also represented by a Slice).
+* $${F475}~—~DICTGETNEXTEQ~(k~D~n~–~x_0~k_0~−1~or~0)$$, similar to $$DICTGETNEXT$$, but computes the minimal key $$k_0$$ that is lexicographically greater than or equal to $$k$$.
+* $${F476}~—~DICTGETPREV~(k~D~n~–~x_0~k_0~−1~or~0)$$, similar to $$DICTGETNEXT$$, but computes the maximal key $$k_0$$ lexicographically smaller than $$k$$.
+* $${F477}~—~DICTGETPREVEQ~(k~D~n~–~x_0~k_0~−1~or~0)$$, similar to DICTGETPREV, but computes the maximal key $$k_0$$ lexicographically smaller than or equal to $$k$$.
+* $${F478}~—~DICTIGETNEXT~(i~D~n~–~x_0~i_0~−1~or~0)$$, similar to $$DICTGETNEXT$$, but interprets all keys in dictionary $$D$$ as big-endian signed n-bit integers, and computes the minimal key $$i_0$$ that is larger than Integer $$i$$ (which does not necessarily fit into n bits).
+* $${F479}~—~DICTIGETNEXTEQ~(i~D~n~–~x_0~i_0~−1~or~0)$$.
+* $${F47A}~—~DICTIGETPREV~(i~D~n~–~x_0~i_0~−1~or~0)$$.
+* $${F47B}~—~DICTIGETPREVEQ~(i~D~n~–~x_0~i_0~−1~or~0)$$.
+* $${F47C}~—~DICTUGETNEXT~(i~D~n~–~x_0~i_0~−1~or~0)$$, similar to $$DICTGETNEXT$$, but interprets all keys in dictionary $$D$$ as big-endian unsigned n-bit integers, and computes the minimal key $$i_0$$ that is larger than Integer $$i$$ (which does not necessarily fit into n bits, and is not necessarily non-negative).
+* $${F47D}~—~DICTUGETNEXTEQ~(i~D~n~–~x_0~i_0~−1~or~0)$$.
+* $${F47E}~—~DICTUGETPREV~(i~D~n~–~x_0~i_0~−1~or~0)$$.
+* $${F47F}~—~DICTUGETPREVEQ~(i~D~n~–~x_0~i_0~−1~or~0)$$.
 
 ### A.10.10. GetMin, GetMax, RemoveMin, RemoveMax operations.
 
-* $${F482}$$~—~DICTMIN~(D~n~–~x~k~−1~or~0)$$, computes the minimal key $$k$$ (represented by a Slice with n data bits) in dictionary $$D$$, and returns $$k$$ along with the associated value $$x$$.
-* $${F483}$$~—~DICTMINREF~(D~n~–~c~k~−1~or~0)$$, similar to $$DICTMIN$$, but returns the only reference in the value as a Cell $$c$$.
-* $${F484}$$~—~DICTIMIN~(D~n~–~x~i~−1~or~0)$$, somewhat similar to $$DICTMIN$$, but computes the minimal key $$i$$ under the assumption that all keys are big-endian signed n-bit integers. Notice that the key and value returned may differ from those computed by $$DICTMIN$$ and $$DICTUMIN$$.
-* $${F485}$$~—~DICTIMINREF~(D~n~–~c~i~−1~or~0)$$.
-* $${F486}$$~—~DICTUMIN~(D~n~–~x~i~−1~or~0)$$, similar to $$DICTMIN$$, but returns the key as an unsigned n-bit Integer $$i$$.
-* $${F487}$$~—~DICTUMINREF~(D~n~–~c~i~−1~or~0)$$.
-* $${F48A}$$~—~DICTMAX~(D~n~–~x~k~−1~or~0)$$, computes the maximal key $$k$$ (represented by a Slice with n data bits) in dictionary $$D$$, and returns $$k$$ along with the associated value $$x$$.
-* $${F48B}$$~—~DICTMAXREF~(D~n~–~c~k~−1~or~0)$$.
-* $${F48C}$$~—~DICTIMAX~(D~n~–~x~i~−1~or~0)$$.
-* $${F48D}$$~—~DICTIMAXREF~(D~n~–~c~i~−1~or~0)$$.
-* $${F48E}$$~—~DICTUMAX~(D~n~–~x~i~−1~or~0)$$.
-* $${F48F}$$~—~DICTUMAXREF~(D~n~–~c~i~−1~or~0)$$.
-* $${F492}$$~—~DICTREMMIN~(D~n~–~D_0~x~k~−1~or~D~0)$$, computes the minimal key $$k$$ (represented by a Slice with n data bits) in dictionary $$D$$, removes $$k$$ from the dictionary, and returns $$k$$ along with the associated value $$x$$ and the modified dictionary $$D_0$$.
-* $${F493}$$~—~DICTREMMINREF~(D~n~–~D_0~c~k~−1~or~D~0)$$, similar to $$DICTREMMIN$$, but returns the only reference in the value as a Cell $$c$$.
-* $${F494}$$~—~DICTIREMMIN~(D~n~–~D_0~x~i~−1~or~D~0)$$, somewhat similar to $$DICTREMMIN$$, but computes the minimal key $$i$$ under the assumption that all keys are big-endian signed n-bit integers. Notice that the key and value returned may differ from those computed by $$DICTREMMIN$$ and $$DICTUREMMIN$$.
-* $${F495}$$~—~DICTIREMMINREF~(D~n~–~D_0~c~i~−1~or~D~0)$$.
-* $${F496}$$~—~DICTUREMMIN~(D~n~–~D_0~x~i~−1~or~D~0)$$, similar to $$DICTREMMIN$$, but returns the key as an unsigned n-bit Integer $$i$$.
-* $${F497}$$~—~DICTUREMMINREF~(D~n~–~D_0~c~i~−1~or~D~0)$$.
-* $${F49A}$$~—~DICTREMMAX~(D~n~–~D_0~x~k~−1~or~D~0)$$, computes the maximal key $$k$$ (represented by a Slice with n data bits) in dictionary $$D$$, removes $$k$$ from the dictionary, and returns $$k$$ along with the associated value $$x$$ and the modified dictionary $$D_0$$.
-* $${F49B}$$~—~DICTREMMAXREF~(D~n~–~D_0~c~k~−1~or~D~0)$$.
-* $${F49C}$$~—~DICTIREMMAX~(D~n~–~D_0~x~i~−1~or~D~0)$$.
-* $${F49D}$$~—~DICTIREMMAXREF~(D~n~–~D_0~c~i~−1~or~D~0)$$.
-* $${F49E}$$~—~DICTUREMMAX~(D~n~–~D_0~x~i~−1~or~D~0)$$.
-* $${F49F}$$~—~DICTUREMMAXREF~(D~n~–~D_0~c~i~−1~or~D~0)$$.
+* $${F482}~—~DICTMIN~(D~n~–~x~k~−1~or~0)$$, computes the minimal key $$k$$ (represented by a Slice with n data bits) in dictionary $$D$$, and returns $$k$$ along with the associated value $$x$$.
+* $${F483}~—~DICTMINREF~(D~n~–~c~k~−1~or~0)$$, similar to $$DICTMIN$$, but returns the only reference in the value as a Cell $$c$$.
+* $${F484}~—~DICTIMIN~(D~n~–~x~i~−1~or~0)$$, somewhat similar to $$DICTMIN$$, but computes the minimal key $$i$$ under the assumption that all keys are big-endian signed n-bit integers. Notice that the key and value returned may differ from those computed by $$DICTMIN$$ and $$DICTUMIN$$.
+* $${F485}~—~DICTIMINREF~(D~n~–~c~i~−1~or~0)$$.
+* $${F486}~—~DICTUMIN~(D~n~–~x~i~−1~or~0)$$, similar to $$DICTMIN$$, but returns the key as an unsigned n-bit Integer $$i$$.
+* $${F487}~—~DICTUMINREF~(D~n~–~c~i~−1~or~0)$$.
+* $${F48A}~—~DICTMAX~(D~n~–~x~k~−1~or~0)$$, computes the maximal key $$k$$ (represented by a Slice with n data bits) in dictionary $$D$$, and returns $$k$$ along with the associated value $$x$$.
+* $${F48B}~—~DICTMAXREF~(D~n~–~c~k~−1~or~0)$$.
+* $${F48C}~—~DICTIMAX~(D~n~–~x~i~−1~or~0)$$.
+* $${F48D}~—~DICTIMAXREF~(D~n~–~c~i~−1~or~0)$$.
+* $${F48E}~—~DICTUMAX~(D~n~–~x~i~−1~or~0)$$.
+* $${F48F}~—~DICTUMAXREF~(D~n~–~c~i~−1~or~0)$$.
+* $${F492}~—~DICTREMMIN~(D~n~–~D_0~x~k~−1~or~D~0)$$, computes the minimal key $$k$$ (represented by a Slice with n data bits) in dictionary $$D$$, removes $$k$$ from the dictionary, and returns $$k$$ along with the associated value $$x$$ and the modified dictionary $$D_0$$.
+* $${F493}~—~DICTREMMINREF~(D~n~–~D_0~c~k~−1~or~D~0)$$, similar to $$DICTREMMIN$$, but returns the only reference in the value as a Cell $$c$$.
+* $${F494}~—~DICTIREMMIN~(D~n~–~D_0~x~i~−1~or~D~0)$$, somewhat similar to $$DICTREMMIN$$, but computes the minimal key $$i$$ under the assumption that all keys are big-endian signed n-bit integers. Notice that the key and value returned may differ from those computed by $$DICTREMMIN$$ and $$DICTUREMMIN$$.
+* $${F495}~—~DICTIREMMINREF~(D~n~–~D_0~c~i~−1~or~D~0)$$.
+* $${F496}~—~DICTUREMMIN~(D~n~–~D_0~x~i~−1~or~D~0)$$, similar to $$DICTREMMIN$$, but returns the key as an unsigned n-bit Integer $$i$$.
+* $${F497}~—~DICTUREMMINREF~(D~n~–~D_0~c~i~−1~or~D~0)$$.
+* $${F49A}~—~DICTREMMAX~(D~n~–~D_0~x~k~−1~or~D~0)$$, computes the maximal key $$k$$ (represented by a Slice with n data bits) in dictionary $$D$$, removes $$k$$ from the dictionary, and returns $$k$$ along with the associated value $$x$$ and the modified dictionary $$D_0$$.
+* $${F49B}~—~DICTREMMAXREF~(D~n~–~D_0~c~k~−1~or~D~0)$$.
+* $${F49C}~—~DICTIREMMAX~(D~n~–~D_0~x~i~−1~or~D~0)$$.
+* $${F49D}~—~DICTIREMMAXREF~(D~n~–~D_0~c~i~−1~or~D~0)$$.
+* $${F49E}~—~DICTUREMMAX~(D~n~–~D_0~x~i~−1~or~D~0)$$.
+* $${F49F}~—~DICTUREMMAXREF~(D~n~–~D_0~c~i~−1~or~D~0)$$.
 
 ### A.10.11. Special GET dictionary and prefix code dictionary operations, and constant dictionaries.
 
-* $${F4A0}$$~—~DICTIGETJMP~(i~D~n~–~)$$, similar to $$DICTIGET$$ but with the value BLESSed into a continuation followed by a $$JMPX$$ to it on success. On failure, does nothing.
-* $${F4A1}$$~—~DICTUGETJMP~(i~D~n~–~)$$, similar to $$DICTIGETJMP$$, but uses DICTUGET instead of $$DICTIGET$$.
-* $${F4A2}$$~—~DICTIGETEXEC~(i~D~n~–~)$$, like $$DICTIGETJMP$$ but with EXECUTE instead of JMPX.
-* $${F4A3}$$~—~DICTUGETEXEC~(i~D~n~–~)$$, similar to $$DICTUGETJMP$$, but with $$EXECUTE$$ instead of $$JMPX$$.
+* $${F4A0}~—~DICTIGETJMP~(i~D~n~–~)$$, similar to $$DICTIGET$$ but with the value BLESSed into a continuation followed by a $$JMPX$$ to it on success. On failure, does nothing.
+* $${F4A1}~—~DICTUGETJMP~(i~D~n~–~)$$, similar to $$DICTIGETJMP$$, but uses DICTUGET instead of $$DICTIGET$$.
+* $${F4A2}~—~DICTIGETEXEC~(i~D~n~–~)$$, like $$DICTIGETJMP$$ but with EXECUTE instead of JMPX.
+* $${F4A3}~—~DICTUGETEXEC~(i~D~n~–~)$$, similar to $$DICTUGETJMP$$, but with $$EXECUTE$$ instead of $$JMPX$$.
 * $${F4A6}_n$$~—~DICTPUSHCONST~n~(–~D~n)$$, pushes a non-empty constant dictionary $$ D $$ with key length $$ 0 \leq n \leq 1023 $$. The dictionary is created from the first remaining references of the current continuation.
-* $${F4A8}$$~—~PFXDICTGETQ~(s~D~n~–~s_0~x~s_{00}~−1~or~s_0)$$, looks up the unique prefix of Slice $$ s $$ in the prefix code dictionary and returns the prefix and corresponding value.
-* $${F4A9}$$~—~PFXDICTGET~(s~D~n~–~s_0~x~s_{00})$$, similar to $$PFXDICTGETQ$$ but throws a cell deserialization failure exception on failure.
-* $${F4AA}$$~—~PFXDICTGETJMP~(s~D~n~–~s_0~s_{00}~or~s)$$, similar to $$PFXDICTGETQ$$, but BLESSes the value into a Continuation and jumps to it. On failure, returns $$ s $$ unchanged.
-* $${F4AB}$$~—~PFXDICTGETEXEC~(s~D~n~–~s_0~s_{00})$$, similar to $$PFXDICTGETJMP$$ , but EXECutes the found continuation. On failure, throws an exception.
+* $${F4A8}~—~PFXDICTGETQ~(s~D~n~–~s_0~x~s_{00}~−1~or~s_0)$$, looks up the unique prefix of Slice $$ s $$ in the prefix code dictionary and returns the prefix and corresponding value.
+* $${F4A9}~—~PFXDICTGET~(s~D~n~–~s_0~x~s_{00})$$, similar to $$PFXDICTGETQ$$ but throws a cell deserialization failure exception on failure.
+* $${F4AA}~—~PFXDICTGETJMP~(s~D~n~–~s_0~s_{00}~or~s)$$, similar to $$PFXDICTGETQ$$, but BLESSes the value into a Continuation and jumps to it. On failure, returns $$ s $$ unchanged.
+* $${F4AB}~—~PFXDICTGETEXEC~(s~D~n~–~s_0~s_{00})$$, similar to $$PFXDICTGETJMP$$ , but EXECutes the found continuation. On failure, throws an exception.
 * $${F4AE}_n$$~—~PFXDICTCONSTGETJMP~n~or~PFXDICTSWITCH~n~(s~–~s_0~s_{00}~or~s)$$, combines $$DICTPUSHCONST$$ $$ n $$ with $$PFXDICTGETJMP$$.
-* $${F4BC}$$~—~DICTIGETJMPZ~(i~D~n~–~i~or~nothing)$$, a variant of $$DICTIGETJMP$$ returning index $$ i $$ on failure.
-* $${F4BD}$$~—~DICTUGETJMPZ~(i~D~n~–~i~or~nothing)$$, a variant of $$DICTUGETJMP$$ returning index $$ i $$ on failure.
-* $${F4BE}$$~—~DICTIGETEXECZ~(i~D~n~–~i~or~nothing)$$, a variant of $$DICTIGETEXEC$$ returning index $$ i $$ on failure.
-* $${F4BF}$$~—~DICTUGETEXECZ~(i~D~n~–~i~or~nothing)$$, a variant of $$DICTUGETEXEC$$ returning index $$ i $$ on failure.
+* $${F4BC}~—~DICTIGETJMPZ~(i~D~n~–~i~or~nothing)$$, a variant of $$DICTIGETJMP$$ returning index $$ i $$ on failure.
+* $${F4BD}~—~DICTUGETJMPZ~(i~D~n~–~i~or~nothing)$$, a variant of $$DICTUGETJMP$$ returning index $$ i $$ on failure.
+* $${F4BE}~—~DICTIGETEXECZ~(i~D~n~–~i~or~nothing)$$, a variant of $$DICTIGETEXEC$$ returning index $$ i $$ on failure.
+* $${F4BF}~—~DICTUGETEXECZ~(i~D~n~–~i~or~nothing)$$, a variant of $$DICTUGETEXEC$$ returning index $$ i $$ on failure.
 
 ### A.10.12. SuBDiCT dictionary operations.
 
-* $${F4B1}$$~—~SUBDICTGET~(k~l~D~n~–~D_0)$$, constructs a subdictionary with all keys starting with prefix $$ k $$ in dictionary $$ D $$.
-* $${F4B2}$$~—~SUBDICTIGET~(x~l~D~n~–~D_0)$$, variant of $$SUBDICTGET$$ with the prefix represented by a signed big-endian $$ l $$-bit Integer $$ x $$.
-* $${F4B3}$$~—~SUBDICTUGET~(x~l~D~n~–~D_0)$$, variant of $$SUBDICTGET$$ with the prefix represented by an unsigned big-endian $$ l $$-bit Integer $$ x $$.
-* $${F4B5}$$~—~SUBDICTRPGET~(k~l~D~n~–~D_0)$$, like $$SUBDICTGET$$ but removes the common prefix $$ k $$ from all keys in the new dictionary.
-* $${F4B6}$$~—~SUBDICTIRPGET~(x~l~D~n~–~D_0)$$, variant of $$SUBDICTRPGET$$ with the prefix represented by a signed big-endian $$ l $$-bit Integer $$ x $$.
-* $${F4B7}$$~—~SUBDICTURPGET~(x~l~D~n~–~D_0)$$, variant of $$SUBDICTRPGET$$ with the prefix represented by an unsigned big-endian $$ l $$-bit Integer $$ x $$.
+* $${F4B1}~—~SUBDICTGET~(k~l~D~n~–~D_0)$$, constructs a subdictionary with all keys starting with prefix $$ k $$ in dictionary $$ D $$.
+* $${F4B2}~—~SUBDICTIGET~(x~l~D~n~–~D_0)$$, variant of $$SUBDICTGET$$ with the prefix represented by a signed big-endian $$ l $$-bit Integer $$ x $$.
+* $${F4B3}~—~SUBDICTUGET~(x~l~D~n~–~D_0)$$, variant of $$SUBDICTGET$$ with the prefix represented by an unsigned big-endian $$ l $$-bit Integer $$ x $$.
+* $${F4B5}~—~SUBDICTRPGET~(k~l~D~n~–~D_0)$$, like $$SUBDICTGET$$ but removes the common prefix $$ k $$ from all keys in the new dictionary.
+* $${F4B6}~—~SUBDICTIRPGET~(x~l~D~n~–~D_0)$$, variant of $$SUBDICTRPGET$$ with the prefix represented by a signed big-endian $$ l $$-bit Integer $$ x $$.
+* $${F4B7}~—~SUBDICTURPGET~(x~l~D~n~–~D_0)$$, variant of $$SUBDICTRPGET$$ with the prefix represented by an unsigned big-endian $$ l $$-bit Integer $$ x $$.
 
 ## A.11 Application-specific primitives
 
@@ -887,11 +887,11 @@ Most of the primitives listed below use 16-bit opcodes.
 
 Of the following primitives, only the first two are "pure" in the sense that they do not use c5 or c7.
 
-* $${F800}$$~—~ACCEPT$$, sets the current gas limit to its maximum allowed value and resets the gas credit to zero.
-* $${F801}$$~—~SETGASLIMIT~(g~–~)$$, sets the current gas limit to the minimum of $$ g $$ and $$ gm $$, and resets the gas credit to zero.
-* $${F802}$$~—~BUYGAS~(x~–~)$$, computes the gas amount that can be bought for $$ x $$ nanograms and sets the gas limit accordingly.
-* $${F804}$$~—~GRAMTOGAS~(x~–~g)$$, computes the gas amount that can be bought for $$ x $$ nanograms.
-* $${F805}$$~—~GASTOGRAM~(g~–~x)$$, computes the price of $$ g $$ gas in nanograms.
+* $${F800}~—~ACCEPT$$, sets the current gas limit to its maximum allowed value and resets the gas credit to zero.
+* $${F801}~—~SETGASLIMIT~(g~–~)$$, sets the current gas limit to the minimum of $$ g $$ and $$ gm $$, and resets the gas credit to zero.
+* $${F802}~—~BUYGAS~(x~–~)$$, computes the gas amount that can be bought for $$ x $$ nanograms and sets the gas limit accordingly.
+* $${F804}~—~GRAMTOGAS~(x~–~g)$$, computes the gas amount that can be bought for $$ x $$ nanograms.
+* $${F805}~—~GASTOGRAM~(g~–~x)$$, computes the price of $$ g $$ gas in nanograms.
 * $$F806-F80E~-$$ Reserved for gas-related primitives.
 * $$F80F~-~COMMIT$$ ($$-$$), commits the current state of registers $$c4$$ ("persistent data") and $$c5$$ ("actions") so that the current execution is considered "successful" with the saved values even if an exception is thrown later.
 
@@ -900,44 +900,44 @@ Of the following primitives, only the first two are "pure" in the sense that the
 
 The pseudorandom number generator uses the random seed (parameter $$\# 6$$, cf. A.11.4), an unsigned 256-bit Integer, and (sometimes) other data kept in c7. The initial value of the random seed before a smart contract is executed in TVM Blockchain is a hash of the smart contract address and the global block random seed. If there are several runs of the same smart contract inside a block, then all of these runs will have the same random seed. This can be fixed, for example, by running LTIME; ADDRAND before using the pseudorandom number generator for the first time.
 
-* $${F810}$$~—~RANDU256~(–~x)$$, generates a pseudo-random unsigned 256-bit Integer $$ x $$.
-* $${F811}$$~—~RAND~(y~–~z)$$, generates a pseudo-random integer $$ z $$ in the range $$ 0 $$ to $$ y - 1 $$.
-* $${F814}$$~—~SETRAND~(x~–~)$$, sets the random seed to unsigned 256-bit Integer $$ x $$.
-* $${F815}$$~—~ADDRAND~(x~–~)$$, mixes unsigned 256-bit Integer $$ x $$ into the random seed.
+* $${F810}~—~RANDU256~(–~x)$$, generates a pseudo-random unsigned 256-bit Integer $$ x $$.
+* $${F811}~—~RAND~(y~–~z)$$, generates a pseudo-random integer $$ z $$ in the range $$ 0 $$ to $$ y - 1 $$.
+* $${F814}~—~SETRAND~(x~–~)$$, sets the random seed to unsigned 256-bit Integer $$ x $$.
+* $${F815}~—~ADDRAND~(x~–~)$$, mixes unsigned 256-bit Integer $$ x $$ into the random seed.
 * $$F810–F81F~—$$ Reserved for pseudo-random number generator primitives.
 
 ### A.11.4. Configuration primitives.
 
 The following primitives read configuration data provided in the Tuple stored in the first component of the Tuple at c7. Whenever TVM is invoked for executing TVM Blockchain smart contracts, this Tuple is initialized by a SmartContractInfo structure; configuration primitives assume that it has remained intact.
 
-* $${F82i}$$~—~GETPARAM~i~(–~x)$$, returns the $$ i $$-th parameter from the Tuple provided at $$ c7 $$.
-* $${F823}$$~—~NOW~(–~x)$$, returns the current Unix time as an Integer.
-* $${F824}$$~—~BLOCKLT~(–~x)$$, returns the starting logical time of the current block.
-* $${F825}$$~—~LTIME~(–~x)$$, returns the logical time of the current transaction.
-* $${F826}$$~—~RANDSEED~(–~x)$$, returns the current random seed as an unsigned 256-bit Integer.
-* $${F827}$$~—~BALANCE~(–~t)$$, returns the remaining balance of the smart contract.
-* $${F828}$$~—~MYADDR~(–~s)$$, returns the internal address of the current smart contract.
-* $${F829}$$~—~CONFIGROOT~(–~D)$$, returns the Maybe Cell $$ D $$ with the current global configuration dictionary.
-* $${F830}$$~—~CONFIGDICT~(–~D~32)$$, returns the global configuration dictionary along with its key length.
-* $${F832}$$~—~CONFIGPARAM~(i~–~c~−1~or~0)$$, returns the value of the global configuration parameter with integer index $$ i $$.
-* $${F833}$$~—~CONFIGOPTPARAM~(i~–~c?)$$, returns the value of the global configuration parameter with integer index $$ i $$.
+* $${F82i}~—~GETPARAM~i~(–~x)$$, returns the $$ i $$-th parameter from the Tuple provided at $$ c7 $$.
+* $${F823}~—~NOW~(–~x)$$, returns the current Unix time as an Integer.
+* $${F824}~—~BLOCKLT~(–~x)$$, returns the starting logical time of the current block.
+* $${F825}~—~LTIME~(–~x)$$, returns the logical time of the current transaction.
+* $${F826}~—~RANDSEED~(–~x)$$, returns the current random seed as an unsigned 256-bit Integer.
+* $${F827}~—~BALANCE~(–~t)$$, returns the remaining balance of the smart contract.
+* $${F828}~—~MYADDR~(–~s)$$, returns the internal address of the current smart contract.
+* $${F829}~—~CONFIGROOT~(–~D)$$, returns the Maybe Cell $$ D $$ with the current global configuration dictionary.
+* $${F830}~—~CONFIGDICT~(–~D~32)$$, returns the global configuration dictionary along with its key length.
+* $${F832}~—~CONFIGPARAM~(i~–~c~−1~or~0)$$, returns the value of the global configuration parameter with integer index $$ i $$.
+* $${F833}~—~CONFIGOPTPARAM~(i~–~c?)$$, returns the value of the global configuration parameter with integer index $$ i $$.
 
 ### A.11.5. Global variable primitives. 
 
 The "global variables" may be helpful in implementing some high-level smart-contract languages. They are in fact stored as components of the Tuple at c7: the $$k$$-th global variable simply is the $$k$$-th component of this Tuple, for $$1 \leq k \leq 254$$. By convention, the 0 -th component is used for the "configuration parameters" of A.11.4, so it is not available as a global variable.
 
-* $${F840}$$~—~GETGLOBVAR~(k~–~x)$$, returns the $$ k $$-th global variable.
-* $${F85_k}$$~—~GETGLOB~k~(–~x)$$, returns the $$ k $$-th global variable.
-* $${F860}$$~—~SETGLOBVAR~(x~k~–~)$$, assigns $$ x $$ to the $$ k $$-th global variable.
-* $${F87_k}$$~—~SETGLOB~k~(x~–~)$$, assigns $$ x $$ to the $$ k $$-th global variable.
+* $${F840}~—~GETGLOBVAR~(k~–~x)$$, returns the $$ k $$-th global variable.
+* $${F85_k}~—~GETGLOB~k~(–~x)$$, returns the $$ k $$-th global variable.
+* $${F860}~—~SETGLOBVAR~(x~k~–~)$$, assigns $$ x $$ to the $$ k $$-th global variable.
+* $${F87_k}~—~SETGLOB~k~(x~–~)$$, assigns $$ x $$ to the $$ k $$-th global variable.
 
 ### A.11.6. Hashing and cryptography primitives.
 
-* $${F900}$$~—~HASHCU~(c~–~x)$$, computes the representation hash of a Cell $$ c $$ and returns it as a 256-bit unsigned integer $$ x $$.
-* $${F901}$$~—~HASHSU~(s~–~x)$$, computes the hash of a Slice $$ s $$ and returns it as a 256-bit unsigned integer $$ x $$.
-* $${F902}$$~—~SHA256U~(s~–~x)$$, computes sha256 of the data bits of Slice $$ s $$.
-* $${F910}$$~—~CHKSIGNU~(h~s~k~–~?)$$, checks the Ed25519-signature $$ s $$ of a hash $$ h $$ using public key $$ k $$.
-* $${F911}$$~—~CHKSIGNS~(d~s~k~–~?)$$, checks whether $$ s $$ is a valid Ed25519-signature of the data portion of Slice $$ d $$ using public key $$ k $$.
+* $${F900}~—~HASHCU~(c~–~x)$$, computes the representation hash of a Cell $$ c $$ and returns it as a 256-bit unsigned integer $$ x $$.
+* $${F901}~—~HASHSU~(s~–~x)$$, computes the hash of a Slice $$ s $$ and returns it as a 256-bit unsigned integer $$ x $$.
+* $${F902}~—~SHA256U~(s~–~x)$$, computes sha256 of the data bits of Slice $$ s $$.
+* $${F910}~—~CHKSIGNU~(h~s~k~–~?)$$, checks the Ed25519-signature $$ s $$ of a hash $$ h $$ using public key $$ k $$.
+* $${F911}~—~CHKSIGNS~(d~s~k~–~?)$$, checks whether $$ s $$ is a valid Ed25519-signature of the data portion of Slice $$ d $$ using public key $$ k $$.
 * $$F912-F93F~-$$ Reserved for hashing and cryptography primitives.
 
 ### A.11.7. Miscellaneous primitives.
