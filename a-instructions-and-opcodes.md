@@ -357,73 +357,73 @@ with *Builders*, or *cell deserialization primitives*, which work with *Slices*.
 
 All these primitives first check whether there is enough space in the Builder, and only then check the range of the value being serialized.
 
-* $$\text{C8}$$ — $$\text{NEWC}$$ ($$\rightarrow~b$$), creates a new empty Builder.
-* $$\text{C9}$$ — $$\text{ENDC}$$ ($$b~\rightarrow~c$$), converts a Builder into an ordinary Cell.
-* $$\text{CA}_{\text{cc}}$$ — $$\text{STI}~\text{cc} + 1$$ ($$x~b~\rightarrow~b'$$), stores a signed cc + 1-bit integer $$x$$ into Builder $$b$$ for \(0 \leq \text{cc} \leq 255$$, throws a range check exception if $$x$$ does not fit into cc + 1 bits.
-* $$\text{CB}_{\text{cc}}$$ — $$\text{STU}~\text{cc} + 1$$ ($$x~b~\rightarrow~b'$$), stores an unsigned cc + 1-bit integer $$x$$ into Builder $$b$$. In all other respects it is similar to STI.
-* $$\text{CC}$$ — $$\text{STREF}$$ ($$c~b~\rightarrow~b'$$), stores a reference to Cell $$c$$ into Builder $$b$$.
-* $$\text{CD}$$ — $$\text{STBREFR}$$ or $$\text{ENDCST}$$ ($$b~b''~\rightarrow~b$$), equivalent to ENDC; SWAP; STREF.
-* $$\text{CE}$$ — $$\text{STSLICE}$$ ($$s~b~\rightarrow~b'$$), stores Slice $$s$$ into Builder $$b$$.
-* $$\text{CF00}$$ — $$\text{STIX}$$ ($$x~b~l~\rightarrow~b'$$), stores a signed $$l$$-bit integer $$x$$ into $$b$$ for $$0 \leq l \leq 257$$.
-* $$\text{CF01}$$ — $$\text{STUX}$$ ($$x~b~l~\rightarrow~b'$$), stores an unsigned $$l$$-bit integer $$x$$ into $$b$$ for $$0 \leq l \leq 256$$.
-* $$\text{CF02}$$ — $$\text{STIXR}$$ ($$b~x~l~\rightarrow~b'$$), similar to STIX, but with arguments in a different order.
-* $$\text{CF03}$$ — $$\text{STUXR}$$ ($$b~x~l~\rightarrow~b'$$), similar to STUX, but with arguments in a different order.
-* $$\text{CF04}$$ — $$\text{STIXQ}$$ ($$x~b~l~\rightarrow~x~b~f \text{ or } b'~0$$), a quiet version of STIX. Description provided in the list.
-* $$\text{CF05}$$ — $$\text{STUXQ}$$ ($$x~b~l~\rightarrow~b'~f$$).
-* $$\text{CF06}$$ — $$\text{STIXRQ}$$ ($$b~x~l~\rightarrow~b~x~f \text{ or } b'~0$$).
-* $$\text{CF07}$$ — $$\text{STUXRQ}$$ ($$b~x~l~\rightarrow~b~x~f \text{ or } b'~0$$).
+* $$\text{C8}$$ — $$\text{NEWC}$$ ($$-~b$$), creates a new empty Builder.
+* $$\text{C9}$$ — $$\text{ENDC}$$ ($$b~-~c$$), converts a Builder into an ordinary Cell.
+* $$\text{CA}_{\text{cc}}$$ — $$\text{STI}~\text{cc} + 1$$ ($$x~b~-~b'$$), stores a signed cc + 1-bit integer $$x$$ into Builder $$b$$ for \(0 \leq \text{cc} \leq 255$$, throws a range check exception if $$x$$ does not fit into cc + 1 bits.
+* $$\text{CB}_{\text{cc}}$$ — $$\text{STU}~\text{cc} + 1$$ ($$x~b~-~b'$$), stores an unsigned cc + 1-bit integer $$x$$ into Builder $$b$$. In all other respects it is similar to STI.
+* $$\text{CC}$$ — $$\text{STREF}$$ ($$c~b~-~b'$$), stores a reference to Cell $$c$$ into Builder $$b$$.
+* $$\text{CD}$$ — $$\text{STBREFR}$$ or $$\text{ENDCST}$$ ($$b~b''~-~b$$), equivalent to ENDC; SWAP; STREF.
+* $$\text{CE}$$ — $$\text{STSLICE}$$ ($$s~b~-~b'$$), stores Slice $$s$$ into Builder $$b$$.
+* $$\text{CF00}$$ — $$\text{STIX}$$ ($$x~b~l~-~b'$$), stores a signed $$l$$-bit integer $$x$$ into $$b$$ for $$0 \leq l \leq 257$$.
+* $$\text{CF01}$$ — $$\text{STUX}$$ ($$x~b~l~-~b'$$), stores an unsigned $$l$$-bit integer $$x$$ into $$b$$ for $$0 \leq l \leq 256$$.
+* $$\text{CF02}$$ — $$\text{STIXR}$$ ($$b~x~l~-~b'$$), similar to STIX, but with arguments in a different order.
+* $$\text{CF03}$$ — $$\text{STUXR}$$ ($$b~x~l~-~b'$$), similar to STUX, but with arguments in a different order.
+* $$\text{CF04}$$ — $$\text{STIXQ}$$ ($$x~b~l~-~x~b~f \text{ or } b'~0$$), a quiet version of STIX. Description provided in the list.
+* $$\text{CF05}$$ — $$\text{STUXQ}$$ ($$x~b~l~-~b'~f$$).
+* $$\text{CF06}$$ — $$\text{STIXRQ}$$ ($$b~x~l~-~b~x~f \text{ or } b'~0$$).
+* $$\text{CF07}$$ — $$\text{STUXRQ}$$ ($$b~x~l~-~b~x~f \text{ or } b'~0$$).
 * $$\text{CF08}_{\text{cc}}$$ — a longer version of STI $$\text{cc} + 1$$.
 * $$\text{CF09}_{\text{cc}}$$ — a longer version of STU $$\text{cc} + 1$$.
-* $$\text{CF0A}_{\text{cc}}$$ — $$\text{STIR}~\text{cc} + 1$$ ($$b~x~\rightarrow~b'$$), equivalent to SWAP; STI $$\text{cc} + 1$$.
-* $$\text{CF0B}_{\text{cc}}$$ — $$\text{STUR}~\text{cc} + 1$$ ($$b~x~\rightarrow~b'$$), equivalent to SWAP; STU $$\text{cc} + 1$$.
-* $$\text{CF0C}_{\text{cc}}$$ — $$\text{STIQ}~\text{cc} + 1$$ ($$x~b~\rightarrow~x~b~f \text{ or } b'~0$$).
-* $$\text{CF0D}_{\text{cc}}$$ — $$\text{STUQ}~\text{cc} + 1$$ ($$x~b~\rightarrow~x~b~f \text{ or } b'~0$$).
-* $$\text{CF0E}_{\text{cc}}$$ — $$\text{STIRQ}~\text{cc} + 1$$ ($$b~x~\rightarrow~b~x~f \text{ or } b'~0$$).
-* $$\text{CF0F}_{\text{cc}}$$ — $$\text{STURQ}~\text{cc} + 1$$ ($$b~x~\rightarrow~b~x~f \text{ or } b'~0$$).
-* $$\text{CF10}$$ — a longer version of STREF ($$c~b~\rightarrow~b'$$).
-* $$\text{CF11}$$ — $$\text{STBREF}$$ ($$b'~b~\rightarrow~b''$$), equivalent to SWAP; STBREFREV.
-* $$\text{CF12}$$ — a longer version of STSLICE ($$s~b~\rightarrow~b'$$).
-* $$\text{CF13}$$ — STB ($$b'~b~\rightarrow~b''$$), appends all data from Builder $$b'$$ to Builder $$b$$.
-* $$\text{CF14}$$ — STREFR ($$b~c~\rightarrow~b'$$).
-* $$\text{CF15}$$ — STBREFR ($$b~b'~\rightarrow~b''$$), a longer encoding of STBREFR.
-* $$\text{CF16}$$ — STSLICER ($$b~s~\rightarrow~b'$$).
-* $$\text{CF17}$$ — STBR ($$b~b'~\rightarrow~b''$$), concatenates two Builders, equivalent to SWAP; STB.
-* $$\text{CF18}$$ — STREFQ ($$c~b~\rightarrow~c~b~{-1} \text{ or } b'~0$$).
-* $$\text{CF19}$$ — STBREFQ ($$b'~b~\rightarrow~b'~b~{-1} \text{ or } b''~0$$).
-* $$\text{CF1A}$$ — STSLICEQ ($$s~b~\rightarrow~s~b~{-1} \text{ or } b'~0$$).
-* $$\text{CF1B}$$ — STBQ ($$b'~b~\rightarrow~b'~b~{-1} \text{ or } b''~0$$).
-* $$\text{CF1C}$$ — STREFRQ ($$b~c~\rightarrow~b~c~{-1} \text{ or } b'~0$$).
-* $$\text{CF1D}$$ — STBREFRQ ($$b~b'~\rightarrow~b~b'~{-1} \text{ or } b''~0$$).
-* $$\text{CF1E}$$ — STSLICERQ ($$b~s~\rightarrow~b~s~{-1} \text{ or } b''~0$$).
-* $$\text{CF1F}$$ — STBRQ ($$b~b'~\rightarrow~b~b'~{-1} \text{ or } b''~0$$).
+* $$\text{CF0A}_{\text{cc}}$$ — $$\text{STIR}~\text{cc} + 1$$ ($$b~x~-~b'$$), equivalent to SWAP; STI $$\text{cc} + 1$$.
+* $$\text{CF0B}_{\text{cc}}$$ — $$\text{STUR}~\text{cc} + 1$$ ($$b~x~-~b'$$), equivalent to SWAP; STU $$\text{cc} + 1$$.
+* $$\text{CF0C}_{\text{cc}}$$ — $$\text{STIQ}~\text{cc} + 1$$ ($$x~b~-~x~b~f \text{ or } b'~0$$).
+* $$\text{CF0D}_{\text{cc}}$$ — $$\text{STUQ}~\text{cc} + 1$$ ($$x~b~-~x~b~f \text{ or } b'~0$$).
+* $$\text{CF0E}_{\text{cc}}$$ — $$\text{STIRQ}~\text{cc} + 1$$ ($$b~x~-~b~x~f \text{ or } b'~0$$).
+* $$\text{CF0F}_{\text{cc}}$$ — $$\text{STURQ}~\text{cc} + 1$$ ($$b~x~-~b~x~f \text{ or } b'~0$$).
+* $$\text{CF10}$$ — a longer version of STREF ($$c~b~-~b'$$).
+* $$\text{CF11}$$ — $$\text{STBREF}$$ ($$b'~b~-~b''$$), equivalent to SWAP; STBREFREV.
+* $$\text{CF12}$$ — a longer version of STSLICE ($$s~b~-~b'$$).
+* $$\text{CF13}$$ — STB ($$b'~b~-~b''$$), appends all data from Builder $$b'$$ to Builder $$b$$.
+* $$\text{CF14}$$ — STREFR ($$b~c~-~b'$$).
+* $$\text{CF15}$$ — STBREFR ($$b~b'~-~b''$$), a longer encoding of STBREFR.
+* $$\text{CF16}$$ — STSLICER ($$b~s~-~b'$$).
+* $$\text{CF17}$$ — STBR ($$b~b'~-~b''$$), concatenates two Builders, equivalent to SWAP; STB.
+* $$\text{CF18}$$ — STREFQ ($$c~b~-~c~b~{-1} \text{ or } b'~0$$).
+* $$\text{CF19}$$ — STBREFQ ($$b'~b~-~b'~b~{-1} \text{ or } b''~0$$).
+* $$\text{CF1A}$$ — STSLICEQ ($$s~b~-~s~b~{-1} \text{ or } b'~0$$).
+* $$\text{CF1B}$$ — STBQ ($$b'~b~-~b'~b~{-1} \text{ or } b''~0$$).
+* $$\text{CF1C}$$ — STREFRQ ($$b~c~-~b~c~{-1} \text{ or } b'~0$$).
+* $$\text{CF1D}$$ — STBREFRQ ($$b~b'~-~b~b'~{-1} \text{ or } b''~0$$).
+* $$\text{CF1E}$$ — STSLICERQ ($$b~s~-~b~s~{-1} \text{ or } b''~0$$).
+* $$\text{CF1F}$$ — STBRQ ($$b~b'~-~b~b'~{-1} \text{ or } b''~0$$).
 * $$\text{CF20}$$ — STREFCONST, equivalent to PUSHREF; STREFR.
 * $$\text{CF21}$$ — STREF2CONST, equivalent to STREFCONST; STREFCONST.
-* $$\text{CF23}$$ — ENDXC ($$b~x~\rightarrow~c$$), description provided in the list.
-* $$\text{CF28}$$ — STILE4 ($$x~b~\rightarrow~b'$$), stores a little-endian signed 32-bit integer.
-* $$\text{CF29}$$ — STULE4 ($$x~b~\rightarrow~b'$$), stores a little-endian unsigned 32-bit integer.
-* $$\text{CF2A}$$ — STILE8 ($$x~b~\rightarrow~b'$$), stores a little-endian signed 64-bit integer.
-* $$\text{CF2B}$$ — STULE8 ($$x~b~\rightarrow~b'$$), stores a little-endian unsigned 64-bit integer.
-* $$\text{CF30}$$ — BDEPTH ($$b~\rightarrow~x$$), description provided in the list.
-* $$\text{CF31}$$ — BBITS ($$b~\rightarrow~x$$), returns the number of data bits already stored in Builder $$b$$.
-* $$\text{CF32}$$ — BREFS ($$b~\rightarrow~y$$), returns the number of cell references already stored in $$b$$.
-* $$\text{CF33}$$ — BBITREFS ($$b~\rightarrow~x~y$$), returns the numbers of both data bits and cell references in $$b$$.
-* $$\text{CF35}$$ — BREMBITS ($$b~\rightarrow~x'$$), returns the number of data bits that can still be stored in $$b$$.
-* $$\text{CF36}$$ — BREMREFS ($$b~\rightarrow~y'$$).
-* $$\text{CF37}$$ — BREMBITREFS ($$b~\rightarrow~x'~y'$$).
-* $$\text{CF38}_{\text{cc}}$$ — BCHKBITS $$\text{cc} + 1$$ ($$b~\rightarrow~$$), checks whether $$\text{cc} + 1$$.
-* $$\text{CF39}$$ — $$\text{BCHKBITS}$$ ($$b~x~\rightarrow~$$), checks if $$x$$ bits can be stored into $$b$$, where $$0 \leq x \leq 1023$$. An exception is thrown if there isn't enough space in $$b$$ for $$x$$ bits or if $$x$$ is out of range $$0 \leq x \leq 1023$$.
-* $$\text{CF3A}$$ — $$\text{BCHKREFS}$$ ($$b~y~\rightarrow~$$), verifies if $$y$$ references can be stored in $$b$$, where $$0 \leq y \leq 7$$.
-* $$\text{CF3B}$$ — $$\text{BCHKBITREFS}$$ ($$b~x~y~\rightarrow~$$), confirms if $$x$$ bits and $$y$$ references can fit into $$b$$, where $$0 \leq x \leq 1023$$ and $$0 \leq y \leq 7$$.
-* $$\text{CF3Ccc}$$ — $$\text{BCHKBITSQ}~cc + 1$$ ($$b~\rightarrow~?\$$), checks if $$cc + 1$$ bits can be saved in $$b$$, $$0 \leq cc \leq 255$$.
-* $$\text{CF3D}$$ — $$\text{BCHKBITSQ}$$ ($$b~x~\rightarrow~?\$$), evaluates if $$x$$ bits can be stored in $$b$$, $$0 \leq x \leq 1023$$.
-* $$\text{CF3E}$$ — $$\text{BCHKREFSQ}$$ ($$b~y~\rightarrow~?\$$), determines if $$y$$ references can be housed in $$b$$, $$0 \leq y \leq 7$$.
-* $$\text{CF3F}$$ — $$\text{BCHKBITREFSQ}$$ ($$b~x~y~\rightarrow~?\$$), verifies if $$x$$ bits and $$y$$ references can be kept in $$b$$, where $$0 \leq x \leq 1023$$ and $$0 \leq y \leq 7$$.
-* $$\text{CF40}$$ — $$\text{STZEROES}$$ ($$b~n~\rightarrow~b'\$$), places $$n$$ binary zeroes into Builder $$b$$.
-* $$\text{CF41}$$ — $$\text{STONES}$$ ($$b~n~\rightarrow~b'\$$), incorporates $$n$$ binary ones into Builder $$b$$.
-* $$\text{CF42}$$ — $$\text{STSAME}$$ ($$b~n~x~\rightarrow~b'\$$), saves $$n$$ binary xes ($$0 \leq x \leq 1$$) into Builder $$b$$.
-* $$\text{CFC0\_xysss}$$ — $$\text{STSLICECONST}~sss$$ ($$b~\rightarrow~b'\$$), adds a constant subslice $$sss$$ of $$0 \leq x \leq 3$$ references and up to $$8y + 1$$ data bits where $$0 \leq y \leq 7$$. Completion bit is included.
-* $$\text{CF81}$$ — $$\text{STSLICECONST}~'0'$$ or $$\text{STZERO}$$ ($$b~\rightarrow~b'\$$), inserts a single binary zero.
-* $$\text{CF83}$$ — $$\text{STSLICECONST}~'1'$$ or $$\text{STONE}$$ ($$b~\rightarrow~b'\$$), appends a single binary one.
+* $$\text{CF23}$$ — ENDXC ($$b~x~-~c$$), description provided in the list.
+* $$\text{CF28}$$ — STILE4 ($$x~b~-~b'$$), stores a little-endian signed 32-bit integer.
+* $$\text{CF29}$$ — STULE4 ($$x~b~-~b'$$), stores a little-endian unsigned 32-bit integer.
+* $$\text{CF2A}$$ — STILE8 ($$x~b~-~b'$$), stores a little-endian signed 64-bit integer.
+* $$\text{CF2B}$$ — STULE8 ($$x~b~-~b'$$), stores a little-endian unsigned 64-bit integer.
+* $$\text{CF30}$$ — BDEPTH ($$b~-~x$$), description provided in the list.
+* $$\text{CF31}$$ — BBITS ($$b~-~x$$), returns the number of data bits already stored in Builder $$b$$.
+* $$\text{CF32}$$ — BREFS ($$b~-~y$$), returns the number of cell references already stored in $$b$$.
+* $$\text{CF33}$$ — BBITREFS ($$b~-~x~y$$), returns the numbers of both data bits and cell references in $$b$$.
+* $$\text{CF35}$$ — BREMBITS ($$b~-~x'$$), returns the number of data bits that can still be stored in $$b$$.
+* $$\text{CF36}$$ — BREMREFS ($$b~-~y'$$).
+* $$\text{CF37}$$ — BREMBITREFS ($$b~-~x'~y'$$).
+* $$\text{CF38}_{\text{cc}}$$ — BCHKBITS $$\text{cc} + 1$$ ($$b~-~$$), checks whether $$\text{cc} + 1$$.
+* $$\text{CF39}$$ — $$\text{BCHKBITS}$$ ($$b~x~-~$$), checks if $$x$$ bits can be stored into $$b$$, where $$0 \leq x \leq 1023$$. An exception is thrown if there isn't enough space in $$b$$ for $$x$$ bits or if $$x$$ is out of range $$0 \leq x \leq 1023$$.
+* $$\text{CF3A}$$ — $$\text{BCHKREFS}$$ ($$b~y~-~$$), verifies if $$y$$ references can be stored in $$b$$, where $$0 \leq y \leq 7$$.
+* $$\text{CF3B}$$ — $$\text{BCHKBITREFS}$$ ($$b~x~y~-~$$), confirms if $$x$$ bits and $$y$$ references can fit into $$b$$, where $$0 \leq x \leq 1023$$ and $$0 \leq y \leq 7$$.
+* $$\text{CF3Ccc}$$ — $$\text{BCHKBITSQ}~cc + 1$$ ($$b~-~?\$$), checks if $$cc + 1$$ bits can be saved in $$b$$, $$0 \leq cc \leq 255$$.
+* $$\text{CF3D}$$ — $$\text{BCHKBITSQ}$$ ($$b~x~-~?\$$), evaluates if $$x$$ bits can be stored in $$b$$, $$0 \leq x \leq 1023$$.
+* $$\text{CF3E}$$ — $$\text{BCHKREFSQ}$$ ($$b~y~-~?\$$), determines if $$y$$ references can be housed in $$b$$, $$0 \leq y \leq 7$$.
+* $$\text{CF3F}$$ — $$\text{BCHKBITREFSQ}$$ ($$b~x~y~-~?\$$), verifies if $$x$$ bits and $$y$$ references can be kept in $$b$$, where $$0 \leq x \leq 1023$$ and $$0 \leq y \leq 7$$.
+* $$\text{CF40}$$ — $$\text{STZEROES}$$ ($$b~n~-~b'\$$), places $$n$$ binary zeroes into Builder $$b$$.
+* $$\text{CF41}$$ — $$\text{STONES}$$ ($$b~n~-~b'\$$), incorporates $$n$$ binary ones into Builder $$b$$.
+* $$\text{CF42}$$ — $$\text{STSAME}$$ ($$b~n~x~-~b'\$$), saves $$n$$ binary xes ($$0 \leq x \leq 1$$) into Builder $$b$$.
+* $$\text{CFC0\_xysss}$$ — $$\text{STSLICECONST}~sss$$ ($$b~-~b'\$$), adds a constant subslice $$sss$$ of $$0 \leq x \leq 3$$ references and up to $$8y + 1$$ data bits where $$0 \leq y \leq 7$$. Completion bit is included.
+* $$\text{CF81}$$ — $$\text{STSLICECONST}~'0'$$ or $$\text{STZERO}$$ ($$b~-~b'\$$), inserts a single binary zero.
+* $$\text{CF83}$$ — $$\text{STSLICECONST}~'1'$$ or $$\text{STONE}$$ ($$b~-~b'\$$), appends a single binary one.
 * $$\text{CFA2}$$ — is equivalent to $$\text{STREFCONST}$$.
 * $$\text{CFA3}$$ — is nearly the same as $$\text{STSLICECONST}~'1'; \text{STREFCONST}$$.
 * $$\text{CFC2}$$ — corresponds to $$\text{STREF2CONST}$$.
@@ -432,114 +432,114 @@ All these primitives first check whether there is enough space in the Builder, a
 
 ### A.7.2. Cell deserialization primitives.
 
-* $$\text{D0}$$ — $$\text{CTOS}$$ ($$c~\rightarrow~s$$), transforms a Cell into a Slice. Note that $$c$$ must be either an ordinary cell or an exotic cell (cf. 3.1.2) which is automatically loaded to produce an ordinary cell $$c'$$, subsequently converted into a Slice.
-* $$\text{D1}$$ — $$\text{ENDS}$$ ($$s~\rightarrow~$$), eliminates a Slice $$s$$ from the stack, and raises an exception if it is not empty.
-* $$\text{D2cc}$$ — $$\text{LDI}~cc + 1$$ ($$s~\rightarrow~x~s'$$), extracts (i.e., parses) a signed $$cc + 1$$-bit integer $$x$$ from Slice $$s$$, and returns the remaining part of $$s$$ as $$s'$$.
-* $$\text{D3cc}$$ — $$\text{LDU}~cc + 1$$ ($$s~\rightarrow~x~s'$$), retrieves an unsigned $$cc + 1$$-bit integer $$x$$ from Slice $$s$$, and returns the residual portion of $$s$$ as $$s'$$.
-* $$\text{D4}$$ — $$\text{LDREF}$$ ($$s~\rightarrow~c~s'$$), fetches a cell reference $$c$$ from Slice $$s$$, and provides the remaining part of $$s$$ as $$s'$$.
-* $$\text{D5}$$ — $$\text{LDREFRTOS}$$ ($$s \rightarrow s'~s''$$), equivalent to executing $$\text{LDREF}$$, followed by $$\text{SWAP}$$, then $$\text{CTOS}$$.
-* $$\text{D6cc}$$ — $$\text{LDSLICE}~cc + 1$$ ($$s \rightarrow s''~s'$$), extracts the next $$cc + 1$$ bits of $$s$$ into a separate Slice $$s''$$.
-* $$\text{D700}$$ — $$\text{LDIX}$$ ($$s~l \rightarrow x~s'$$), loads a signed $$l$$-bit ($$0 \leq l \leq 257$$) integer $$x$$ from Slice $$s$$, returning the remainder of $$s$$ as $$s'$$.
-* $$\text{D701}$$ — $$\text{LDUX}$$ ($$s~l \rightarrow x~s'$$), loads an unsigned $$l$$-bit integer $$x$$ from the first $$l$$ bits of $$s$$, with $$0 \leq l \leq 256$$.
-* $$\text{D702}$$ — $$\text{PLDIX}$$ ($$s~l \rightarrow x$$), preloads a signed $$l$$-bit integer from Slice $$s$$, for $$0 \leq l \leq 257$$.
-* $$\text{D703}$$ — $$\text{PLDUX}$$ ($$s~l \rightarrow x$$), preloads an unsigned $$l$$-bit integer from $$s$$, for $$0 \leq l \leq 256$$.
-* $$\text{D704}$$ — $$\text{LDIXQ}$$ ($$s~l \rightarrow x~s'~-1~\text{or}~s~0$$), quiet version of $$\text{LDIX}$$, loads a signed $$l$$-bit integer from $$s$$ similarly to $$\text{LDIX}$$, returning a success flag equal to $$-1$$ on success or $$0$$ on failure (if $$s$$ doesn't have $$l$$ bits) instead of throwing a cell underflow exception.
-* $$\text{D705}$$ — $$\text{LDUXQ}$$ ($$s~l \rightarrow x~s'~-1~\text{or}~s~0$$), quiet version of $$\text{LDUX}$$.
-* $$\text{D706}$$ — $$\text{PLDIXQ}$$ ($$s~l \rightarrow x~-1~\text{or}~0$$), quiet version of $$\text{PLDIX}$$.
-* $$\text{D707}$$ — $$\text{PLDUXQ}$$ ($$s~l \rightarrow x~-1~\text{or}~0$$), quiet version of $$\text{PLDUX}$$.
-* $$\text{D708cc}$$ — $$\text{LDI}~cc + 1$$ ($$s \rightarrow x~s'$$), a longer encoding for $$\text{LDI}$$.
-* $$\text{D709cc}$$ — $$\text{LDU}~cc + 1$$ ($$s \rightarrow x~s'$$), a longer encoding for $$\text{LDU}$$.
-* $$\text{D70Acc}$$ — $$\text{PLDI}~cc+ 1$$ ($$s \rightarrow x$$), preloads a signed $$cc+ 1$$-bit integer from Slice $$s$$.
-* $$\text{D70Bcc}$$ — $$\text{PLDU}~cc + 1$$ ($$s \rightarrow x$$), preloads an unsigned $$cc + 1$$-bit integer from $$s$$.
-* $$\text{D70Ccc}$$ — $$\text{LDIQ}~cc + 1$$ ($$s \rightarrow x~s'~-1~\text{or}~s~0$$), a quiet version of $$\text{LDI}$$.
-* $$\text{D70Dcc}$$ — $$\text{LDUQ}~cc + 1$$ ($$s \rightarrow x~s'~-1~\text{or}~s~0$$), a quiet version of $$\text{LDU}$$.
-* $$\text{D70Ecc}$$ — $$\text{PLDIQ}~cc + 1$$ ($$s \rightarrow x~-1~\text{or}~0$$), a quiet version of $$\text{PLDI}$$.
-* $$\text{D70Fcc}$$ — $$\text{PLDUQ}~cc + 1$$ ($$s \rightarrow x~-1~\text{or}~0$$), a quiet version of $$\text{PLDU}$$.
-* $$\text{D714\_c}$$ — $$\text{PLDUZ}~32(c + 1)$$ ($$s \rightarrow s~x$$), preloads the first $$32(c + 1)$$ bits of Slice $$s$$ into an unsigned integer $$x
-* $$\text{D718}$$ — $$\text{LDSLICEX}$$ ($$s~l \rightarrow s''~s_{0}$$), loads the first $$0 \leq l \leq 1023$$ bits from Slice $$s$$ into a separate Slice $$s''$$, returning the remainder of $$s$$ as $$s_{0}$$.
-* $$\text{D719}$$ — $$\text{PLDSLICEX}$$ ($$s~l \rightarrow s''$$), returns the first $$0 \leq l \leq 1023$$ bits of $$s$$ as $$s''$$.
-* $$\text{D71A}$$ — $$\text{LDSLICEXQ}$$ ($$s~l \rightarrow s''~s_{0}~-1~\text{or}~s~0$$), a quiet version of $$\text{LDSLICEX}$$.
-* $$\text{D71B}$$ — $$\text{PLDSLICEXQ}$$ ($$s~l \rightarrow s_{0}~-1~\text{or}~0$$), a quiet version of $$\text{LDSLICEXQ}$$.
-* $$\text{D71Ccc}$$ — $$\text{LDSLICE}~cc + 1$$ ($$s \rightarrow s''~s_{0}$$), a longer encoding for $$\text{LDSLICE}$$.
-* $$\text{D71Dcc}$$ — $$\text{PLDSLICE}~cc + 1$$ ($$s \rightarrow s''$$), returns the first $$0 < cc + 1 \leq 256$$ bits of $$s$$ as $$s''$$.
-* $$\text{D71Ecc}$$ — $$\text{LDSLICEQ}~cc + 1$$ ($$s \rightarrow s''~s_{0}~-1~\text{or}~s~0$$), a quiet version of $$\text{LDSLICE}$$.
-* $$\text{D71Fcc}$$ — $$\text{PLDSLICEQ}~cc + 1$$ ($$s \rightarrow s''~-1~\text{or}~0$$), a quiet version of $$\text{PLDSLICE}$$.
-* $$\text{D720}$$ — $$\text{SDCUTFIRST}$$ ($$s~l \rightarrow s_{0}$$), returns the first $$0 \leq l \leq 1023$$ bits of $$s$$. It is equivalent to $$\text{PLDSLICEX}$$.
-* $$\text{D721}$$ — $$\text{SDSKIPFIRST}$$ ($$s~l \rightarrow s_{0}$$), returns all but the first $$0 \leq l \leq 1023$$ bits of $$s$$. It is equivalent to $$\text{LDSLICEX};~\text{NIP}$$.
-* $$\text{D722}$$ — $$\text{SDCUTLAST}$$ ($$s~l \rightarrow s_{0}$$), returns the last $$0 \leq l \leq 1023$$ bits of $$s$$.
-* $$\text{D723}$$ — $$\text{SDSKIPLAST}$$ ($$s~l \rightarrow s_{0}$$), returns all but the last $$0 \leq l \leq 1023$$ bits of $$s$$.
-* $$\text{D724}$$ — $$\text{SDSUBSTR}$$ ($$s~l~l_{0} \rightarrow s_{0}$$), returns $$0 \leq l_{0} \leq 1023$$ bits of $$s$$ starting from offset $$0 \leq l \leq 1023$$, thus extracting a bit substring out of the data of $$s$$.
-* $$\text{D726}$$ — $$\text{SDBEGINSX}$$ ($$s~s_{0} \rightarrow s''$$), checks whether $$s$$ begins with (the data bits of) $$s_{0}$$, and removes $$s_{0}$$ from $$s$$ on success. On failure throws a cell deserialization exception. Primitive $$\text{SDPFXREV}$$ can be considered a quiet version of $$\text{SDBEGINSX}$$.
-* $$\text{D727}$$ — $$\text{SDBEGINSXQ}$$ ($$s~s_{0} \rightarrow s''~-1~\text{or}~s~0$$), a quiet version of $$\text{SDBEGINSX}$$.
-* $$\text{D72A\_xsss}$$ — $$\text{SDBEGINS}$$ ($$s \rightarrow s''$$), checks whether $$s$$ begins with constant bitstring $$sss$$ of length $$8x + 3$$ (with continuation bit assumed), where $$0 \leq x \leq 127$$, and removes $$sss$$ from $$s$$ on success.
-* $$\text{D72802}$$ — $$\text{SDBEGINS}~'0'$$ ($$s \rightarrow s''$$), checks whether $$s$$ begins with a binary zero.
-* $$\text{D72806}$$ — $$\text{SDBEGINS}~'1'$$ ($$s \rightarrow s''$$), checks whether $$s$$ begins with a binary one.
-* $$\text{D72E\_xsss}$$ — $$\text{SDBEGINSQ}$$ ($$s \rightarrow s''~-1~\text{or}~s~0$$), a quiet version of $$\text{SDBEGINS}$$.
-* $$\text{D730}$$ — $$\text{SCUTFIRST}$$ ($$s~l~r \rightarrow s_{0}$$), returns the first $$0 \leq l \leq 1023$$ bits and first $$0 \leq r \leq 4$$ references of $$s$$.
-* $$\text{D731}$$ — $$\text{SSKIPFIRST}$$ ($$s~l~r \rightarrow s_{0}$$).
-* $$\text{D732}$$ — $$\text{SCUTLAST}$$ ($$s~l~r \rightarrow s_{0}$$), returns the last $$0 \leq l \leq 1023$$ data bits and last $$0 \leq r \leq 4$$ references of $$s$$.
-* $$\text{D733}$$ — $$\text{SSKIPLAST}$$ ($$s~l~r \rightarrow s_{0}$$).
-* $$\text{D734}$$ — $$\text{SUBSLICE}$$ ($$s~l~r~l_{0}~r_{0} \rightarrow s_{0}$$), returns $$0 \leq l_{0} \leq 1023$$ bits and $$0 \leq r_{0} \leq 4$$ references from Slice $$s$$, after skipping the first $$0 \leq l \leq 1023$$ bits and first $$0 \leq r \leq 4$$ references.
-* $$\text{D736}$$ — $$\text{SPLIT}$$ ($$s~l~r \rightarrow s_{0}~s''$$), splits the first $$0 \leq l \leq 1023$$ data bits and first $$0 \leq r \leq 4$$ references from $$s$$ into $$s_{0}$$, returning the remainder of $$s$$ as $$s''$$.
-* $$\text{D737}$$ — $$\text{SPLITQ}$$ ($$s~l~r \rightarrow s_{0}~s''~-1~\text{or}~s~0$$), a quiet version of $$\text{SPLIT}$$.
-* $$\text{D739}$$ — $$\text{XCTOS}$$ ($$c \rightarrow s~?$$), transforms an ordinary or exotic cell into a Slice, as if it were an ordinary cell. A flag is returned indicating whether $$c$$ is exotic. If that is the case, its type can later be deserialized from the first eight bits of $$s$$.
-* $$\text{D73A}$$ — $$\text{XLOAD}$$ ($$c \rightarrow c_{0}$$), loads an exotic cell $$c$$ and returns an ordinary cell $$c_{0}$$. If $$c$$ is already ordinary, does nothing. If $$c$$ cannot be loaded, throws an exception.
-* $$\text{D73B}$$ — $$\text{XLOADQ}$$ ($$c \rightarrow c_{0}~-1~\text{or}~c~0$$), loads an exotic cell $$c$$ as XLOAD, but returns 0 on failure.
-* $$\text{D741}$$ — $$\text{SCHKBITS}$$ ($$s~l \rightarrow$$), checks whether there are at least $$l$$ data bits in Slice $$s$$. If this is not the case, throws a cell deserialization (i.e., cell underflow) exception.
-* $$\text{D742}$$ — $$\text{SCHKREFS}$$ ($$s~r \rightarrow$$), checks whether there are at least $$r$$ references in Slice $$s$$.
-* $$\text{D743}$$ — $$\text{SCHKBITREFS}$$ ($$s~l~r \rightarrow$$), checks whether there are at least $$l$$ data bits and $$r$$ references in Slice $$s$$.
-* $$\text{D745}$$ — $$\text{SCHKBITSQ}$$ ($$s~l \rightarrow ?$$), checks whether there are at least $$l$$ data bits in Slice $$s$$.
-* $$\text{D746}$$ — $$\text{SCHKREFSQ}$$ ($$s~r \rightarrow ?$$), checks whether there are at least $$r$$ references in Slice $$s$$.
-* $$\text{D747}$$ — $$\text{SCHKBITREFSQ}$$ ($$s~l~r \rightarrow ?$$), checks whether there are at least $$l$$ data bits and $$r$$ references in Slice $$s$$.
-* $$\text{D748}$$ — $$\text{PLDREFVAR}$$ ($$s~n \rightarrow c$$), returns the $$n$$-th cell reference of Slice $$s$$ for $$0 \leq n \leq 3$$.
-* $$\text{D749}$$ — $$\text{SBITS}$$ ($$s \rightarrow l$$), returns the number of data bits in Slice $$s$$.
-* $$\text{D74A}$$ — $$\text{SREFS}$$ ($$s \rightarrow r$$), returns the number of references in Slice $$s$$.
-* $$\text{D74B}$$ — $$\text{SBITREFS}$$ ($$s \rightarrow l~r$$), returns both the number of data bits and the number of references in $$s$$.
-* $$\text{D74E\_n}$$ — $$\text{PLDREFIDX}~n$$ ($$s \rightarrow c$$), returns the $$n$$-th cell reference of Slice $$s$$, where $$0 \leq n \leq 3$$.
-* $$\text{D74C}$$ — $$\text{PLDREF}$$ ($$s \rightarrow c$$), preloads the first cell reference of a Slice.
-* $$\text{D750}$$ — $$\text{LDILE4}$$ ($$s \rightarrow x~s_{0}$$), loads a little-endian signed 32-bit integer.
-* $$\text{D751}$$ — $$\text{LDULE4}$$ ($$s \rightarrow x~s_{0}$$), loads a little-endian unsigned 32-bit integer.
-* $$\text{D752}$$ — $$\text{LDILE8}$$ ($$s \rightarrow x~s_{0}$$), loads a little-endian signed 64-bit integer.
-* $$\text{D753}$$ — $$\text{LDULE8}$$ ($$s \rightarrow x~s_{0}$$), loads a little-endian unsigned 64-bit integer.
-* $$\text{D754}$$ — $$\text{PLDILE4}$$ ($$s \rightarrow x$$), preloads a little-endian signed 32-bit integer.
-* $$\text{D755}$$ — $$\text{PLDULE4}$$ ($$s \rightarrow x$$), preloads a little-endian unsigned 32-bit integer.
-* $$\text{D756}$$ — $$\text{PLDILE8}$$ ($$s \rightarrow x$$), preloads a little-endian signed 64-bit integer.
-* $$\text{D757}$$ — $$\text{PLDULE8}$$ ($$s \rightarrow x$$), preloads a little-endian unsigned 64-bit integer.
-* $$\text{D758}$$ — $$\text{LDILE4Q}$$ ($$s \rightarrow x~s_{0}~-1~\text{or}~s~0$$), quietly loads a little-endian signed 32-bit integer.
-* $$\text{D759}$$ — $$\text{LDULE4Q}$$ ($$s \rightarrow x~s_{0}~-1~\text{or}~s~0$$), quietly loads a little-endian unsigned 32-bit integer.
-* $$\text{D75A}$$ — $$\text{LDILE8Q}$$ ($$s \rightarrow x~s_{0}~-1~\text{or}~s~0$$), quietly loads a little-endian signed 64-bit integer.
-* $$\text{D75B}$$ — $$\text{LDULE8Q}$$ ($$s \rightarrow x~s_{0}~-1~\text{or}~s~0$$), quietly loads a little-endian unsigned 64-bit integer.
-* $$\text{D75C}$$ — $$\text{PLDILE4Q}$$ ($$s \rightarrow x~-1~\text{or}~0$$), quietly preloads a little-endian signed 32-bit integer.
-* $$\text{D75D}$$ — $$\text{PLDULE4Q}$$ ($$s \rightarrow x~-1~\text{or}~0$$), quietly preloads a little-endian unsigned 32-bit integer.
-* $$\text{D75E}$$ — $$\text{PLDILE8Q}$$ ($$s \rightarrow x~-1~\text{or}~0$$), quietly preloads a little-endian signed 64-bit integer.
-* $$\text{D75F}$$ — $$\text{PLDULE8Q}$$ ($$s \rightarrow x~-1~\text{or}~0$$), quietly preloads a little-endian unsigned 64-bit integer.
-* $$\text{D760}$$ — $$\text{LDZEROES}$$ ($$s \rightarrow n~s_{0}$$), returns the count $$n$$ of leading zero bits in $$s$$, and removes these bits from $$s$$.
-* $$\text{D761}$$ — $$\text{LDONES}$$ ($$s \rightarrow n~s_{0}$$), returns the count $$n$$ of leading one bits in $$s$$, and removes these bits from $$s$$.
-* $$\text{D762}$$ — $$\text{LDSAME}$$ ($$s~x \rightarrow n~s_{0}$$), returns the count $$n$$ of leading bits equal to $$0 \leq x \leq 1$$ in $$s$$, and removes these bits from $$s$$.
-* $$\text{D764}$$ — $$\text{SDEPTH}$$ ($$s \rightarrow x$$), returns the depth of Slice $$s$$. If $$s$$ has no references, then $$x = 0$$; otherwise $$x$$ is one plus the maximum of depths of cells referred to from $$s$$.
-* $$\text{D765}$$ — $$\text{CDEPTH}$$ ($$c \rightarrow x$$), returns the depth of Cell $$c$$. If $$c$$ has no references, then $$x = 0$$; otherwise $$x$$ is one plus the maximum of depths of cells referred to from $$c$$. If c is a *Null* instead of a *Cell*, returns zero.
+* $$\text{D0}$$ — $$\text{CTOS}$$ ($$c~-~s$$), transforms a Cell into a Slice. Note that $$c$$ must be either an ordinary cell or an exotic cell (cf. 3.1.2) which is automatically loaded to produce an ordinary cell $$c'$$, subsequently converted into a Slice.
+* $$\text{D1}$$ — $$\text{ENDS}$$ ($$s~-~$$), eliminates a Slice $$s$$ from the stack, and raises an exception if it is not empty.
+* $$\text{D2cc}$$ — $$\text{LDI}~cc + 1$$ ($$s~-~x~s'$$), extracts (i.e., parses) a signed $$cc + 1$$-bit integer $$x$$ from Slice $$s$$, and returns the remaining part of $$s$$ as $$s'$$.
+* $$\text{D3cc}$$ — $$\text{LDU}~cc + 1$$ ($$s~-~x~s'$$), retrieves an unsigned $$cc + 1$$-bit integer $$x$$ from Slice $$s$$, and returns the residual portion of $$s$$ as $$s'$$.
+* $$\text{D4}$$ — $$\text{LDREF}$$ ($$s~-~c~s'$$), fetches a cell reference $$c$$ from Slice $$s$$, and provides the remaining part of $$s$$ as $$s'$$.
+* $$\text{D5}$$ — $$\text{LDREFRTOS}$$ ($$s - s'~s''$$), equivalent to executing $$\text{LDREF}$$, followed by $$\text{SWAP}$$, then $$\text{CTOS}$$.
+* $$\text{D6cc}$$ — $$\text{LDSLICE}~cc + 1$$ ($$s - s''~s'$$), extracts the next $$cc + 1$$ bits of $$s$$ into a separate Slice $$s''$$.
+* $$\text{D700}$$ — $$\text{LDIX}$$ ($$s~l - x~s'$$), loads a signed $$l$$-bit ($$0 \leq l \leq 257$$) integer $$x$$ from Slice $$s$$, returning the remainder of $$s$$ as $$s'$$.
+* $$\text{D701}$$ — $$\text{LDUX}$$ ($$s~l - x~s'$$), loads an unsigned $$l$$-bit integer $$x$$ from the first $$l$$ bits of $$s$$, with $$0 \leq l \leq 256$$.
+* $$\text{D702}$$ — $$\text{PLDIX}$$ ($$s~l - x$$), preloads a signed $$l$$-bit integer from Slice $$s$$, for $$0 \leq l \leq 257$$.
+* $$\text{D703}$$ — $$\text{PLDUX}$$ ($$s~l - x$$), preloads an unsigned $$l$$-bit integer from $$s$$, for $$0 \leq l \leq 256$$.
+* $$\text{D704}$$ — $$\text{LDIXQ}$$ ($$s~l - x~s'~-1~\text{or}~s~0$$), quiet version of $$\text{LDIX}$$, loads a signed $$l$$-bit integer from $$s$$ similarly to $$\text{LDIX}$$, returning a success flag equal to $$-1$$ on success or $$0$$ on failure (if $$s$$ doesn't have $$l$$ bits) instead of throwing a cell underflow exception.
+* $$\text{D705}$$ — $$\text{LDUXQ}$$ ($$s~l - x~s'~-1~\text{or}~s~0$$), quiet version of $$\text{LDUX}$$.
+* $$\text{D706}$$ — $$\text{PLDIXQ}$$ ($$s~l - x~-1~\text{or}~0$$), quiet version of $$\text{PLDIX}$$.
+* $$\text{D707}$$ — $$\text{PLDUXQ}$$ ($$s~l - x~-1~\text{or}~0$$), quiet version of $$\text{PLDUX}$$.
+* $$\text{D708cc}$$ — $$\text{LDI}~cc + 1$$ ($$s - x~s'$$), a longer encoding for $$\text{LDI}$$.
+* $$\text{D709cc}$$ — $$\text{LDU}~cc + 1$$ ($$s - x~s'$$), a longer encoding for $$\text{LDU}$$.
+* $$\text{D70Acc}$$ — $$\text{PLDI}~cc+ 1$$ ($$s - x$$), preloads a signed $$cc+ 1$$-bit integer from Slice $$s$$.
+* $$\text{D70Bcc}$$ — $$\text{PLDU}~cc + 1$$ ($$s - x$$), preloads an unsigned $$cc + 1$$-bit integer from $$s$$.
+* $$\text{D70Ccc}$$ — $$\text{LDIQ}~cc + 1$$ ($$s - x~s'~-1~\text{or}~s~0$$), a quiet version of $$\text{LDI}$$.
+* $$\text{D70Dcc}$$ — $$\text{LDUQ}~cc + 1$$ ($$s - x~s'~-1~\text{or}~s~0$$), a quiet version of $$\text{LDU}$$.
+* $$\text{D70Ecc}$$ — $$\text{PLDIQ}~cc + 1$$ ($$s - x~-1~\text{or}~0$$), a quiet version of $$\text{PLDI}$$.
+* $$\text{D70Fcc}$$ — $$\text{PLDUQ}~cc + 1$$ ($$s - x~-1~\text{or}~0$$), a quiet version of $$\text{PLDU}$$.
+* $$\text{D714\_c}$$ — $$\text{PLDUZ}~32(c + 1)$$ ($$s - s~x$$), preloads the first $$32(c + 1)$$ bits of Slice $$s$$ into an unsigned integer $$x
+* $$\text{D718}$$ — $$\text{LDSLICEX}$$ ($$s~l - s''~s'$$), loads the first $$0 \leq l \leq 1023$$ bits from Slice $$s$$ into a separate Slice $$s''$$, returning the remainder of $$s$$ as $$s'$$.
+* $$\text{D719}$$ — $$\text{PLDSLICEX}$$ ($$s~l - s''$$), returns the first $$0 \leq l \leq 1023$$ bits of $$s$$ as $$s''$$.
+* $$\text{D71A}$$ — $$\text{LDSLICEXQ}$$ ($$s~l - s''~s'~-1~\text{or}~s~0$$), a quiet version of $$\text{LDSLICEX}$$.
+* $$\text{D71B}$$ — $$\text{PLDSLICEXQ}$$ ($$s~l - s'~-1~\text{or}~0$$), a quiet version of $$\text{LDSLICEXQ}$$.
+* $$\text{D71Ccc}$$ — $$\text{LDSLICE}~cc + 1$$ ($$s - s''~s'$$), a longer encoding for $$\text{LDSLICE}$$.
+* $$\text{D71Dcc}$$ — $$\text{PLDSLICE}~cc + 1$$ ($$s - s''$$), returns the first $$0 < cc + 1 \leq 256$$ bits of $$s$$ as $$s''$$.
+* $$\text{D71Ecc}$$ — $$\text{LDSLICEQ}~cc + 1$$ ($$s - s''~s'~-1~\text{or}~s~0$$), a quiet version of $$\text{LDSLICE}$$.
+* $$\text{D71Fcc}$$ — $$\text{PLDSLICEQ}~cc + 1$$ ($$s - s''~-1~\text{or}~0$$), a quiet version of $$\text{PLDSLICE}$$.
+* $$\text{D720}$$ — $$\text{SDCUTFIRST}$$ ($$s~l - s'$$), returns the first $$0 \leq l \leq 1023$$ bits of $$s$$. It is equivalent to $$\text{PLDSLICEX}$$.
+* $$\text{D721}$$ — $$\text{SDSKIPFIRST}$$ ($$s~l - s'$$), returns all but the first $$0 \leq l \leq 1023$$ bits of $$s$$. It is equivalent to $$\text{LDSLICEX};~\text{NIP}$$.
+* $$\text{D722}$$ — $$\text{SDCUTLAST}$$ ($$s~l - s'$$), returns the last $$0 \leq l \leq 1023$$ bits of $$s$$.
+* $$\text{D723}$$ — $$\text{SDSKIPLAST}$$ ($$s~l - s'$$), returns all but the last $$0 \leq l \leq 1023$$ bits of $$s$$.
+* $$\text{D724}$$ — $$\text{SDSUBSTR}$$ ($$s~l~l' - s'$$), returns $$0 \leq l' \leq 1023$$ bits of $$s$$ starting from offset $$0 \leq l \leq 1023$$, thus extracting a bit substring out of the data of $$s$$.
+* $$\text{D726}$$ — $$\text{SDBEGINSX}$$ ($$s~s' - s''$$), checks whether $$s$$ begins with (the data bits of) $$s'$$, and removes $$s'$$ from $$s$$ on success. On failure throws a cell deserialization exception. Primitive $$\text{SDPFXREV}$$ can be considered a quiet version of $$\text{SDBEGINSX}$$.
+* $$\text{D727}$$ — $$\text{SDBEGINSXQ}$$ ($$s~s' - s''~-1~\text{or}~s~0$$), a quiet version of $$\text{SDBEGINSX}$$.
+* $$\text{D72A\_xsss}$$ — $$\text{SDBEGINS}$$ ($$s - s''$$), checks whether $$s$$ begins with constant bitstring $$sss$$ of length $$8x + 3$$ (with continuation bit assumed), where $$0 \leq x \leq 127$$, and removes $$sss$$ from $$s$$ on success.
+* $$\text{D72802}$$ — $$\text{SDBEGINS}~'0'$$ ($$s - s''$$), checks whether $$s$$ begins with a binary zero.
+* $$\text{D72806}$$ — $$\text{SDBEGINS}~'1'$$ ($$s - s''$$), checks whether $$s$$ begins with a binary one.
+* $$\text{D72E\_xsss}$$ — $$\text{SDBEGINSQ}$$ ($$s - s''~-1~\text{or}~s~0$$), a quiet version of $$\text{SDBEGINS}$$.
+* $$\text{D730}$$ — $$\text{SCUTFIRST}$$ ($$s~l~r - s'$$), returns the first $$0 \leq l \leq 1023$$ bits and first $$0 \leq r \leq 4$$ references of $$s$$.
+* $$\text{D731}$$ — $$\text{SSKIPFIRST}$$ ($$s~l~r - s'$$).
+* $$\text{D732}$$ — $$\text{SCUTLAST}$$ ($$s~l~r - s'$$), returns the last $$0 \leq l \leq 1023$$ data bits and last $$0 \leq r \leq 4$$ references of $$s$$.
+* $$\text{D733}$$ — $$\text{SSKIPLAST}$$ ($$s~l~r - s'$$).
+* $$\text{D734}$$ — $$\text{SUBSLICE}$$ ($$s~l~r~l'~r' - s'$$), returns $$0 \leq l' \leq 1023$$ bits and $$0 \leq r' \leq 4$$ references from Slice $$s$$, after skipping the first $$0 \leq l \leq 1023$$ bits and first $$0 \leq r \leq 4$$ references.
+* $$\text{D736}$$ — $$\text{SPLIT}$$ ($$s~l~r - s'~s''$$), splits the first $$0 \leq l \leq 1023$$ data bits and first $$0 \leq r \leq 4$$ references from $$s$$ into $$s'$$, returning the remainder of $$s$$ as $$s''$$.
+* $$\text{D737}$$ — $$\text{SPLITQ}$$ ($$s~l~r - s'~s''~-1~\text{or}~s~0$$), a quiet version of $$\text{SPLIT}$$.
+* $$\text{D739}$$ — $$\text{XCTOS}$$ ($$c - s~?$$), transforms an ordinary or exotic cell into a Slice, as if it were an ordinary cell. A flag is returned indicating whether $$c$$ is exotic. If that is the case, its type can later be deserialized from the first eight bits of $$s$$.
+* $$\text{D73A}$$ — $$\text{XLOAD}$$ ($$c - c'$$), loads an exotic cell $$c$$ and returns an ordinary cell $$c'$$. If $$c$$ is already ordinary, does nothing. If $$c$$ cannot be loaded, throws an exception.
+* $$\text{D73B}$$ — $$\text{XLOADQ}$$ ($$c - c'~-1~\text{or}~c~0$$), loads an exotic cell $$c$$ as XLOAD, but returns 0 on failure.
+* $$\text{D741}$$ — $$\text{SCHKBITS}$$ ($$s~l -$$), checks whether there are at least $$l$$ data bits in Slice $$s$$. If this is not the case, throws a cell deserialization (i.e., cell underflow) exception.
+* $$\text{D742}$$ — $$\text{SCHKREFS}$$ ($$s~r -$$), checks whether there are at least $$r$$ references in Slice $$s$$.
+* $$\text{D743}$$ — $$\text{SCHKBITREFS}$$ ($$s~l~r -$$), checks whether there are at least $$l$$ data bits and $$r$$ references in Slice $$s$$.
+* $$\text{D745}$$ — $$\text{SCHKBITSQ}$$ ($$s~l - ?$$), checks whether there are at least $$l$$ data bits in Slice $$s$$.
+* $$\text{D746}$$ — $$\text{SCHKREFSQ}$$ ($$s~r - ?$$), checks whether there are at least $$r$$ references in Slice $$s$$.
+* $$\text{D747}$$ — $$\text{SCHKBITREFSQ}$$ ($$s~l~r - ?$$), checks whether there are at least $$l$$ data bits and $$r$$ references in Slice $$s$$.
+* $$\text{D748}$$ — $$\text{PLDREFVAR}$$ ($$s~n - c$$), returns the $$n$$-th cell reference of Slice $$s$$ for $$0 \leq n \leq 3$$.
+* $$\text{D749}$$ — $$\text{SBITS}$$ ($$s - l$$), returns the number of data bits in Slice $$s$$.
+* $$\text{D74A}$$ — $$\text{SREFS}$$ ($$s - r$$), returns the number of references in Slice $$s$$.
+* $$\text{D74B}$$ — $$\text{SBITREFS}$$ ($$s - l~r$$), returns both the number of data bits and the number of references in $$s$$.
+* $$\text{D74E\_n}$$ — $$\text{PLDREFIDX}~n$$ ($$s - c$$), returns the $$n$$-th cell reference of Slice $$s$$, where $$0 \leq n \leq 3$$.
+* $$\text{D74C}$$ — $$\text{PLDREF}$$ ($$s - c$$), preloads the first cell reference of a Slice.
+* $$\text{D750}$$ — $$\text{LDILE4}$$ ($$s - x~s'$$), loads a little-endian signed 32-bit integer.
+* $$\text{D751}$$ — $$\text{LDULE4}$$ ($$s - x~s'$$), loads a little-endian unsigned 32-bit integer.
+* $$\text{D752}$$ — $$\text{LDILE8}$$ ($$s - x~s'$$), loads a little-endian signed 64-bit integer.
+* $$\text{D753}$$ — $$\text{LDULE8}$$ ($$s - x~s'$$), loads a little-endian unsigned 64-bit integer.
+* $$\text{D754}$$ — $$\text{PLDILE4}$$ ($$s - x$$), preloads a little-endian signed 32-bit integer.
+* $$\text{D755}$$ — $$\text{PLDULE4}$$ ($$s - x$$), preloads a little-endian unsigned 32-bit integer.
+* $$\text{D756}$$ — $$\text{PLDILE8}$$ ($$s - x$$), preloads a little-endian signed 64-bit integer.
+* $$\text{D757}$$ — $$\text{PLDULE8}$$ ($$s - x$$), preloads a little-endian unsigned 64-bit integer.
+* $$\text{D758}$$ — $$\text{LDILE4Q}$$ ($$s - x~s'~-1~\text{or}~s~0$$), quietly loads a little-endian signed 32-bit integer.
+* $$\text{D759}$$ — $$\text{LDULE4Q}$$ ($$s - x~s'~-1~\text{or}~s~0$$), quietly loads a little-endian unsigned 32-bit integer.
+* $$\text{D75A}$$ — $$\text{LDILE8Q}$$ ($$s - x~s'~-1~\text{or}~s~0$$), quietly loads a little-endian signed 64-bit integer.
+* $$\text{D75B}$$ — $$\text{LDULE8Q}$$ ($$s - x~s'~-1~\text{or}~s~0$$), quietly loads a little-endian unsigned 64-bit integer.
+* $$\text{D75C}$$ — $$\text{PLDILE4Q}$$ ($$s - x~-1~\text{or}~0$$), quietly preloads a little-endian signed 32-bit integer.
+* $$\text{D75D}$$ — $$\text{PLDULE4Q}$$ ($$s - x~-1~\text{or}~0$$), quietly preloads a little-endian unsigned 32-bit integer.
+* $$\text{D75E}$$ — $$\text{PLDILE8Q}$$ ($$s - x~-1~\text{or}~0$$), quietly preloads a little-endian signed 64-bit integer.
+* $$\text{D75F}$$ — $$\text{PLDULE8Q}$$ ($$s - x~-1~\text{or}~0$$), quietly preloads a little-endian unsigned 64-bit integer.
+* $$\text{D760}$$ — $$\text{LDZEROES}$$ ($$s - n~s'$$), returns the count $$n$$ of leading zero bits in $$s$$, and removes these bits from $$s$$.
+* $$\text{D761}$$ — $$\text{LDONES}$$ ($$s - n~s'$$), returns the count $$n$$ of leading one bits in $$s$$, and removes these bits from $$s$$.
+* $$\text{D762}$$ — $$\text{LDSAME}$$ ($$s~x - n~s'$$), returns the count $$n$$ of leading bits equal to $$0 \leq x \leq 1$$ in $$s$$, and removes these bits from $$s$$.
+* $$\text{D764}$$ — $$\text{SDEPTH}$$ ($$s - x$$), returns the depth of Slice $$s$$. If $$s$$ has no references, then $$x = 0$$; otherwise $$x$$ is one plus the maximum of depths of cells referred to from $$s$$.
+* $$\text{D765}$$ — $$\text{CDEPTH}$$ ($$c - x$$), returns the depth of Cell $$c$$. If $$c$$ has no references, then $$x = 0$$; otherwise $$x$$ is one plus the maximum of depths of cells referred to from $$c$$. If c is a *Null* instead of a *Cell*, returns zero.
 
 
 ## A.8 Continuation and control flow primitives
 
 ### A.8.1. Unconditional control flow primitives.
 
-* $$\text{D8}$$ — $$\text{EXECUTE}$$ or $$\text{CALLX}$$ ($$c \rightarrow$$), calls or executes continuation $$c$$ (i.e., $$cc \leftarrow c \circ0~ cc$$).
-* $$\text{D9}$$ — $$\text{JMPX}$$ ($$c \rightarrow$$), jumps, or transfers control, to continuation $$c$$ (i.e., $$cc \leftarrow c \circ0~ c0$$, or rather $$cc \leftarrow (c \circ0~ c0) \circ1~ c1$$). The remainder of the previous current continuation $$cc$$ is discarded.
-* $$\text{DA}_{pr}$$ — $$\text{CALLXARGS}~ p,r$$ ($$c \rightarrow$$), calls continuation $$c$$ with $$p$$ parameters and expecting $$r$$ return values, $$0 \leq p \leq 15$$, $$0 \leq r \leq 15$$.
-* $$\text{DB0}_{p}$$ — $$\text{CALLXARGS}~ p,−1$$ ($$c \rightarrow$$), calls continuation $$c$$ with $$0 \leq p \leq 15$$ parameters, expecting an arbitrary number of return values.
-* $$\text{DB1}_{p}$$ — $$\text{JMPXARGS}~ p$$ ($$c \rightarrow$$), jumps to continuation $$c$$, passing only the top $$0 \leq p \leq 15$$ values from the current stack to it (the remainder of the current stack is discarded).
+* $$\text{D8}$$ — $$\text{EXECUTE}$$ or $$\text{CALLX}$$ ($$c -$$), calls or executes continuation $$c$$ (i.e., $$cc \leftarrow c \circ0~ cc$$).
+* $$\text{D9}$$ — $$\text{JMPX}$$ ($$c -$$), jumps, or transfers control, to continuation $$c$$ (i.e., $$cc \leftarrow c \circ0~ c0$$, or rather $$cc \leftarrow (c \circ0~ c0) \circ1~ c1$$). The remainder of the previous current continuation $$cc$$ is discarded.
+* $$\text{DA}_{pr}$$ — $$\text{CALLXARGS}~ p,r$$ ($$c -$$), calls continuation $$c$$ with $$p$$ parameters and expecting $$r$$ return values, $$0 \leq p \leq 15$$, $$0 \leq r \leq 15$$.
+* $$\text{DB0}_{p}$$ — $$\text{CALLXARGS}~ p,−1$$ ($$c -$$), calls continuation $$c$$ with $$0 \leq p \leq 15$$ parameters, expecting an arbitrary number of return values.
+* $$\text{DB1}_{p}$$ — $$\text{JMPXARGS}~ p$$ ($$c -$$), jumps to continuation $$c$$, passing only the top $$0 \leq p \leq 15$$ values from the current stack to it (the remainder of the current stack is discarded).
 * $$\text{DB2}_{r}$$ — $$\text{RETARGS}~ r$$, returns to $$c0$$, with $$0 \leq r \leq 15$$ return values taken from the current stack.
 * $$\text{DB30}$$ — $$\text{RET}$$ or $$\text{RETTRUE}$$, returns to the continuation at $$c0$$ (i.e., performs $$cc \leftarrow c0$$). The remainder of the current continuation $$cc$$ is discarded. Approximately equivalent to $$\text{PUSH}~ c0;~ \text{JMPX}$$.
 * $$\text{DB31}$$ — $$\text{RETALT}$$ or $$\text{RETFALSE}$$, returns to the continuation at $$c1$$ (i.e., $$cc \leftarrow c1$$). Approximately equivalent to $$\text{PUSH}~ c1;~ \text{JMPX}$$.
-* $$\text{DB32}$$ — $$\text{BRANCH}$$ or $$\text{RETBOOL}$$ ($$f \rightarrow$$), performs $$\text{RETTRUE}$$ if integer $$f \neq 0$$, or $$\text{RETFALSE}$$ if $$f = 0$$.
-* $$\text{DB34}$$ — $$\text{CALLCC}$$ ($$c \rightarrow$$), call with current continuation, transfers control to $$c$$, pushing the old value of $$cc$$ into $$c$$’s stack (instead of discarding it or writing it into new $$c0$$).
-* $$\text{DB35}$$ — $$\text{JMPXDATA}$$ ($$c \rightarrow$$), similar to $$\text{CALLCC}$$, but the remainder of the current continuation (the old value of $$cc$$) is converted into a Slice before pushing it into the stack of $$c$$.
-* $$\text{DB36}_{pr}$$ — $$\text{CALLCCARGS}~ p,r$$ ($$c \rightarrow$$), similar to $$\text{CALLXARGS}$$, but pushes the old value of $$cc$$ (along with the top $$0 \leq p \leq 15$$ values from the original stack) into the stack of newly-invoked continuation $$c$$, setting $$cc.nargs$$ to $$−1 \leq r \leq 14$$.
-* $$\text{DB38}$$ — $$\text{CALLXVARARGS}$$ ($$c~ p~ r \rightarrow$$), similar to $$\text{CALLXARGS}$$, but takes $$−1 \leq p, r \leq 254$$ from the stack. The next three operations also take $$p$$ and $$r$$ from the stack, both in the range $$−1 . . . 254$$.
-* $$\text{DB39}$$ — $$\text{RETVARARGS}$$ ($$p~ r \rightarrow$$), similar to $$\text{RETARGS}$$.
-* $$\text{DB3A}$$ — $$\text{JMPXVARARGS}$$ ($$c~ p~ r \rightarrow$$), similar to $$\text{JMPXARGS}$$.
-* $$\text{DB3B}$$ — $$\text{CALLCCVARARGS}$$ ($$c~ p~ r \rightarrow$$), similar to $$\text{CALLCCARGS}$$.
+* $$\text{DB32}$$ — $$\text{BRANCH}$$ or $$\text{RETBOOL}$$ ($$f -$$), performs $$\text{RETTRUE}$$ if integer $$f \neq 0$$, or $$\text{RETFALSE}$$ if $$f = 0$$.
+* $$\text{DB34}$$ — $$\text{CALLCC}$$ ($$c -$$), call with current continuation, transfers control to $$c$$, pushing the old value of $$cc$$ into $$c$$’s stack (instead of discarding it or writing it into new $$c0$$).
+* $$\text{DB35}$$ — $$\text{JMPXDATA}$$ ($$c -$$), similar to $$\text{CALLCC}$$, but the remainder of the current continuation (the old value of $$cc$$) is converted into a Slice before pushing it into the stack of $$c$$.
+* $$\text{DB36}_{pr}$$ — $$\text{CALLCCARGS}~ p,r$$ ($$c -$$), similar to $$\text{CALLXARGS}$$, but pushes the old value of $$cc$$ (along with the top $$0 \leq p \leq 15$$ values from the original stack) into the stack of newly-invoked continuation $$c$$, setting $$cc.nargs$$ to $$−1 \leq r \leq 14$$.
+* $$\text{DB38}$$ — $$\text{CALLXVARARGS}$$ ($$c~ p~ r -$$), similar to $$\text{CALLXARGS}$$, but takes $$−1 \leq p, r \leq 254$$ from the stack. The next three operations also take $$p$$ and $$r$$ from the stack, both in the range $$−1 . . . 254$$.
+* $$\text{DB39}$$ — $$\text{RETVARARGS}$$ ($$p~ r -$$), similar to $$\text{RETARGS}$$.
+* $$\text{DB3A}$$ — $$\text{JMPXVARARGS}$$ ($$c~ p~ r -$$), similar to $$\text{JMPXARGS}$$.
+* $$\text{DB3B}$$ — $$\text{CALLCCVARARGS}$$ ($$c~ p~ r -$$), similar to $$\text{CALLCCARGS}$$.
 * $$\text{DB3C}$$ — $$\text{CALLREF}$$, equivalent to $$\text{PUSHREFCONT};~ \text{CALLX}$$.
 * $$\text{DB3D}$$ — $$\text{JMPREF}$$, equivalent to $$\text{PUSHREFCONT};~ \text{JMPX}$$.
 * $$\text{DB3E}$$ — $$\text{JMPREFDATA}$$, equivalent to $$\text{PUSHREFCONT};~ \text{JMPXDATA}$$.
